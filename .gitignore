@@ -1,6 +1,9 @@
 node_modules/
 .next/
 .npm-cache/
+backend/vendor/
+backend/.phpunit.result.cache
+backend/database/*.sqlite
 .env*
 !.env.example
 *.tsbuildinfo
