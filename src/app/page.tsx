@@ -20,6 +20,7 @@ const weights = [
   {
     gsm: 180,
     label: "Light and easy",
+    image: "/categories/Starkvibe Premium T-Shirt Combo.png",
     name: (
       <>
         Regular Fit Tee
@@ -34,6 +35,7 @@ const weights = [
   {
     gsm: 220,
     label: "Everyday standard",
+    image: "/categories/Starkvibe Premium Polo Combo Pack.png",
     name: (
       <>
         Oversized Tee
@@ -48,6 +50,7 @@ const weights = [
   {
     gsm: 240,
     label: "Structured and soft",
+    image: "/categories/Starkvibe Premium T-Shirt Combo.png",
     name: <>Oversized French Terry Tee</>,
     price: "₹880",
     className: "bg-[#3b3a36] text-paper lg:h-[620px]",
@@ -56,6 +59,7 @@ const weights = [
   {
     gsm: 350,
     label: "Cotton fleece",
+    image: "/categories/Starkvibe Sweatshirts Combo Pack.png",
     name: (
       <>
         Fleece Sweatshirt
@@ -66,6 +70,48 @@ const weights = [
     price: "From ₹1080",
     className: "bg-ink text-paper lg:h-[720px]",
     number: "text-gold lg:text-[170px]",
+  },
+];
+const categories = [
+  {
+    label: "T-shirts",
+    eyebrow: "Everyday essentials",
+    image: "/categories/Starkvibe Premium T-Shirt Combo.png",
+    description: "Clean fits, premium cotton and easy everyday comfort.",
+    href: "/shop?category=tees",
+    cardClass: "col-span-2 min-h-[320px] sm:col-span-2 lg:col-span-1 lg:min-h-[295px]",
+  },
+  {
+    label: "Polos",
+    eyebrow: "Polished comfort",
+    image: "/categories/Starkvibe Premium Polo Combo Pack.png",
+    description: "Breathable Matty fabric with a sharper everyday finish.",
+    href: "/shop?category=polo",
+    cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
+  },
+  {
+    label: "Kids",
+    eyebrow: "Made to move",
+    image: "/categories/Starkvibe Kids Combo Pack.png",
+    description: "Soft, flexible pieces for active days and special moments.",
+    href: "/shop?category=kids",
+    cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
+  },
+  {
+    label: "Sweatshirts",
+    eyebrow: "Warm layers",
+    image: "/categories/Starkvibe Sweatshirts Combo Pack.png",
+    description: "350 GSM fleece with warmth, softness and structure.",
+    href: "/shop?category=fleece",
+    cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
+  },
+  {
+    label: "Hoodies",
+    eyebrow: "Heavy cotton fleece",
+    image: "/categories/Starkvibe Premium Hoodie Combo.png",
+    description: "Substantial layers built for streetwear and custom prints.",
+    href: "/shop?category=fleece",
+    cardClass: "col-span-2 min-h-[300px] sm:col-span-3 lg:col-span-1 lg:min-h-[295px]",
   },
 ];
 const steps = [
@@ -134,7 +180,7 @@ export default function Home() {
               <p className={`${eyebrow} mb-0 text-gold`}>
                 Premium cotton wear · 180 to 350 GSM
               </p>
-              <h1 className="font-display text-[clamp(64px,7.8vw,124px)] leading-[.95] font-black uppercase">
+              <h1 className="font-display text-[clamp(50px,7.8vw,124px)] leading-[.95] font-black uppercase">
                 Heavy.
 
                 cotton.
@@ -226,53 +272,56 @@ export default function Home() {
               ))}
             </div>
           </section>
-          <section id="weight" className={`${container} pt-20 lg:pt-32`}>
+          <section id="categories" className={`${container} pt-20 lg:pt-32`}>
             <Reveal>
-              <div className="mb-16 flex flex-wrap items-end justify-between gap-6">
+              <div className="mb-12 flex flex-wrap items-end justify-between gap-6 lg:mb-16">
                 <div>
-                  <p className={`${eyebrow} text-olive`}>Shop by weight</p>
+                  <p className={`${eyebrow} text-olive`}>Explore the collection</p>
                   <h2 className={heading}>
-                    The heavier
+                    Find your
                     <br />
-                    it gets, the
-                    <br />
-                    higher it climbs.
+                    everyday piece.
                   </h2>
                 </div>
                 <p className="max-w-[400px] text-[17px] leading-[1.6] text-[#3f3e3a]">
-                  GSM is grams per square metre, the weight of the fabric. More
-                  GSM means a denser, warmer, more structured garment. Pick your
-                  weight first.
+                  From clean everyday tees to substantial fleece layers, choose
+                  the shape that fits your wardrobe, your team or your next
+                  custom print.
                 </p>
               </div>
             </Reveal>
-            <div className="grid grid-cols-2 items-end gap-4 lg:grid-cols-4">
-              {weights.map((w) => (
+            <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5">
+              {categories.map((category) => (
                 <a
-                  key={w.gsm}
-                  href={`/shop?weight=${w.gsm}`}
-                  className={`group flex h-[340px] min-w-0 flex-col justify-between overflow-hidden p-5 transition-transform duration-500 hover:-translate-y-2 lg:p-7 ${w.className}`}
+                  key={category.label}
+                  href={category.href}
+                  className={`group relative flex min-h-[390px] min-w-[84vw] snap-start flex-col justify-end overflow-hidden bg-[#e4e2da] p-5 text-paper shadow-[0_10px_30px_rgba(13,13,12,.12)] transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_22px_45px_rgba(13,13,12,.22)] sm:min-h-0 sm:min-w-0 sm:snap-none sm:p-6 lg:p-7 ${category.cardClass}`}
                 >
-                  <p
-                    className={`text-[11px] font-semibold tracking-[.14em] uppercase lg:text-[13px] ${w.gsm === 350 ? "text-gold" : ""}`}
-                  >
-                    {w.label}
-                  </p>
-                  <div>
-                    <p
-                      className={`font-display text-[90px] leading-[.8] font-black sm:text-[120px] ${w.number}`}
-                    >
-                      {w.gsm}
+                  <Image
+                    src={category.image}
+                    alt={`${category.label} StarkVibe collection`}
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 50vw"
+                    className="object-contain object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-transparent transition-opacity duration-500 group-hover:via-ink/35" aria-hidden="true" />
+                  <div className="relative z-10">
+                    <p className="mb-2 text-[10px] font-semibold tracking-[.18em] text-gold uppercase lg:text-[11px]">
+                      {category.eyebrow}
                     </p>
-                    <p className="mt-3 mb-[18px] text-xs font-semibold tracking-[.14em]">
-                      GSM
-                    </p>
-                    <p className="text-sm leading-[1.45] font-semibold lg:text-base">
-                      {w.name}
-                    </p>
-                    <p className="mt-2 text-xs font-bold lg:text-sm">
-                      {w.price}
-                    </p>
+                    <div className="flex items-end justify-between gap-3">
+                      <div>
+                        <h3 className="font-display text-[clamp(24px,1vw,28px)] leading-[.88] font-black uppercase">
+                          {category.label}
+                        </h3>
+                        <p className="mt-3 max-w-[260px] text-xs leading-relaxed text-paper/80 sm:text-sm">
+                          {category.description}
+                        </p>
+                      </div>
+                     
+                    </div>
+                  </div>
+                  <div className="hidden">
                     <div className="mt-2.5 flex justify-end text-xs lg:text-sm">
                       <span className="font-bold">Shop →</span>
                     </div>

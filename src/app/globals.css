@@ -11,10 +11,14 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 24px;
+    overflow-x: hidden;
   }
   body {
     background: var(--color-paper);
     color: var(--color-ink);
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   button,
   a,
@@ -32,6 +36,11 @@
   ::selection {
     background: var(--color-gold);
     color: var(--color-ink);
+  }
+}
+@media (max-width: 1023px) {
+  body {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom));
   }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -4,7 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { addBagItem, useBag, type BagItem } from "@/lib/bag";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, ShoppingBag, Menu, ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  House,
+  Menu,
+  Palette,
+  Search,
+  ShoppingBag,
+  Shirt,
+  X,
+} from "lucide-react";
 import { filters, mrpPrice, productImage, products, salePrice } from "@/lib/catalogue";
 import { Reveal } from "./reveal";
 
@@ -32,6 +41,21 @@ export function Storefront({
     return () =>
       window.removeEventListener("starkvibe-add-to-bag", receiveOrder);
   }, [router]);
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
   const shown = products.filter(
     (p) =>
       (filter === "all" || p.category === filter) &&
@@ -39,15 +63,15 @@ export function Storefront({
   );
   const links = [
     ["Shop", "/shop"],
-    ["Birthday printing", "/birthday"],
-    ["Office & bulk", "/office-bulk"],
-    ["Anniversary wear", "/anniversary"],
-    ["Custom gifting", "/gifting"],
-    ["Campaign merchandise", "/political-campaigns"],
+    ["Birthday printing", "/custom-printing/birthday"],
+    ["Office & bulk", "/custom-printing/office-bulk"],
+    ["Anniversary wear", "/custom-printing/anniversary"],
+    ["Custom gifting", "/custom-printing/gifting"],
+    ["Campaign merchandise", "/custom-printing/political-campaigns"],
   ];
   return (
     <>
-      <header className="relative mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 lg:flex-nowrap">
+      <header className="relative z-40 mx-auto flex w-full max-w-[1400px] flex-nowrap items-center gap-2 px-5 py-4 lg:gap-3 lg:px-12 lg:py-7">
         <nav
           aria-label="Main navigation"
           className="hidden gap-6 whitespace-nowrap text-[13px] font-semibold tracking-[.02em] uppercase lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2"
@@ -65,8 +89,9 @@ export function Storefront({
         </nav>
         <button
           aria-label="Open menu"
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="order-2 p-2 lg:hidden"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
+          className="order-3 flex size-11 shrink-0 items-center justify-center border border-ink/15 bg-paper transition-colors hover:bg-ink hover:text-paper lg:hidden"
         >
           <Menu size={22} />
         </button>
@@ -83,7 +108,7 @@ export function Storefront({
             className="h-auto w-[150px] lg:w-[190px]"
           />
         </a>
-        <div className="order-3 flex items-center justify-end gap-1 lg:flex-1">
+        <div className="order-2 ml-auto flex items-center justify-end gap-1 lg:flex-1">
           <button
             aria-label="Search products"
             onClick={() => setSearchOpen(!searchOpen)}
@@ -93,33 +118,91 @@ export function Storefront({
           </button>
           <Link
             href="/cart"
-            className="flex h-11 items-center gap-2 bg-ink px-3 text-xs font-semibold text-paper lg:px-4 lg:text-sm"
+            aria-label={`Open cart (${count} items)`}
+            className="relative flex size-11 shrink-0 items-center justify-center bg-ink text-paper lg:h-11 lg:w-auto lg:gap-2 lg:px-4 lg:text-sm"
           >
             <ShoppingBag size={18} />
-            <span>Bag ({count})</span>
+            <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-gold text-[9px] font-bold text-ink lg:static lg:size-auto lg:rounded-none lg:bg-transparent lg:text-sm lg:font-semibold lg:text-paper">
+              <span className="lg:hidden">{count}</span>
+              <span className="hidden lg:inline">Bag ({count})</span>
+            </span>
           </Link>
         </div>
-        {menuOpen && (
-          <nav
-            aria-label="Mobile navigation"
-            className="flex w-full flex-wrap gap-5 border-t border-ink/15 pt-4 text-sm lg:hidden"
-          >
-            {links.map(([label, href]) => (
-              <Link key={href} href={href} onClick={() => setMenuOpen(false)}>
-                {label}
+        <div
+          aria-hidden={!menuOpen}
+          onClick={() => setMenuOpen(false)}
+          className={`fixed inset-0 z-[80] bg-ink/45 backdrop-blur-[2px] transition-opacity duration-300 lg:hidden ${menuOpen ? "visible opacity-100" : "invisible opacity-0"}`}
+        />
+        <aside
+          aria-label="Mobile navigation"
+          aria-hidden={!menuOpen}
+          className={`fixed inset-y-0 left-0 z-[90] flex w-[min(88vw,380px)] flex-col bg-paper px-6 pb-8 pt-5 shadow-2xl transition-transform duration-300 ease-out lg:hidden ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        >
+          <div className="flex items-center justify-between border-b border-ink/15 pb-5">
+            <Image
+              src="/branding/starkvibe-wordmark-premium.png"
+              alt="StarkVibe"
+              width={280}
+              height={88}
+              className="h-auto w-[145px]"
+            />
+            <button
+              aria-label="Close menu"
+              onClick={() => setMenuOpen(false)}
+              className="flex size-11 items-center justify-center border border-ink/15 transition-colors hover:bg-ink hover:text-paper"
+            >
+              <X size={21} />
+            </button>
+          </div>
+          <p className="mt-8 text-[11px] font-bold tracking-[.2em] text-olive uppercase">
+            Explore StarkVibe
+          </p>
+          <nav className="mt-3 flex flex-col" aria-label="Mobile navigation links">
+            {links.map(([label, href], index) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className={`group flex items-center justify-between border-b border-ink/10 py-4 text-[17px] font-semibold transition-colors hover:text-olive ${href === pathname ? "text-olive" : ""}`}
+              >
+                <span className="flex items-center gap-3">
+                  <span className="font-display text-sm text-ink/35">0{index + 1}</span>
+                  {label}
+                </span>
+                <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
               </Link>
             ))}
           </nav>
-        )}
+          <div className="mt-auto border-t border-ink/15 pt-5 text-sm text-ink/65">
+            <p className="font-semibold text-ink">Premium cotton. Honest finish.</p>
+            <p className="mt-1">Custom prints for moments worth keeping.</p>
+          </div>
+        </aside>
         {searchOpen && (
-          <div className="w-full lg:absolute lg:top-[120px] lg:right-12 lg:z-20 lg:w-96">
-            <label className="sr-only" htmlFor="search">
-              Search the range
-            </label>
+          <div
+            className="fixed inset-0 z-[75] bg-ink/45 px-4 pt-20 backdrop-blur-sm sm:pt-28"
+            role="presentation"
+            onClick={() => setSearchOpen(false)}
+          >
+            <div
+              className="mx-auto w-full max-w-2xl overflow-hidden border border-ink bg-paper shadow-2xl"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Search products"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <div className="flex items-center border-b border-ink/20 px-4">
+                <Search size={20} className="shrink-0 text-olive" />
+                <label className="sr-only" htmlFor="search">
+                  Search the range
+                </label>
             <input
               autoFocus
               id="search"
               value={query}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") setSearchOpen(false);
+              }}
               onChange={(e) => {
                 setQuery(e.target.value);
                 document
@@ -127,8 +210,16 @@ export function Storefront({
                   ?.scrollIntoView({ behavior: "smooth" });
               }}
               placeholder="Search tees, polos, fleece…"
-              className="h-14 w-full border border-ink bg-paper px-4"
-            />
+                  className="h-16 w-full bg-transparent px-3 outline-none"
+                />
+                <button
+                  aria-label="Close search"
+                  onClick={() => setSearchOpen(false)}
+                  className="flex size-9 shrink-0 items-center justify-center border border-ink/15 text-sm transition-colors hover:bg-ink hover:text-paper"
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
             {hideRange && (
               <div className="border-x border-b border-ink bg-paper p-3">
                 {shown.map((product) => (
@@ -147,6 +238,7 @@ export function Storefront({
                 )}
               </div>
             )}
+            </div>
           </div>
         )}
       </header>
@@ -154,7 +246,7 @@ export function Storefront({
       {!hideRange && (
         <section
           id="range"
-          className="mx-auto max-w-[1400px] px-5 pt-20 lg:px-12 lg:pt-36"
+          className="mx-auto max-w-[1400px] px-5 pt-20 lg:px-12"
         >
           <Reveal>
             <div className="mb-10 flex flex-wrap items-end justify-between gap-8">
@@ -283,6 +375,26 @@ export function Storefront({
           )}
         </section>
       )}
+      <nav
+        aria-label="Mobile quick navigation"
+        className="fixed inset-x-0 bottom-0 z-[70] flex h-[68px] items-stretch border-t border-ink/15 bg-paper/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_25px_rgba(13,13,12,.08)] backdrop-blur-md lg:hidden"
+      >
+        {[
+          ["Home", "/", House],
+          ["Shop", "/shop", Shirt],
+          ["Custom", "/custom-printing", Palette],
+          ["Bag", "/cart", ShoppingBag],
+        ].map(([label, href, Icon]) => (
+          <Link
+            key={href as string}
+            href={href as string}
+            className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[10px] font-semibold tracking-[.04em] transition-colors ${pathname === href ? "text-olive" : "text-ink/65 hover:text-ink"}`}
+          >
+            <Icon size={19} strokeWidth={pathname === href ? 2.5 : 1.8} />
+            <span>{label as string}{label === "Bag" ? ` (${count})` : ""}</span>
+          </Link>
+        ))}
+      </nav>
     </>
   );
 }
