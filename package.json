@@ -1,0 +1,26 @@
+{
+  "name": "starkvibe",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "react": "latest",
+    "react-dom": "latest",
+    "lucide-react": "latest",
+    "motion": "latest"
+  },
+  "devDependencies": {
+    "typescript": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "tailwindcss": "latest",
+    "@tailwindcss/postcss": "latest"
+  }
+}
