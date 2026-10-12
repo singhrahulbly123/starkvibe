@@ -22,19 +22,19 @@ export function ShopProductCard({
   const sizes = sizesFor(product);
   const href = `/products/${product.id}?colour=${colour.file}`;
   return (
-    <article className="group flex min-w-0 flex-col">
-      <div className="relative h-[380px] overflow-hidden bg-[#e4e2da] sm:h-[420px]">
+    <article className="group flex min-w-0 flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)]">
+      <div className="relative h-[380px] overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] sm:h-[420px]">
         <Link
           href={href}
           aria-label={`View ${product.name}`}
-          className="absolute inset-0"
+          className="absolute inset-0 p-1"
         >
           <Image
             src={productImage(product, colour)}
             alt={`${product.name} in ${colour.name}`}
             fill
             sizes="(min-width: 1024px) 27vw, (min-width: 640px) 45vw, 100vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+            className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"
           />
         </Link>
         <span className="pointer-events-none absolute top-4 left-4 bg-ink px-3 py-2 text-xs font-bold tracking-[.1em] text-paper">
@@ -52,7 +52,7 @@ export function ShopProductCard({
             fill={saved ? "currentColor" : "none"}
           />
         </button>
-        <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-wrap items-end justify-between gap-2">
+        <div className="pointer-events-none absolute inset-x-3 bottom-3 flex flex-wrap items-end justify-between gap-2">
           <span className="bg-paper/95 px-2.5 py-1.5 text-[11px] font-bold tracking-[.1em] text-[#55544f] uppercase">
             Colour: {colour.name}
           </span>

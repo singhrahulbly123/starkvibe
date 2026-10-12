@@ -1,13 +1,14 @@
 "use client";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Minus, Plus } from "lucide-react";
 import { mrpPrice, products, productImage, salePrice, type Product } from "@/lib/catalogue";
-import { productFit, sizesFor } from "@/lib/product-details";
+import { productFit, sizeGuideFor, sizesFor } from "@/lib/product-details";
 import { ProductGallery } from "./product-gallery";
 import { ProductReviews } from "./product-reviews";
 import { Reveal } from "./reveal";
+import { ShopProductCard } from "./shop-product-card";
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const sectionHeading =
@@ -51,8 +52,10 @@ export function ProductDetails({
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [activeFaq, setActiveFaq] = useState("Benefits");
+  const [relatedColours, setRelatedColours] = useState<Record<string, number>>({});
   const colour = product.colours[colourIndex];
   const fit = productFit(product);
+  const sizeGuide = sizeGuideFor(product);
   const fabric =
     product.category === "fleece"
       ? "100% cotton fleece"
@@ -698,8 +701,7 @@ export function ProductDetails({
         >
           <table className="w-full min-w-[560px] border-collapse text-base">
             <caption className="sr-only">
-              Available sizes. Measurements have not yet been supplied by
-              StarkVibe.
+              {product.name} size measurements in inches.
             </caption>
             <thead>
               <tr className="border-y border-ink text-left">
@@ -717,21 +719,26 @@ export function ProductDetails({
               </tr>
             </thead>
             <tbody>
-              {sizesFor(product).map((s) => (
+              {sizeGuide.map((measurement) => (
                 <tr
-                  key={s}
+                  key={measurement.size}
                   className="border-b border-[#cfccc2] last:border-ink"
                 >
                   <th
                     scope="row"
                     className="py-[18px] pr-3 text-left font-extrabold"
                   >
-                    {s}
+                    {measurement.size}
                   </th>
-                  {[0, 1, 2, 3].map((i) => (
-                    <td key={i} className="px-3 py-[18px] text-[#77756c]">
+                  {[measurement.chest, measurement.length, measurement.shoulder, measurement.sleeve].map((value, i) => (
+                    <Fragment key={i}>
+                    <td key={`measurement-${i}`} className="px-3 py-[18px] text-[#55544f]">
+                      {value}&quot;
+                    </td>
+                    <td key={i} className="hidden px-3 py-[18px] text-[#77756c]">
                       <span aria-label="Measurement pending">—</span>
                     </td>
+                    </Fragment>
                   ))}
                 </tr>
               ))}
@@ -739,8 +746,8 @@ export function ProductDetails({
           </table>
         </div>
         <p className="mt-4 text-sm text-[#55544f]">
-          Need an exact fit? Request the chest, length, shoulder and sleeve
-          measurements before ordering.
+          Measurements are approximate garment dimensions in inches. Compare
+          them with a similar garment you already own before ordering.
         </p>
       </section>
       <section
@@ -808,40 +815,26 @@ export function ProductDetails({
         </Reveal>
         <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {related.map((p) => {
-            const relatedColour =
+            const defaultColourIndex =
               p.id === "regular"
-                ? p.colours[1]
+                ? 1
                 : p.id === "hoodie"
-                  ? p.colours[3]
+                  ? 3
                   : p.id === "terry"
-                    ? p.colours[1]
-                    : p.colours[0];
+                    ? 1
+                    : 0;
+            const selectedColour = relatedColours[p.id] ?? defaultColourIndex;
             return (
-              <Link
+              <ShopProductCard
                 key={p.id}
-                href={`/products/${p.id}?colour=${relatedColour.file}`}
-                className="group block"
-              >
-                <div className="relative h-[360px] overflow-hidden bg-[#e4e2da]">
-                  <Image
-                    src={productImage(p, relatedColour)}
-                    alt={`${p.name} in ${relatedColour.name}`}
-                    fill
-                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                  />
-                  <span className="absolute top-3.5 left-3.5 bg-ink px-3 py-[7px] text-xs font-bold tracking-[.1em] text-paper">
-                    {p.gsm} GSM
-                  </span>
-                </div>
-                <div className="mt-[18px] flex items-start justify-between gap-4 text-lg leading-tight font-bold">
-                  <h3>{p.name}</h3>
-                  <span className="flex items-baseline gap-2 whitespace-nowrap">
-                    <del className="text-xs font-normal text-[#77756c]">MRP ₹{mrpPrice(p)}</del>
-                    <span>₹{salePrice(p)}</span>
-                  </span>
-                </div>
-              </Link>
+                product={p}
+                colourIndex={selectedColour}
+                onColourChange={(index) =>
+                  setRelatedColours((current) => ({ ...current, [p.id]: index }))
+                }
+                saved={false}
+                onSave={() => undefined}
+              />
             );
           })}
         </div>

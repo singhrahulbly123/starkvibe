@@ -79,8 +79,41 @@ export function Checkout() {
     event.preventDefault();
     if (!items.length) return;
     const data = new FormData(event.currentTarget);
+    const orderId = `SV-${Date.now().toString().slice(-8)}`;
+    const orderRecord = {
+      id: orderId,
+      createdAt: new Date().toLocaleDateString("en-IN"),
+      summary: items
+        .map(
+          (item) =>
+            `${item.quantity} × ${item.product.name} (${item.product.colours[item.colour].name}, ${item.size})`,
+        )
+        .join(", "),
+      total: formatPrice(subtotal),
+      status: "Order request" as const,
+    };
+    try {
+      const previous = JSON.parse(
+        localStorage.getItem("starkvibe-account-orders") || "[]",
+      );
+      localStorage.setItem(
+        "starkvibe-account-orders",
+        JSON.stringify([orderRecord, ...(Array.isArray(previous) ? previous : [])]),
+      );
+      localStorage.setItem(
+        "starkvibe-account-user",
+        JSON.stringify({
+          name: `${data.get("first")} ${data.get("last")}`.trim(),
+          email: data.get("email"),
+          phone: data.get("phone"),
+        }),
+      );
+      localStorage.setItem("starkvibe-user-email", String(data.get("email") || ""));
+    } catch {
+      // The WhatsApp order flow still works if browser storage is unavailable.
+    }
     const order = [
-      "StarkVibe order request — awaiting confirmation",
+      `StarkVibe order request ${orderId} — awaiting confirmation`,
       ...items.map(
         (item) =>
           `${item.quantity} × ${item.product.name}, ${item.product.colours[item.colour].name}, size ${item.size}: ${formatPrice(item.quantity * salePrice(item.product))}`,

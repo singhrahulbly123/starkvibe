@@ -6,7 +6,7 @@ import { ArrowLeft, Check, Download, ImagePlus, Redo2, RotateCcw, Send, Undo2 } 
 import { ThankYouModal } from "./thank-you-modal";
 
 type Side = "front" | "back";
-type Garment = "tee" | "hoodie";
+type Garment = "tee" | "polo" | "kids" | "sweatshirt" | "hoodie";
 type Layer = {
   id: string;
   type: "text" | "image";
@@ -29,12 +29,60 @@ const colours = [
   { name: "White", value: "white", image: "/branding/custom-tee-white.png", backImage: "/branding/custom-tee-white-back.png" },
 ];
 
-const hoodieImages: Record<string, string> = {
-  black: "/products/t-adda/350-gsm-hoodie-black.webp",
-  "sea-green": "/products/t-adda/350-gsm-hoodie-olive-green.webp",
-  maroon: "/products/t-adda/350-gsm-hoodie-coffee-brown.webp",
-  navy: "/products/t-adda/350-gsm-hoodie-off-white.webp",
-  white: "/products/t-adda/350-gsm-hoodie-off-white.webp",
+const garmentImages: Record<Garment, Record<string, string>> = {
+  tee: Object.fromEntries(colours.map((item) => [item.value, item.image])),
+  polo: {
+    black: "/products/starkvibe/catalogue-detail/220-gsm-polo/black-detail.webp",
+    white: "/products/starkvibe/catalogue-detail/220-gsm-polo/white-detail.webp",
+  },
+  kids: {
+    black: "/products/starkvibe/catalogue-detail/180-gsm-kids-regular-tee/black-detail.webp",
+    "sea-green": "/products/starkvibe/catalogue-detail/180-gsm-kids-regular-tee/sea-green-detail.webp",
+    white: "/products/starkvibe/catalogue-detail/180-gsm-kids-regular-tee/white-detail.webp",
+  },
+  sweatshirt: {
+    black: "/products/starkvibe/catalogue-detail/350-gsm-sweatshirt/black-generated-v1.webp",
+    maroon: "/products/starkvibe/catalogue-detail/350-gsm-sweatshirt/maroon-generated-v1.webp",
+    navy: "/products/starkvibe/catalogue-detail/350-gsm-sweatshirt/navy-blue-generated-v1.webp",
+  },
+  hoodie: {
+    black: "/products/starkvibe/catalogue-detail/350-gsm-hoodie/black-generated-v1.webp",
+    maroon: "/products/starkvibe/catalogue-detail/350-gsm-hoodie/coffee-brown-generated-v1.webp",
+    navy: "/products/starkvibe/catalogue-detail/350-gsm-hoodie/off-white-generated-v1.webp",
+    white: "/products/starkvibe/catalogue-detail/350-gsm-hoodie/beige-generated-v1.webp",
+  },
+};
+
+const garmentOptions: { value: Garment; label: string; note: string }[] = [
+  { value: "tee", label: "T-shirt", note: "180–240 GSM" },
+  { value: "polo", label: "Polo", note: "220 GSM Matty" },
+  { value: "kids", label: "Kids", note: "Kids regular fit" },
+  { value: "sweatshirt", label: "Sweatshirt", note: "350 GSM fleece" },
+  { value: "hoodie", label: "Hoodie", note: "350 GSM fleece" },
+];
+
+const garmentBackImages: Record<Garment, Record<string, string>> = {
+  tee: Object.fromEntries(colours.map((item) => [item.value, item.backImage])),
+  polo: {
+    black: "/products/starkvibe/design-editor/polo-black-back-generated.png",
+    white: "/products/starkvibe/design-editor/polo-black-back-generated.png",
+  },
+  kids: {
+    black: "/products/starkvibe/design-editor/kids-black-back-generated.png",
+    "sea-green": "/products/starkvibe/design-editor/kids-black-back-generated.png",
+    white: "/products/starkvibe/design-editor/kids-black-back-generated.png",
+  },
+  sweatshirt: {
+    black: "/products/starkvibe/catalogue-detail/350-gsm-sweatshirt/black-original-style-v2.webp",
+    maroon: "/products/starkvibe/design-editor/sweatshirt-maroon-back-generated.png",
+    navy: "/products/starkvibe/catalogue-detail/350-gsm-sweatshirt/navy-blue-original-style-v2.webp",
+  },
+  hoodie: {
+    black: "/products/starkvibe/design-editor/hoodie-black-back-generated.png",
+    maroon: "/products/starkvibe/design-editor/hoodie-black-back-generated.png",
+    navy: "/products/starkvibe/design-editor/hoodie-black-back-generated.png",
+    white: "/products/starkvibe/design-editor/hoodie-black-back-generated.png",
+  },
 };
 
 const blankDesign: DesignState = { front: [], back: [] };
@@ -60,7 +108,10 @@ export function DesignEditor() {
 
   const layers = design[side];
   const selected = layers.find((layer) => layer.id === selectedId) ?? null;
-  const garmentImage = garment === "tee" ? (side === "front" ? colour.image : colour.backImage) : hoodieImages[colour.value];
+  const garmentImage = (side === "back" ? garmentBackImages[garment] : garmentImages[garment])[colour.value]
+    ?? garmentImages[garment].black;
+  const availableColours = colours.filter((item) => garmentImages[garment][item.value]);
+  const selectedGarment = garmentOptions.find((item) => item.value === garment)!;
   const canUndo = past.length > 0;
   const canRedo = future.length > 0;
 
@@ -80,6 +131,13 @@ export function DesignEditor() {
     });
     setSelectedId(id);
     setText("");
+  }
+
+  function changeGarment(next: Garment) {
+    setGarment(next);
+    const firstAvailable = colours.find((item) => garmentImages[next][item.value]);
+    if (firstAvailable) setColour(firstAvailable);
+    setSelectedId(null);
   }
 
   function addImage(event: ChangeEvent<HTMLInputElement>) {
@@ -165,7 +223,7 @@ export function DesignEditor() {
     const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "917060421033";
     const details = [
       "Hello StarkVibe, I created a custom design.",
-      `Garment: ${garment === "tee" ? "T-shirt" : "Hoodie"}`,
+      `Garment: ${selectedGarment.label}`,
       `Colour: ${colour.name}`,
       `Size: ${size}`,
       `Quantity: ${quantity}`,
@@ -275,8 +333,30 @@ export function DesignEditor() {
           <aside className="border border-ink bg-paper p-5 sm:p-7">
             <div className="mb-7 flex items-center justify-between border-b border-ink pb-4"><h2 className="font-display text-3xl font-black uppercase">Design controls</h2><div className="flex gap-1"><button onClick={undo} disabled={!canUndo} aria-label="Undo" className="p-2 disabled:opacity-30"><Undo2 size={18} /></button><button onClick={redo} disabled={!canRedo} aria-label="Redo" className="p-2 disabled:opacity-30"><Redo2 size={18} /></button><button onClick={reset} aria-label="Reset design" className="p-2"><RotateCcw size={18} /></button></div></div>
             <div className="space-y-6">
-              <div><label className="mb-2 block text-xs font-bold tracking-[.12em] uppercase">Garment</label><div className="grid grid-cols-2 gap-2">{(["tee", "hoodie"] as Garment[]).map((item) => <button key={item} onClick={() => setGarment(item)} className={`border p-3 text-left text-sm font-bold capitalize ${garment === item ? "border-ink bg-ink text-paper" : "border-ink/30"}`}>{item === "tee" ? "T-shirt" : "Hoodie"}</button>)}</div></div>
-              <div><label className="mb-2 block text-xs font-bold tracking-[.12em] uppercase">Colour</label><div className="flex flex-wrap gap-2">{colours.map((item) => <button key={item.value} onClick={() => setColour(item)} title={item.name} className={`h-9 w-9 rounded-full border-2 ${colour.value === item.value ? "border-ink ring-2 ring-olive ring-offset-2" : "border-ink/20"}`} style={{ background: item.value === "sea-green" ? "#9ce6bd" : item.value === "maroon" ? "#8d2d32" : item.value === "navy" ? "#0c1235" : item.value }} />)}</div></div>
+              <div>
+                <label className="mb-2 block text-xs font-bold tracking-[.12em] uppercase">Choose product</label>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {garmentOptions.map((item) => {
+                    const preview = garmentImages[item.value].black || garmentImages[item.value][Object.keys(garmentImages[item.value])[0]];
+                    return (
+                      <button
+                        key={item.value}
+                        onClick={() => changeGarment(item.value)}
+                        className={`group overflow-hidden border text-left transition-colors ${garment === item.value ? "border-ink bg-ink text-paper" : "border-ink/30 hover:border-ink"}`}
+                      >
+                        <span className="relative block aspect-[4/3] overflow-hidden bg-[#dedbd2]">
+                          <img src={preview} alt={`${item.label} product`} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                        </span>
+                        <span className="block px-2.5 py-2">
+                          <span className="block text-sm font-bold">{item.label}</span>
+                          <span className={`mt-0.5 block text-[10px] ${garment === item.value ? "text-paper/70" : "text-ink/55"}`}>{item.note}</span>
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div><label className="mb-2 block text-xs font-bold tracking-[.12em] uppercase">Colour</label><div className="flex flex-wrap gap-2">{availableColours.map((item) => <button key={item.value} onClick={() => setColour(item)} title={item.name} className={`h-9 w-9 rounded-full border-2 ${colour.value === item.value ? "border-ink ring-2 ring-olive ring-offset-2" : "border-ink/20"}`} style={{ background: item.value === "sea-green" ? "#9ce6bd" : item.value === "maroon" ? "#8d2d32" : item.value === "navy" ? "#0c1235" : item.value }} />)}</div></div>
               <div className="grid grid-cols-2 gap-3"><label className="text-sm font-semibold">Size<select value={size} onChange={(event) => setSize(event.target.value)} className="mt-2 h-11 w-full border border-ink/40 bg-paper px-3"><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></label><label className="text-sm font-semibold">Quantity<input type="number" min="1" value={quantity} onChange={(event) => setQuantity(event.target.value)} className="mt-2 h-11 w-full border border-ink/40 bg-paper px-3" /></label></div>
               <div className="border-t border-ink/20 pt-5"><label className="mb-2 block text-xs font-bold tracking-[.12em] uppercase">Add text</label><div className="flex gap-2"><input value={text} onChange={(event) => setText(event.target.value)} onKeyDown={(event) => event.key === "Enter" && addText()} placeholder="Name, quote or number" className="h-11 min-w-0 flex-1 border border-ink/40 bg-paper px-3 text-sm" /><button onClick={addText} className="bg-ink px-4 text-sm font-bold text-paper">Add</button></div></div>
               <label className="flex cursor-pointer items-center justify-center gap-2 border border-dashed border-ink/50 p-4 text-sm font-bold hover:bg-ink/5"><ImagePlus size={18} /> Upload image / logo<input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={addImage} className="hidden" /></label>

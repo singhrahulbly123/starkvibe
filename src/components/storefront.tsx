@@ -63,6 +63,7 @@ export function Storefront({
   );
   const links = [
     ["Shop", "/shop"],
+    ["My account", "/my-account"],
     ["Birthday printing", "/custom-printing/birthday"],
     ["Office & bulk", "/custom-printing/office-bulk"],
     ["Anniversary wear", "/custom-printing/anniversary"],
@@ -71,7 +72,7 @@ export function Storefront({
   ];
   return (
     <>
-      <header className="relative z-40 mx-auto flex w-full max-w-[1400px] flex-nowrap items-center gap-2 px-5 py-4 lg:gap-3 lg:px-12 lg:py-7">
+      <header className="fixed inset-x-0 top-0 z-[100] isolate mx-auto flex h-[60px] w-full flex-nowrap items-center gap-2 border-b border-ink/15 bg-paper/95 px-5 py-2 shadow-[0_6px_18px_rgba(13,13,12,.08)] backdrop-blur-md lg:h-[76px] lg:gap-3 lg:px-12">
         <nav
           aria-label="Main navigation"
           className="hidden gap-6 whitespace-nowrap text-[13px] font-semibold tracking-[.02em] uppercase lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2"
@@ -196,20 +197,20 @@ export function Storefront({
                 <label className="sr-only" htmlFor="search">
                   Search the range
                 </label>
-            <input
-              autoFocus
-              id="search"
-              value={query}
-              onKeyDown={(event) => {
-                if (event.key === "Escape") setSearchOpen(false);
-              }}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                document
-                  .getElementById("range")
-                  ?.scrollIntoView({ behavior: "smooth" });
-              }}
-              placeholder="Search tees, polos, fleece…"
+                <input
+                  autoFocus
+                  id="search"
+                  value={query}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") setSearchOpen(false);
+                  }}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    document
+                      .getElementById("range")
+                      ?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  placeholder="Search tees, polos, fleece…"
                   className="h-16 w-full bg-transparent px-3 outline-none"
                 />
                 <button
@@ -220,28 +221,29 @@ export function Storefront({
                   <span aria-hidden="true">×</span>
                 </button>
               </div>
-            {hideRange && (
-              <div className="border-x border-b border-ink bg-paper p-3">
-                {shown.map((product) => (
-                  <a
-                    key={product.id}
-                    href={`/products/${product.id}`}
-                    className="block px-2 py-3 text-sm font-semibold transition-colors hover:bg-ink/5"
-                  >
-                    {product.name}
-                  </a>
-                ))}
-                {!shown.length && (
-                  <p className="px-2 py-3 text-sm text-ink/60">
-                    No matching pieces. Try another name.
-                  </p>
-                )}
-              </div>
-            )}
+              {hideRange && (
+                <div className="border-x border-b border-ink bg-paper p-3">
+                  {shown.map((product) => (
+                    <a
+                      key={product.id}
+                      href={`/products/${product.id}`}
+                      className="block px-2 py-3 text-sm font-semibold transition-colors hover:bg-ink/5"
+                    >
+                      {product.name}
+                    </a>
+                  ))}
+                  {!shown.length && (
+                    <p className="px-2 py-3 text-sm text-ink/60">
+                      No matching pieces. Try another name.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
       </header>
+      <div aria-hidden="true" className="h-[60px] lg:h-[76px]" />
       {children}
       {!hideRange && (
         <section
@@ -286,7 +288,7 @@ export function Storefront({
             {shown.map((p) => {
               const selected = colours[p.id] || 0;
               return (
-                <article key={p.id} className="group flex flex-col">
+                <article key={p.id} className="group flex flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)]">
                   <div className="relative">
                     <button
                       aria-label={`View ${p.name}`}
@@ -295,23 +297,23 @@ export function Storefront({
                           `/products/${p.id}?colour=${p.colours[selected].file}`,
                         );
                       }}
-                      className="relative h-[400px] w-full overflow-hidden bg-[#e4e2da] text-left"
+                      className="relative h-[400px] w-full overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] p-1 text-left"
                     >
-                    <Image
-                      src={productImage(p, p.colours[selected])}
-                      alt={`${p.name} in ${p.colours[selected].name}`}
-                      fill
-                      sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                    />
-                    <span className="absolute top-4 left-4 bg-ink px-3 py-2 text-xs font-bold tracking-[.1em] text-paper uppercase">
-                      {p.gsm} GSM
-                    </span>
-                    <span className="absolute bottom-3 left-4 bg-paper/90 px-2 py-1 text-[11px] tracking-[.12em] uppercase">
-                      {p.colours[selected].name}
-                    </span>
+                      <Image
+                        src={productImage(p, p.colours[selected])}
+                        alt={`${p.name} in ${p.colours[selected].name}`}
+                        fill
+                        sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                        className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"
+                      />
+                      <span className="absolute top-4 left-4 bg-ink px-3 py-2 text-xs font-bold tracking-[.1em] text-paper uppercase">
+                        {p.gsm} GSM
+                      </span>
+                      <span className="absolute bottom-3 left-4 bg-paper/90 px-2 py-1 text-[11px] tracking-[.12em] uppercase">
+                        {p.colours[selected].name}
+                      </span>
                     </button>
-                    <div className="absolute inset-x-3 bottom-3 flex flex-wrap items-center rounded-md bg-paper/85 px-2 py-1 backdrop-blur-sm">
+                    <div className="absolute inset-x-3 bottom-3 flex flex-wrap items-center rounded-md border border-ink/10 bg-paper/90 px-2 py-1 backdrop-blur-sm">
                       {p.colours.map((c, i) => (
                         <button
                           key={c.hex}
