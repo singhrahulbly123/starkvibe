@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { ThankYouModal } from "./thank-you-modal";
+import { trackEvent } from "@/lib/analytics";
 export function QuoteForm() {
   const [need, setNeed] = useState("");
   const [message, setMessage] = useState("");
@@ -27,6 +28,7 @@ export function QuoteForm() {
           e.preventDefault();
           const data = new FormData(e.currentTarget);
           const text = `Hi StarkVibe, I'd like a quote.\nName: ${data.get("name")}\nWhatsApp: ${data.get("phone")}\n${need}`;
+          trackEvent("custom_print_enquiry", { enquiry_type: "quote", has_brief: Boolean(need.trim()) });
           const emailResponse = await fetch("/api/enquiry", {
             method: "POST",
             headers: { "Content-Type": "application/json" },

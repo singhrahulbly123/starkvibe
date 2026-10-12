@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { products } from "@/lib/catalogue";
+import { productImage, products } from "@/lib/catalogue";
+import { productSeoDescription, productSeoKeywords, productSku } from "@/lib/product-seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
@@ -19,7 +20,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: product
       ? `${product.name} — StarkVibe`
       : "Product not found — StarkVibe",
-    description: product?.note,
+    description: product ? productSeoDescription(product) : undefined,
+    keywords: product ? productSeoKeywords(product) : undefined,
+    other: product ? { "product:sku": productSku(product) } : undefined,
+    alternates: product
+      ? { canonical: `/products/${product.id}` }
+      : undefined,
+    openGraph: product
+      ? {
+          type: "website",
+          title: `${product.name} — StarkVibe`,
+          description: productSeoDescription(product),
+          url: `https://starkvibe.com/products/${product.id}`,
+          images: [{ url: productImage(product, product.colours[0]), alt: product.name }],
+        }
+      : undefined,
   };
 }
 export default async function ProductPage({ params, searchParams }: Props) {

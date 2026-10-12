@@ -143,7 +143,7 @@ const faqs = [
   ],
   [
     "Can I get my own branding or print on these?",
-    "Yes. These pieces are chosen with custom branding and printing in mind. Send your design, quantities and preferred garments using the enquiry form. Minimum quantities and turnaround will be confirmed in your quote.",
+    "Yes. These pieces are chosen for custom printing. Send your design, quantities and preferred garments using the enquiry form. Minimum quantities and turnaround will be confirmed in your quote.",
   ],
   [
     "How do I pick a size?",
@@ -166,7 +166,7 @@ export default function Home() {
       </a>
       <div className="flex flex-wrap justify-between gap-2 bg-ink px-5 py-[11px] text-[13px] text-paper lg:px-12">
         <span>
-          Custom branding and bulk enquiries —{" "}
+          Custom printing and bulk enquiries —{" "}
           <a href="#custom" className="font-semibold text-gold">
             Get in touch
           </a>
@@ -206,7 +206,7 @@ export default function Home() {
                     href="#custom"
                     className="flex h-[58px] items-center border border-paper px-[34px] font-semibold transition-colors hover:bg-paper hover:text-ink"
                   >
-                    Custom branding
+                    Custom printing
                   </a>
                 </div>
               </div>

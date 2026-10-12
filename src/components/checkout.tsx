@@ -12,6 +12,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, LockKeyhole, Mail } from "lucide-react";
 import { useBag, formatPrice } from "@/lib/bag";
 import { productImage, salePrice } from "@/lib/catalogue";
+import { trackEvent } from "@/lib/analytics";
 
 const paymentMethods = [
   "Cash on delivery",
@@ -75,6 +76,16 @@ export function Checkout() {
     setEmail(window.localStorage.getItem("starkvibe-user-email") || "");
   }, []);
 
+  useEffect(() => {
+    if (ready && items.length) {
+      trackEvent("begin_checkout", {
+        currency: "INR",
+        value: subtotal,
+        items: items.map((item) => ({ item_id: item.product.id, item_name: item.product.name, quantity: item.quantity, price: salePrice(item.product) })),
+      });
+    }
+  }, [ready, items, subtotal]);
+
   function placeOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!items.length) return;
@@ -134,6 +145,12 @@ export function Checkout() {
       `Payment preference: ${payment}`,
       `Order note: ${localStorage.getItem("starkvibe-order-note") || "None"}`,
     ].join("\n");
+    trackEvent("purchase_request", {
+      currency: "INR",
+      value: subtotal,
+      transaction_id: orderId,
+      items: items.map((item) => ({ item_id: item.product.id, item_name: item.product.name, quantity: item.quantity, price: salePrice(item.product) })),
+    });
     const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "917060421033";
     if (phone) {
       window.open(

@@ -44,10 +44,10 @@ function BrandingBanner() {
     <div className="grid items-center gap-8 bg-gold p-7 sm:grid-cols-2 lg:px-14 lg:py-12">
       <div>
         <p className="mb-4 text-xs font-bold tracking-[.18em] uppercase">
-          Custom branding
+          Custom printing
         </p>
         <h2 className="font-display text-[clamp(40px,4.2vw,64px)] leading-[.88] font-black uppercase">
-          Your logo.
+          Your design.
           <br />
           Any of these.
         </h2>

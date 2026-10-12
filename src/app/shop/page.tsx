@@ -19,7 +19,7 @@ export default function ShopPage() {
       </a>
       <div className="flex flex-wrap justify-between gap-2 bg-ink px-5 py-[11px] text-[13px] text-paper lg:px-12">
         <span>
-          Custom branding and bulk enquiries —{" "}
+          Custom printing and bulk enquiries —{" "}
           <a href="/#custom" className="font-semibold text-gold">
             Get in touch
           </a>

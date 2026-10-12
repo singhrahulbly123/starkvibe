@@ -243,7 +243,7 @@ export function Storefront({
           </div>
         )}
       </header>
-      <div aria-hidden="true" className="h-[60px] lg:h-[76px]" />
+      {/* <div aria-hidden="true" className="h-[60px] lg:h-[76px]" /> */}
       {children}
       {!hideRange && (
         <section

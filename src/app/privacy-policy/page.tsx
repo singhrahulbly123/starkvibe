@@ -9,5 +9,6 @@ export default function PrivacyPolicyPage() {
     { title: "How we use it", body: "Information is used to process orders, prepare quotations, confirm custom printing details, arrange delivery, provide support and send important order updates. We do not sell customer information." },
     { title: "Payments and security", body: "Payment and order details are handled through the services used for your order. We take reasonable steps to protect information, but no online transmission can be guaranteed to be completely secure." },
     { title: "Your choices", body: "You can ask us to correct or delete personal information where legally and operationally possible. Contact us at singhrahulbly123@gmail.com for privacy requests." },
+    { title: "Analytics and consent", body: "If you choose to accept analytics, StarkVibe may use Google Analytics to understand page visits, product interest and general website performance. Analytics is loaded only after consent and is configured with IP anonymisation. You can decline analytics or clear the consent choice in your browser at any time." },
   ]} />;
 }

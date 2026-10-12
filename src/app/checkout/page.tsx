@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Checkout — StarkVibe",
   description:
     "Your bag, delivery details and preferred payment method, all in one place.",
+  robots: { index: false, follow: false },
 };
 
 export default function CheckoutPage() {

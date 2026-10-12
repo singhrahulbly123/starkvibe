@@ -205,10 +205,35 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
 
 export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
   const content = pages[page];
+  const faq = [
+    ["Can I order a single custom printed garment?", "Yes. Single personalised pieces and larger group or bulk orders can be discussed. Share the garment, colour, size and artwork so the team can confirm the quote."],
+    ["Which garments can be custom printed?", "StarkVibe offers cotton t-shirts, polos, kids tees, sweatshirts and hoodies. The best option depends on your artwork, occasion, colour and quantity."],
+    ["What details are needed for a custom printing quote?", "Send your artwork or idea, garment preference, colour, size breakdown, quantity and required delivery date. The team will confirm production and delivery details before approval."],
+  ];
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map(([question, answer]) => ({
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: { "@type": "Answer", text: answer },
+    })),
+  };
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <Storefront hideRange>
         <main>
+          <nav aria-label="Breadcrumb" className={`${container} py-4 text-sm text-[#55544f]`}>
+            <ol className="flex flex-wrap items-center gap-2">
+              <li><Link href="/" className="hover:text-olive">Home</Link></li>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" className="font-bold text-ink">{content.label}</li>
+            </ol>
+          </nav>
           <section className="bg-ink text-paper">
             <div className={`${container} py-10 lg:py-16`}>
               <Reveal className="mb-10">
@@ -293,6 +318,22 @@ export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
                 <p><strong>03. Confirm the plan.</strong><br />We review the design and confirm the quote, production timeline and delivery details.</p>
               </div>
             </Reveal>
+          </section>
+          <section className="border-t border-ink/20 bg-[#eeece5] py-16 lg:py-24">
+            <div className={`${container} grid gap-10 lg:grid-cols-[.7fr_1.3fr]`}>
+              <div>
+                <p className="mb-4 text-[13px] font-bold tracking-[.18em] text-olive uppercase">Custom printing FAQ</p>
+                <h2 className="font-display text-[clamp(48px,6vw,78px)] leading-[.88] font-black uppercase">Before you print.</h2>
+              </div>
+              <div className="divide-y divide-ink/20 border-y border-ink/25">
+                {faq.map(([question, answer]) => (
+                  <details key={question} className="py-5">
+                    <summary className="cursor-pointer text-lg font-bold">{question}</summary>
+                    <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-[#55544f]">{answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
           </section>
         </main>
       </Storefront>

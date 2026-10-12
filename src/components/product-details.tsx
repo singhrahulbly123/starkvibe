@@ -1,10 +1,12 @@
 "use client";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Minus, Plus } from "lucide-react";
 import { mrpPrice, products, productImage, salePrice, type Product } from "@/lib/catalogue";
 import { productFit, sizeGuideFor, sizesFor } from "@/lib/product-details";
+import { productMaterial, productSeoDescription, productSku } from "@/lib/product-seo";
+import { trackEvent } from "@/lib/analytics";
 import { ProductGallery } from "./product-gallery";
 import { ProductReviews } from "./product-reviews";
 import { Reveal } from "./reveal";
@@ -79,6 +81,14 @@ export function ProductDetails({
     .map((id) => products.find((p) => p.id === id)!);
   const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "917060421033";
 
+  useEffect(() => {
+    trackEvent("view_item", {
+      currency: "INR",
+      value: salePrice(product),
+      items: [{ item_id: product.id, item_name: product.name, price: salePrice(product) }],
+    });
+  }, [product]);
+
   function selectColour(index: number) {
     setColourIndex(index);
     setAdded(false);
@@ -93,6 +103,11 @@ export function ProductDetails({
     );
   }
   function addToBag() {
+    trackEvent("add_to_cart", {
+      currency: "INR",
+      value: quantity * salePrice(product),
+      items: [{ item_id: product.id, item_name: product.name, quantity, price: salePrice(product) }],
+    });
     window.dispatchEvent(
       new CustomEvent("starkvibe-add-to-bag", {
         detail: {
@@ -108,6 +123,7 @@ export function ProductDetails({
   }
   const specs = [
     ["Fabric", fabric],
+    ["SKU", productSku(product)],
     ["Weight", `${product.gsm} GSM`],
     ["Fit", fit],
     ["Finish", "Double bio-washed, silicon washed"],
@@ -183,8 +199,66 @@ export function ProductDetails({
       "Suitable for birthdays, parties, events and personalised gifts",
     ],
   };
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: productSeoDescription(product),
+    sku: productSku(product),
+    brand: { "@type": "Brand", name: "StarkVibe" },
+    category: `${product.category} clothing`,
+    material: productMaterial(product),
+    audience: {
+      "@type": "PeopleAudience",
+      suggestedGender: "unisex",
+      suggestedMinAge: product.id === "kids" ? 2 : undefined,
+    },
+    image: product.colours.map(
+      (item) => `https://starkvibe.com${productImage(product, item)}`,
+    ),
+    color: product.colours.map((item) => item.name),
+    size: sizesFor(product),
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "Fabric weight", value: `${product.gsm} GSM` },
+      { "@type": "PropertyValue", name: "Fit", value: fit },
+      { "@type": "PropertyValue", name: "Finish", value: "Double bio-washed and silicon washed" },
+      { "@type": "PropertyValue", name: "Construction", value: "Double stitched seams" },
+    ],
+    offers: {
+      "@type": "Offer",
+      url: `https://starkvibe.com/products/${product.id}`,
+      priceCurrency: "INR",
+      price: salePrice(product),
+      priceValidUntil: "2027-12-31",
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "IN",
+        returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
+        merchantReturnLink: "https://starkvibe.com/returns-policy",
+      },
+    },
+  };
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: accordion.map(([question, answer]) => ({
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: { "@type": "Answer", text: answer },
+    })),
+  };
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <nav
         aria-label="Breadcrumb"
         className={`${container} flex flex-wrap justify-between gap-x-6 gap-y-2 pt-1 pb-6 text-sm text-[#55544f]`}

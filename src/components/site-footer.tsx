@@ -14,7 +14,7 @@ export function SiteFooter() {
               <span className="text-gold">your line.</span>
             </h2>
             <a
-              href="/#custom"
+              href="/contact"
               className="flex h-[60px] items-center gap-4 bg-gold px-[38px] font-bold text-ink transition-colors hover:bg-paper"
             >
               Start an enquiry
@@ -22,7 +22,7 @@ export function SiteFooter() {
             </a>
           </div>
         </Reveal>
-        <div className="grid grid-cols-2 gap-12 py-16 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid grid-cols-2 gap-10 py-16 lg:grid-cols-[1.35fr_1fr_1fr_1fr_1fr]">
           <div className="col-span-2 max-w-[400px] lg:col-span-1">
             <a
               href="/#top"
@@ -69,6 +69,16 @@ export function SiteFooter() {
           </div>
           <div>
             <h3 className="mb-4 text-xs font-bold tracking-[.18em] text-gold uppercase">
+              Company
+            </h3>
+            <div className="flex flex-col text-[15px]">
+              {[['About StarkVibe', '/about'], ['Journal', '/blog'], ['Editorial policy', '/editorial-policy'], ['Contact', '/contact'], ['My account', '/my-account']].map(([label, href]) => (
+                <a key={label} href={href} className="py-2 transition-colors hover:text-gold">{label}</a>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h3 className="mb-4 text-xs font-bold tracking-[.18em] text-gold uppercase">
               Help
             </h3>
             <div className="flex flex-col text-[15px]">
@@ -82,8 +92,10 @@ export function SiteFooter() {
                 <a
                   key={label}
                   href={
-                    label === "Custom printing" || label === "Contact"
+                    label === "Custom printing"
                       ? "/custom-printing"
+                      : label === "Contact"
+                        ? "/contact"
                       : label === "Shipping"
                         ? "/shipping-policy"
                         : label === "Returns"
@@ -102,21 +114,15 @@ export function SiteFooter() {
               Reach us
             </h3>
             <a
-              href="/#custom"
+              href="/contact"
               className="text-[15px] leading-[1.8] text-[#c9c7be]"
             >
-              Custom printing & bulk orders
+              Custom printing & bulk orders across India
               <br />
               Request a quote →
             </a>
-            {process.env.NEXT_PUBLIC_CONTACT_EMAIL && (
-              <a
-                className="mt-3 block text-sm"
-                href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`}
-              >
-                {process.env.NEXT_PUBLIC_CONTACT_EMAIL}
-              </a>
-            )}
+            <a className="mt-3 block text-sm" href="mailto:singhrahulbly123@gmail.com">singhrahulbly123@gmail.com</a>
+            <a className="mt-2 block text-sm" href="https://wa.me/917060421033">WhatsApp: +91 70604 21033</a>
           </div>
         </div>
         <div className="flex flex-wrap justify-between gap-3 border-t border-[#2e2e2a] pt-6 text-[13px] text-[#8f8d84]">
