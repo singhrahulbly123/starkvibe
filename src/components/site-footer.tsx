@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import { locations } from "@/lib/locations";
 import { Reveal } from "./reveal";
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 export function SiteFooter() {
@@ -72,9 +73,25 @@ export function SiteFooter() {
               Company
             </h3>
             <div className="flex flex-col text-[15px]">
-              {[['About StarkVibe', '/about'], ['Journal', '/blog'], ['Locations', '/locations'], ['Editorial policy', '/editorial-policy'], ['Contact', '/contact'], ['My account', '/my-account']].map(([label, href]) => (
+              {[['About StarkVibe', '/about'], ['Journal', '/blog'], ['Editorial policy', '/editorial-policy'], ['Contact', '/contact'], ['My account', '/my-account']].map(([label, href]) => (
                 <a key={label} href={href} className="py-2 transition-colors hover:text-gold">{label}</a>
               ))}
+              <details className="group mt-2 border-t border-[#2e2e2a] pt-3">
+                <summary className="flex cursor-pointer list-none items-center justify-between py-2 font-semibold marker:hidden">
+                  <span>Locations</span>
+                  <span className="text-gold transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+                </summary>
+                <div className="grid grid-cols-2 gap-x-4 pb-2 text-[13px] text-[#b9b7ae]">
+                  <a href="/locations" className="col-span-2 py-1.5 font-semibold text-paper transition-colors hover:text-gold">
+                    All locations
+                  </a>
+                  {locations.map((location) => (
+                    <a key={location.slug} href={`/locations/${location.slug}`} className="py-1.5 transition-colors hover:text-gold">
+                      {location.city}
+                    </a>
+                  ))}
+                </div>
+              </details>
             </div>
           </div>
           <div>
