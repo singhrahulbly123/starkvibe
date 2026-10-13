@@ -23,6 +23,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   description:
     "Premium 100% cotton tees, polos, sweatshirts and hoodies from 180 to 350 GSM. Shop everyday fits and custom printing for birthdays, events and teams.",
+  keywords: [
+    "premium cotton t-shirts India",
+    "custom printed t-shirts",
+    "bulk teamwear India",
+    "180 GSM cotton tee",
+    "350 GSM fleece hoodie",
+    "StarkVibe",
+  ],
   openGraph: {
     type: "website",
     siteName: "StarkVibe",
@@ -30,12 +38,22 @@ export const metadata: Metadata = {
     description:
       "Premium cotton tees, polos, sweatshirts and hoodies with custom printing for events, teams and gifting.",
     url: "https://starkvibe.com",
+    locale: "en_IN",
+    images: [
+      {
+        url: "/branding/starkvibe-wordmark-premium.png",
+        width: 1200,
+        height: 630,
+        alt: "StarkVibe premium cotton wear",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "StarkVibe — Premium Cotton Wear",
     description:
       "Premium cotton tees, polos, sweatshirts and hoodies with custom printing.",
+    images: ["/branding/starkvibe-wordmark-premium.png"],
   },
   verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
