@@ -4,6 +4,7 @@ import { Storefront } from "@/components/storefront";
 import { Reveal } from "@/components/reveal";
 import { QuoteForm } from "@/components/quote-form";
 import { swatches } from "@/lib/catalogue";
+import { AbHeroCopy } from "@/components/ab-hero-copy";
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const heading =
@@ -180,36 +181,7 @@ export default function Home() {
               <p className={`${eyebrow} mb-0 text-gold`}>
                 Premium cotton wear · 180 to 350 GSM
               </p>
-              <h1 className="font-display text-[clamp(50px,7.8vw,124px)] leading-[.95] font-black uppercase">
-                Heavy.
-
-                cotton.
-                <br />
-                <span className="text-gold">Honest</span>
-
-                finish.
-              </h1>
-              <div>
-                <p className="mb-9 max-w-[480px] text-lg leading-[1.6] text-[#c9c7be]">
-                  Tees, polos, sweatshirts and hoodies in 100% cotton. Double
-                  bio-washed, silicon washed and double stitched, ready for
-                  everyday wear or your own branding.
-                </p>
-                <div className="flex flex-wrap gap-3.5">
-                  <a
-                    href="/shop"
-                    className="flex h-[58px] items-center bg-gold px-[34px] font-bold text-ink transition-colors hover:bg-paper"
-                  >
-                    Shop the range
-                  </a>
-                  <a
-                    href="#custom"
-                    className="flex h-[58px] items-center border border-paper px-[34px] font-semibold transition-colors hover:bg-paper hover:text-ink"
-                  >
-                    Custom printing
-                  </a>
-                </div>
-              </div>
+              <AbHeroCopy />
             </div>
             <div className="relative min-h-[460px] overflow-hidden bg-[#e2dfd6] lg:min-h-[620px]">
               <span
