@@ -188,7 +188,7 @@ export function CartPageContent() {
                       item.product,
                       item.product.colours[item.colour],
                     )}
-                    alt={`${item.product.name} in ${item.product.colours[item.colour].name}`}
+                    alt={`StarkVibe ${item.product.name} 100% cotton in ${item.product.colours[item.colour].name}`}
                     width={84}
                     height={100}
                     className="h-[100px] w-[84px] object-cover"
@@ -257,7 +257,7 @@ export function CartPageContent() {
                   >
                     <Image
                       src={productImage(product, colour)}
-                      alt={`${product.name} in ${colour.name}`}
+                      alt={`StarkVibe ${product.name} 100% cotton in ${colour.name}`}
                       fill
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"

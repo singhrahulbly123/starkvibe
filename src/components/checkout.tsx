@@ -524,7 +524,7 @@ export function Checkout() {
                             item.product,
                             item.product.colours[item.colour],
                           )}
-                          alt={`${item.product.name} in ${item.product.colours[item.colour].name}`}
+                          alt={`StarkVibe ${item.product.name} 100% cotton in ${item.product.colours[item.colour].name}`}
                           fill
                           sizes="72px"
                           className="object-cover"

@@ -301,7 +301,7 @@ export default function Home() {
                 >
                   <Image
                     src={category.image}
-                    alt={`${category.label} StarkVibe collection`}
+                    alt={`StarkVibe ${category.label} 100% cotton clothing collection`}
                     fill
                     sizes="(min-width: 1024px) 25vw, 50vw"
                     className="object-contain object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
@@ -340,7 +340,7 @@ export default function Home() {
             <Reveal className="relative flex min-h-[450px] flex-col justify-between overflow-hidden bg-[#e2dfd6] p-8 text-ink lg:min-h-[680px]">
               <Image
                 src="/branding/cotton-process-bg.png"
-                alt="Natural cotton fibres and woven cotton fabric"
+                alt="StarkVibe 100% cotton fibres and woven cotton fabric texture"
                 fill
                 sizes="(min-width: 1024px) 45vw, 100vw"
                 className="object-cover opacity-65"

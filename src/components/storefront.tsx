@@ -356,7 +356,7 @@ export function Storefront({
                     >
                       <Image
                         src={productImage(p, p.colours[selected])}
-                        alt={`${p.name} in ${p.colours[selected].name}`}
+                        alt={`StarkVibe ${p.name} 100% cotton in ${p.colours[selected].name}`}
                         fill
                         sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                         className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"

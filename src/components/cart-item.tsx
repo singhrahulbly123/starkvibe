@@ -27,7 +27,7 @@ export function CartItem({
       >
         <Image
           src={productImage(item.product, colour)}
-          alt={`${item.product.name} in ${colour.name}`}
+          alt={`StarkVibe ${item.product.name} 100% cotton in ${colour.name}`}
           fill
           sizes="150px"
           className="object-cover"

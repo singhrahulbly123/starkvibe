@@ -319,7 +319,7 @@ export function DesignEditor() {
             </div>
             <div className="mx-auto max-w-[620px]">
               <div className="relative aspect-[4/5] overflow-hidden bg-[#dedbd2]">
-                <img src={garmentImage} alt={`${colour.name} ${garment} preview`} className="absolute inset-0 h-full w-full object-contain" />
+                <img src={garmentImage} alt={`StarkVibe ${colour.name} ${garment} cotton garment preview`} className="absolute inset-0 h-full w-full object-contain" />
                 <div className="absolute inset-[18%_22%_20%] overflow-hidden">
                   {layers.map((layer) => <div key={layer.id} onPointerDown={(event) => startMove(event, layer)} onPointerMove={moveLayer} onPointerUp={endMove} onClick={() => setSelectedId(layer.id)} className={`absolute max-w-[80%] cursor-grab touch-none select-none active:cursor-grabbing ${selectedId === layer.id ? "outline outline-2 outline-olive outline-offset-4" : ""}`} style={{ left: `${layer.x}%`, top: `${layer.y}%`, transform: `translate(-50%, -50%) rotate(${layer.rotation}deg) scale(${layer.scale})`, color: layer.colour, fontSize: `${layer.fontSize}cqw`, lineHeight: 1, fontWeight: 800 }}>
                     {layer.type === "text" ? <span className="whitespace-nowrap drop-shadow-[0_1px_2px_rgba(0,0,0,.35)]">{layer.value}</span> : <img src={layer.value} alt="Uploaded design" className="max-h-32 max-w-40 object-contain" />}
@@ -345,7 +345,7 @@ export function DesignEditor() {
                         className={`group overflow-hidden border text-left transition-colors ${garment === item.value ? "border-ink bg-ink text-paper" : "border-ink/30 hover:border-ink"}`}
                       >
                         <span className="relative block aspect-[4/3] overflow-hidden bg-[#dedbd2]">
-                          <img src={preview} alt={`${item.label} product`} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                          <img src={preview} alt={`StarkVibe ${item.label} cotton product preview`} className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105" />
                         </span>
                         <span className="block px-2.5 py-2">
                           <span className="block text-sm font-bold">{item.label}</span>

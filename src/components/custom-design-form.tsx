@@ -83,7 +83,7 @@ export function CustomDesignForm({
         <div className="relative aspect-[4/5] overflow-hidden bg-[#e2dfd6]">
           <Image
             src={previewImage}
-            alt="Custom print product preview"
+            alt="StarkVibe custom printed cotton apparel preview"
             fill
             sizes="(min-width: 1024px) 30vw, 100vw"
             className="object-cover"

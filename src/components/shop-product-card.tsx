@@ -31,7 +31,7 @@ export function ShopProductCard({
         >
           <Image
             src={productImage(product, colour)}
-            alt={`${product.name} in ${colour.name}`}
+            alt={`StarkVibe ${product.name} 100% cotton in ${colour.name}`}
             fill
             sizes="(min-width: 1024px) 27vw, (min-width: 640px) 45vw, 100vw"
             className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"

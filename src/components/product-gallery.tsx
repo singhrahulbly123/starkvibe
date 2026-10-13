@@ -43,7 +43,7 @@ export function ProductGallery({
             >
               <Image
                 src={productImage(product, thumbnailColour)}
-                alt={`${product.name}, ${thumbnailColour.name}`}
+                alt={`StarkVibe ${product.name} 100% cotton in ${thumbnailColour.name}`}
                 fill
                 sizes="108px"
                 className="object-contain"
@@ -59,7 +59,7 @@ export function ProductGallery({
           <Image
             key={`${colour.file}-${view}`}
             src={mainImage}
-            alt={`${product.name}, ${colour.name}, ${view.toLowerCase()} view`}
+            alt={`StarkVibe ${product.name} 100% cotton in ${colour.name}, ${view.toLowerCase()} view`}
             fill
             priority={view === "Front"}
             sizes="(min-width: 1024px) 50vw, 100vw"
