@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { ShopCatalogue } from "@/components/shop-catalogue";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
-import { categoryMetaDescription, categoryMetaTitle } from "@/lib/seo";
+import { categoryMetaDescription, categoryMetaKeywords, categoryMetaTitle } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: categoryMetaTitle("Cotton Fabric Clothing"),
   description: categoryMetaDescription("cotton fabric clothing"),
+  keywords: categoryMetaKeywords("cotton fabric clothing"),
   alternates: { canonical: "/shop/fabric" },
 };
 

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProductBySlug, productImage, products, productSlug } from "@/lib/catalogue";
-import { productSeoDescription, productSeoKeywords, productSku } from "@/lib/product-seo";
-import { productMetaDescription, productMetaTitle } from "@/lib/seo";
+import { productSku } from "@/lib/product-seo";
+import { productMetaDescription, productMetaKeywords, productMetaTitle } from "@/lib/seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? productMetaTitle(product)
       : "Product not found — StarkVibe",
     description: product ? productMetaDescription(product) : undefined,
-    keywords: product ? productSeoKeywords(product) : undefined,
+    keywords: product ? productMetaKeywords(product) : undefined,
     other: product ? { "product:sku": productSku(product) } : undefined,
     alternates: product
       ? { canonical: `/products/${productSlug(product)}` }

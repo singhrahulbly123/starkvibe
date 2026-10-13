@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { getLocation, locations } from "@/lib/locations";
-import { locationMetaDescription, locationMetaTitle } from "@/lib/seo";
+import { locationMetaDescription, locationMetaKeywords, locationMetaTitle } from "@/lib/seo";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -19,12 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: locationMetaTitle(location.city),
     description: locationMetaDescription(location.city),
-    keywords: [
-      `${location.city} custom t-shirts`,
-      `${location.city} cotton clothing`,
-      `${location.city} bulk teamwear`,
-      `online custom printing ${location.city}`,
-    ],
+    keywords: locationMetaKeywords(location.city),
     alternates: { canonical: `/locations/${location.slug}` },
     openGraph: {
       title: locationMetaTitle(location.city),
