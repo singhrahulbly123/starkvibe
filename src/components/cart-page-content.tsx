@@ -188,7 +188,7 @@ export function CartPageContent() {
                       item.product,
                       item.product.colours[item.colour],
                     )}
-                    alt={item.product.name}
+                    alt={`${item.product.name} in ${item.product.colours[item.colour].name}`}
                     width={84}
                     height={100}
                     className="h-[100px] w-[84px] object-cover"
