@@ -254,7 +254,7 @@ export function Storefront({
                   {shown.map((product) => (
                     <a
                       key={product.id}
-                      href={`/products/${product.id}`}
+                      href={`/products/${productSlug(product)}`}
                       className="block px-2 py-3 text-sm font-semibold transition-colors hover:bg-ink/5"
                     >
                       {product.name}
