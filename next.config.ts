@@ -11,6 +11,9 @@ const productRedirects = [
 ] as const;
 
 const nextConfig: NextConfig = {
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
   async redirects() {
     return productRedirects.map(([oldSlug, newSlug]) => ({
       source: `/products/${oldSlug}`,

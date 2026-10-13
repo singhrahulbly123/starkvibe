@@ -225,6 +225,7 @@ export default function Home() {
                   height={900}
                   alt="Mint regular fit 180 GSM cotton tee"
                   priority
+                  sizes="(min-width: 1024px) 34vw, 58vw"
                   className="h-auto w-full"
                 />
               </div>
@@ -234,7 +235,7 @@ export default function Home() {
                   width={600}
                   height={900}
                   alt="Black regular fit 180 GSM cotton tee"
-                  priority
+                  sizes="(min-width: 1024px) 36vw, 62vw"
                   className="h-auto w-full"
                 />
               </div>
@@ -244,6 +245,7 @@ export default function Home() {
                   width={600}
                   height={900}
                   alt="Maroon regular fit 180 GSM cotton tee"
+                  sizes="(min-width: 1024px) 28vw, 48vw"
                   className="h-auto w-full"
                 />
               </div>
