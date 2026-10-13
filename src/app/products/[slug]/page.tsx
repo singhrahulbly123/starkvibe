@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { productImage, products } from "@/lib/catalogue";
+import { getProductBySlug, productImage, products, productSlug } from "@/lib/catalogue";
 import { productSeoDescription, productSeoKeywords, productSku } from "@/lib/product-seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
@@ -11,11 +11,11 @@ type Props = {
   searchParams: Promise<{ colour?: string }>;
 };
 export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.id }));
+  return products.map((product) => ({ slug: productSlug(product) }));
 }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = products.find((p) => p.id === slug);
+  const product = getProductBySlug(slug);
   return {
     title: product
       ? `${product.name} — StarkVibe`
@@ -24,14 +24,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     keywords: product ? productSeoKeywords(product) : undefined,
     other: product ? { "product:sku": productSku(product) } : undefined,
     alternates: product
-      ? { canonical: `/products/${product.id}` }
+      ? { canonical: `/products/${productSlug(product)}` }
       : undefined,
     openGraph: product
       ? {
           type: "website",
           title: `${product.name} — StarkVibe`,
           description: productSeoDescription(product),
-          url: `https://starkvibe.com/products/${product.id}`,
+          url: `https://starkvibe.com/products/${productSlug(product)}`,
           images: [{ url: productImage(product, product.colours[0]), alt: product.name }],
         }
       : undefined,
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 export default async function ProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const product = products.find((p) => p.id === slug);
+  const product = getProductBySlug(slug);
   if (!product) notFound();
   const { colour } = await searchParams;
   const selected = Math.max(

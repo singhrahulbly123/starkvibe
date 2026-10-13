@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus } from "lucide-react";
-import { productImage, salePrice } from "@/lib/catalogue";
+import { productImage, productSlug, salePrice } from "@/lib/catalogue";
 import { formatPrice, type BagItem } from "@/lib/bag";
 
 export function CartItem({
@@ -17,7 +17,7 @@ export function CartItem({
   onSave: () => void;
 }) {
   const colour = item.product.colours[item.colour];
-  const href = `/products/${item.product.id}?colour=${colour.file}`;
+  const href = `/products/${productSlug(item.product)}?colour=${colour.file}`;
   return (
     <article className="flex flex-wrap items-start gap-x-7 gap-y-5 border-b border-ink/60 py-7">
       <Link

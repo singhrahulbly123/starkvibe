@@ -16,7 +16,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { filters, mrpPrice, productImage, products, salePrice } from "@/lib/catalogue";
+import { filters, getProductBySlug, mrpPrice, productImage, products, productSlug, salePrice } from "@/lib/catalogue";
 import { Reveal } from "./reveal";
 
 export function Storefront({
@@ -80,7 +80,7 @@ export function Storefront({
     !pathname.startsWith("/blog/");
   const breadcrumbOnDark = pathname.startsWith("/custom-printing");
   const breadcrumbLabel = pathname.startsWith("/products/")
-    ? products.find((product) => product.id === pathname.split("/")[2])?.name || "Product"
+    ? getProductBySlug(pathname.split("/")[2])?.name || "Product"
     : pathname === "/cart"
       ? "Your bag"
       : pathname === "/my-account"
@@ -349,7 +349,7 @@ export function Storefront({
                       aria-label={`View ${p.name}`}
                       onClick={() => {
                         router.push(
-                          `/products/${p.id}?colour=${p.colours[selected].file}`,
+                          `/products/${productSlug(p)}?colour=${p.colours[selected].file}`,
                         );
                       }}
                       className="relative h-[400px] w-full overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] p-1 text-left"
@@ -401,7 +401,7 @@ export function Storefront({
                   <button
                     onClick={() => {
                       router.push(
-                        `/products/${p.id}?colour=${p.colours[selected].file}`,
+                        `/products/${productSlug(p)}?colour=${p.colours[selected].file}`,
                       );
                     }}
                     className="mt-3 flex h-[52px] items-center justify-center gap-2 border border-ink text-[15px] font-bold transition-colors hover:bg-ink hover:text-paper"

@@ -8,6 +8,13 @@ export type Product = {
   note: string;
   colours: Colour[];
 };
+export function productSlug(product: Pick<Product, "name">) {
+  return product.name
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
 export function salePrice(product: Product) {
   if (product.gsm === 350) return product.id === "hoodie" ? 1570 : 1470;
   if (product.gsm === 240) return 1149;
@@ -126,6 +133,9 @@ export const products: Product[] = [
     ],
   },
 ];
+export function getProductBySlug(slug: string) {
+  return products.find((product) => product.id === slug || productSlug(product) === slug);
+}
 const suppliedProductImages: Record<string, Record<string, string>> = {
   oversized: {
     black: "Oversized220GSMTee/Starkvibe Oversized T-Shirt Advertisement.png",

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { productImage, products } from "@/lib/catalogue";
+import { productImage, products, productSlug } from "@/lib/catalogue";
 import { blogPosts } from "@/lib/blog";
 
 const baseUrl = "https://starkvibe.com";
@@ -36,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority,
     })),
     ...products.map((product) => ({
-      url: `${baseUrl}/products/${product.id}`,
+      url: `${baseUrl}/products/${productSlug(product)}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.9,

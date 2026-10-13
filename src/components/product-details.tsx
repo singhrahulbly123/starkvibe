@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Minus, Plus } from "lucide-react";
-import { mrpPrice, products, productImage, salePrice, type Product } from "@/lib/catalogue";
+import { mrpPrice, products, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { productFit, sizeGuideFor, sizesFor } from "@/lib/product-details";
 import { productMaterial, productSeoDescription, productSku } from "@/lib/product-seo";
 import { trackEvent } from "@/lib/analytics";
@@ -226,7 +226,7 @@ export function ProductDetails({
     ],
     offers: {
       "@type": "Offer",
-      url: `https://starkvibe.com/products/${product.id}`,
+      url: `https://starkvibe.com/products/${productSlug(product)}`,
       priceCurrency: "INR",
       price: salePrice(product),
       priceValidUntil: "2027-12-31",
@@ -672,7 +672,7 @@ export function ProductDetails({
                 className="grid items-center gap-2 sm:grid-cols-[200px_1fr] sm:gap-4"
               >
                 <Link
-                  href={`/products/${id}`}
+                  href={`/products/${productSlug(products.find((item) => item.id === id)!)}`}
                   className={`text-sm ${id === product.id ? "font-extrabold" : "font-medium"}`}
                 >
                   {comparisonNames[id]}

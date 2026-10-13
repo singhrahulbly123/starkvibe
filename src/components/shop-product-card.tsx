@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { mrpPrice, productImage, salePrice, type Product } from "@/lib/catalogue";
+import { mrpPrice, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
 
 export function ShopProductCard({
@@ -20,7 +20,7 @@ export function ShopProductCard({
 }) {
   const colour = product.colours[colourIndex];
   const sizes = sizesFor(product);
-  const href = `/products/${product.id}?colour=${colour.file}`;
+  const href = `/products/${productSlug(product)}?colour=${colour.file}`;
   return (
     <article className="group flex min-w-0 flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)]">
       <div className="relative h-[380px] overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] sm:h-[420px]">
