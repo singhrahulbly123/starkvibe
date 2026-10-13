@@ -61,6 +61,40 @@ export const blogPosts: BlogPost[] = [
     ],
     related: [{ label: "Shop cotton wear", href: "/shop/fabric" }, { label: "Browse colours", href: "/shop/colours" }, { label: "Read shipping policy", href: "/shipping-policy" }],
   },
+  {
+    slug: "how-to-choose-a-premium-cotton-t-shirt",
+    title: "How to Choose a Premium Cotton T-Shirt",
+    description: "Learn how to compare cotton T-shirts by fabric, GSM, fit, finish and colour so you can choose a comfortable premium everyday tee.",
+    category: "Buying guide",
+    published: "2026-10-08",
+    readTime: "5 min read",
+    intro: "A premium cotton T-shirt should feel good when you first put it on and continue to work after repeated wear. Instead of judging a tee only by its appearance, check the fabric weight, construction, fit, finish and care instructions together. This guide explains the details that make a cotton T-shirt comfortable, versatile and worth adding to your regular rotation.",
+    sections: [
+      { heading: "Start with the fabric and GSM", paragraphs: ["Cotton gives a soft, breathable base for everyday clothing, while GSM describes how much fabric is used per square metre. A lighter 180 GSM tee can feel easy in warm weather, 220 GSM gives a more substantial everyday feel, and 240 GSM French Terry brings extra structure for an oversized streetwear look. The right choice depends on your climate, layering habits and preferred silhouette rather than the highest number alone."] },
+      { heading: "Choose a fit that works with your wardrobe", paragraphs: ["Regular fits sit closer to the body and are easy to wear under a shirt, jacket or overshirt. An oversized fit gives more room through the chest and sleeves, making it useful with relaxed denim, cargos and shorts. Check the shoulder line, sleeve length and overall body length instead of relying only on the size label, because a well-proportioned fit looks intentional in every colour."] },
+      { heading: "Look for a clean, durable finish", paragraphs: ["Inspect the neckline, seams and surface before buying. A balanced collar should recover after wear, while even stitching and a smooth finish help the T-shirt keep its shape. Double-stitched stress points are useful for regular wear. If you are choosing a tee for custom printing, also consider the available print area and select a surface that supports your artwork clearly."] },
+      { heading: "Build a useful colour rotation", paragraphs: ["Black, white, navy and grey are simple foundation colours because they work with most trousers and layers. Add olive, beige or a seasonal shade when you want more personality without making the outfit difficult to style. For teams, events or gifting, confirm the complete colour and size breakdown before ordering so every wearer gets a practical option."] },
+      { heading: "Quick questions before you order", paragraphs: ["Ask yourself where you will wear the tee, whether you need room for layering, how often it will be washed and if it needs a print. These answers narrow the choice quickly: lighter cotton for heat, heavier structured fabric for a statement fit, and a clear durable base for custom artwork. Read the care label and compare the full specifications before you add to cart."] },
+    ],
+    related: [{ label: "Compare fabric options", href: "/shop/fabric" }, { label: "Browse all cotton products", href: "/shop" }, { label: "Explore colour options", href: "/shop/colours" }],
+  },
+  {
+    slug: "cotton-clothing-styling-tips",
+    title: "Styling Tips: How to Wear Cotton Clothing",
+    description: "Simple styling ideas for cotton T-shirts, polos, sweatshirts and hoodies, from clean everyday outfits to relaxed layered looks.",
+    category: "Style guide",
+    published: "2026-10-10",
+    readTime: "5 min read",
+    intro: "Cotton clothing is easy to style because it can move between everyday comfort, smart-casual dressing and relaxed streetwear. The best outfits usually come from balancing the fit, colour and weight of each layer. Use these styling tips to get more combinations from your cotton T-shirts, polos, sweatshirts and hoodies without overcomplicating your wardrobe.",
+    sections: [
+      { heading: "Make a T-shirt the starting point", paragraphs: ["For a clean daily outfit, pair a regular-fit cotton tee with straight jeans, chinos or tailored shorts. Keep the shoes simple and choose one layer, such as an open overshirt, when the weather changes. A plain black, white or grey T-shirt creates a reliable base, while one muted colour adds interest without competing with the rest of the look."] },
+      { heading: "Style an oversized tee with balance", paragraphs: ["An oversized T-shirt works best when the rest of the outfit has a clear shape. Try relaxed trousers or cargos with a slightly neater hem, or pair the tee with shorts that keep the outfit light. Keep accessories purposeful: a cap, watch or clean sneakers can finish the look without making it feel busy. A structured 240 GSM French Terry tee is especially useful when you want the oversized silhouette to hold its form."] },
+      { heading: "Use polos for a polished casual look", paragraphs: ["A cotton polo gives more structure than a basic tee while staying comfortable. Wear it with chinos for office-casual dressing, dark denim for an evening plan or neutral shorts for a weekend outfit. Keep the colour contrast controlled and let the collar create the polished detail. Tuck it in only when the trousers and proportions support a sharper finish."] },
+      { heading: "Layer fleece for cooler days", paragraphs: ["When the temperature drops, wear a cotton tee under a 350 GSM fleece sweatshirt or hoodie. Start with a simple base colour, then add a contrasting or tonal outer layer. Straight-leg denim, cargos and clean trainers keep the outfit practical. Avoid too many loose layers at once; one relaxed piece and one more defined piece usually creates the better silhouette."] },
+      { heading: "Keep colours and care consistent", paragraphs: ["Build outfits around two or three related colours, such as black with grey and white, or olive with beige and cream. Turn printed garments inside out before washing and follow the care label so the fit and artwork stay presentable. A small rotation of dependable cotton pieces can look fresh when the combinations, proportions and layering change."] },
+    ],
+    related: [{ label: "Shop cotton fabric styles", href: "/shop/fabric" }, { label: "Find your colour", href: "/shop/colours" }, { label: "Read the GSM guide", href: "/blog/how-to-choose-the-right-gsm-t-shirt" }],
+  },
 ];
 
 export function getBlogPost(slug: string) {
