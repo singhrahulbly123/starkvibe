@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Storefront } from "@/components/storefront";
 import { SiteFooter } from "@/components/site-footer";
 import { ShopCatalogue } from "@/components/shop-catalogue";
+import { categoryMetaDescription, categoryMetaTitle } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Shop the Range — StarkVibe",
-  description:
-    "Seven pieces. 100% cotton. Shop StarkVibe tees, polos, kids wear and fleece by fabric weight, colour and price.",
+  title: categoryMetaTitle("Cotton Clothing Collection"),
+  description: categoryMetaDescription("cotton clothing"),
   alternates: { canonical: "/shop" },
 };
 export default function ShopPage() {

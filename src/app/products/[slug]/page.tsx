@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProductBySlug, productImage, products, productSlug } from "@/lib/catalogue";
 import { productSeoDescription, productSeoKeywords, productSku } from "@/lib/product-seo";
+import { productMetaDescription, productMetaTitle } from "@/lib/seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
@@ -18,9 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = getProductBySlug(slug);
   return {
     title: product
-      ? `${product.name} — StarkVibe`
+      ? productMetaTitle(product)
       : "Product not found — StarkVibe",
-    description: product ? productSeoDescription(product) : undefined,
+    description: product ? productMetaDescription(product) : undefined,
     keywords: product ? productSeoKeywords(product) : undefined,
     other: product ? { "product:sku": productSku(product) } : undefined,
     alternates: product
@@ -29,8 +30,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: product
       ? {
           type: "website",
-          title: `${product.name} — StarkVibe`,
-          description: productSeoDescription(product),
+          title: productMetaTitle(product),
+          description: productMetaDescription(product),
           url: `https://starkvibe.com/products/${productSlug(product)}`,
           images: [{ url: productImage(product, product.colours[0]), alt: product.name }],
         }

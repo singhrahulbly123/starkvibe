@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { getLocation, locations } from "@/lib/locations";
+import { locationMetaDescription, locationMetaTitle } from "@/lib/seo";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -16,8 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const location = getLocation((await params).city);
   if (!location) return { title: "Location not found — StarkVibe" };
   return {
-    title: `StarkVibe ${location.city} | Online Cotton Wear & Custom Printing`,
-    description: `${location.intro} Explore ${location.city}-focused product guidance and online custom printing with StarkVibe.`,
+    title: locationMetaTitle(location.city),
+    description: locationMetaDescription(location.city),
     keywords: [
       `${location.city} custom t-shirts`,
       `${location.city} cotton clothing`,
@@ -26,8 +27,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ],
     alternates: { canonical: `/locations/${location.slug}` },
     openGraph: {
-      title: `StarkVibe ${location.city} | Online Cotton Wear & Custom Printing`,
-      description: location.intro,
+      title: locationMetaTitle(location.city),
+      description: locationMetaDescription(location.city),
       url: `https://starkvibe.com/locations/${location.slug}`,
       type: "website",
     },
