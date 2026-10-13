@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { productImage, products, productSlug } from "@/lib/catalogue";
 import { blogPosts } from "@/lib/blog";
+import { locations } from "@/lib/locations";
 
 const baseUrl = "https://starkvibe.com";
 
@@ -22,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/custom-printing/gifting", 0.7, "monthly"],
     ["/custom-printing/political-campaigns", 0.7, "monthly"],
     ["/design-your-own", 0.7, "monthly"],
+    ["/locations", 0.7, "monthly"],
     ["/privacy-policy", 0.2, "yearly"],
     ["/shipping-policy", 0.2, "yearly"],
     ["/returns-policy", 0.2, "yearly"],
@@ -47,6 +49,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...blogPosts.map((post) => ({
       url: `${baseUrl}/blog/${post.slug}`,
       lastModified: new Date(post.published),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+    ...locations.map((location) => ({
+      url: `${baseUrl}/locations/${location.slug}`,
+      lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),

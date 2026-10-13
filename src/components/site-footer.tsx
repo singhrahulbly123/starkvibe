@@ -72,7 +72,7 @@ export function SiteFooter() {
               Company
             </h3>
             <div className="flex flex-col text-[15px]">
-              {[['About StarkVibe', '/about'], ['Journal', '/blog'], ['Editorial policy', '/editorial-policy'], ['Contact', '/contact'], ['My account', '/my-account']].map(([label, href]) => (
+              {[['About StarkVibe', '/about'], ['Journal', '/blog'], ['Locations', '/locations'], ['Editorial policy', '/editorial-policy'], ['Contact', '/contact'], ['My account', '/my-account']].map(([label, href]) => (
                 <a key={label} href={href} className="py-2 transition-colors hover:text-gold">{label}</a>
               ))}
             </div>
