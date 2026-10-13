@@ -1,18 +1,21 @@
 import type { Product } from "./catalogue";
 
 export function productMetaTitle(product: Product) {
-  return `${product.name} | StarkVibe Pure Cotton Clothing`;
+  return `${product.name} | Premium Cotton T-Shirt & Clothing | StarkVibe`;
 }
 
 export function productMetaDescription(product: Product) {
-  return `Shop StarkVibe ${product.name} in ${product.gsm} GSM 100% cotton with a comfortable fit, durable finish and colour options for everyday wear or custom printing.`;
+  return `Shop the StarkVibe ${product.name}, a premium cotton clothing choice in ${product.gsm} GSM 100% cotton. Comfortable fabric, dependable fit and colour options for every-season wear or custom printing.`;
 }
 
 export function productMetaKeywords(product: Product) {
   return [
+    "premium T-shirt",
     `${product.name} premium cotton clothing`,
     `${product.gsm} GSM cotton ${product.category}`,
+    "comfortable cotton",
     "comfortable cotton fabric",
+    "all-season clothing",
     "best fit cotton clothing",
     "custom printed cotton clothing",
     "StarkVibe India",
@@ -24,15 +27,19 @@ export function categoryMetaTitle(category: string) {
 }
 
 export function categoryMetaDescription(category: string) {
-  return `Explore the StarkVibe ${category.toLowerCase()} collection in high-quality 100% cotton clothing. Comfortable, stylish designs for everyday wear, teams and custom printing.`;
+  return `Explore StarkVibe men's cotton T-shirts and ${category.toLowerCase()} in high-quality 100% cotton clothing. Choose comfortable cotton, practical fits and all-season clothing for everyday wear, teams and custom printing.`;
 }
 
 export function categoryMetaKeywords(category: string) {
   return [
     category,
+    "men's cotton T-shirts",
+    "premium T-shirt",
     "cotton t-shirts",
     "100% cotton clothing",
+    "comfortable cotton",
     "comfortable fabric",
+    "all-season clothing",
     "best fit everyday wear",
     "custom printing India",
     "StarkVibe",
@@ -40,20 +47,24 @@ export function categoryMetaKeywords(category: string) {
 }
 
 export function locationMetaTitle(city: string) {
-  return `100% Cotton Clothing in ${city} | StarkVibe Online`;
+  return `${city} Cotton Clothing Store | StarkVibe Online`;
 }
 
 export function locationMetaDescription(city: string) {
-  return `Shop StarkVibe online in ${city} for premium 100% cotton T-shirts, polos, sweatshirts and hoodies, with custom printing for teams, events and gifting.`;
+  return `Shop StarkVibe online for ${city} cotton clothing: premium T-shirts, polos, sweatshirts and hoodies in comfortable cotton for every season, with custom printing for teams, events and gifting.`;
 }
 
 export function locationMetaKeywords(city: string) {
   return [
+    `${city} cotton clothing store`,
     `${city} cotton clothing`,
+    `premium T-shirt in ${city}`,
     `cotton T-shirts in ${city}`,
     `${city} custom printed T-shirts`,
     `${city} bulk teamwear`,
+    "comfortable cotton",
     "comfortable cotton fabric",
+    "all-season clothing",
     "best fit cotton clothing",
     "StarkVibe online",
   ];
