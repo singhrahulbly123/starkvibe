@@ -3,6 +3,7 @@ export type AnalyticsEvent =
   | "view_item"
   | "add_to_cart"
   | "begin_checkout"
+  | "purchase"
   | "purchase_request"
   | "custom_print_enquiry"
   | "search"
@@ -23,4 +24,20 @@ export function trackEvent(event: AnalyticsEvent, parameters: Record<string, unk
   } else if (window.dataLayer) {
     window.dataLayer.push(["event", event, parameters]);
   }
+}
+
+export type EcommerceItem = {
+  item_id: string;
+  item_name: string;
+  quantity: number;
+  price: number;
+};
+
+export function trackPurchase(transactionId: string, value: number, items: EcommerceItem[]) {
+  trackEvent("purchase", {
+    transaction_id: transactionId,
+    currency: "INR",
+    value,
+    items,
+  });
 }

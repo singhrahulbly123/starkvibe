@@ -12,7 +12,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, LockKeyhole, Mail } from "lucide-react";
 import { useBag, formatPrice } from "@/lib/bag";
 import { productImage, salePrice } from "@/lib/catalogue";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, type EcommerceItem } from "@/lib/analytics";
 
 const paymentMethods = [
   "Cash on delivery",
@@ -72,6 +72,13 @@ export function Checkout() {
   const [prepared, setPrepared] = useState(false);
   const [email, setEmail] = useState("");
 
+  const analyticsItems: EcommerceItem[] = items.map((item) => ({
+    item_id: item.product.id,
+    item_name: item.product.name,
+    quantity: item.quantity,
+    price: salePrice(item.product),
+  }));
+
   useEffect(() => {
     setEmail(window.localStorage.getItem("starkvibe-user-email") || "");
   }, []);
@@ -81,7 +88,7 @@ export function Checkout() {
       trackEvent("begin_checkout", {
         currency: "INR",
         value: subtotal,
-        items: items.map((item) => ({ item_id: item.product.id, item_name: item.product.name, quantity: item.quantity, price: salePrice(item.product) })),
+        items: analyticsItems,
       });
     }
   }, [ready, items, subtotal]);
@@ -149,7 +156,7 @@ export function Checkout() {
       currency: "INR",
       value: subtotal,
       transaction_id: orderId,
-      items: items.map((item) => ({ item_id: item.product.id, item_name: item.product.name, quantity: item.quantity, price: salePrice(item.product) })),
+      items: analyticsItems,
     });
     const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "917060421033";
     if (phone) {
