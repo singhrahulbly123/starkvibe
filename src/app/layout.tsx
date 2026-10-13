@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { Suspense } from "react";
 import "./globals.css";
 import { SiteAnalytics } from "@/components/site-analytics";
 
@@ -71,7 +72,9 @@ export default function RootLayout({
         className={`${shoulders.variable} ${hanken.variable} font-sans antialiased`}
       >
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
-        <SiteAnalytics />
+        <Suspense fallback={null}>
+          <SiteAnalytics />
+        </Suspense>
         {children}
       </body>
     </html>
