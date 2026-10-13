@@ -122,13 +122,14 @@ export function ProductDetails({
     setAdded(true);
   }
   const specs = [
-    ["Fabric", fabric],
+    ["Material", fabric],
     ["SKU", productSku(product)],
-    ["Weight", `${product.gsm} GSM`],
+    ["GSM", `${product.gsm} GSM`],
     ["Fit", fit],
     ["Finish", "Double bio-washed, silicon washed"],
     ["Construction", "Double stitched seams"],
-    ["Colours", `${product.colours.length} shades`],
+    ["Colour options", product.colours.map((item) => item.name).join(", ")],
+    ["Washing", "Wash gently with similar colours; turn printed garments inside out"],
     [
       "Best for",
       product.id === "kids"
