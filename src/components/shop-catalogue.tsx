@@ -68,7 +68,13 @@ function BrandingBanner() {
   );
 }
 
-export function ShopCatalogue() {
+export function ShopCatalogue({
+  introTitle,
+  introParagraphs,
+}: {
+  introTitle: string;
+  introParagraphs: string[];
+}) {
   const [filters, setFilters] = useState<ShopFilters>(defaultShopFilters);
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [colours, setColours] = useState<Record<string, number>>({});
@@ -193,6 +199,14 @@ export function ShopCatalogue() {
           </p>
         </div>
       </div>
+      <section className="mb-12 max-w-[920px] border-y border-ink/20 py-8" aria-labelledby="catalogue-intro">
+        <h2 id="catalogue-intro" className="font-display text-4xl leading-none font-black uppercase">
+          {introTitle}
+        </h2>
+        <div className="mt-5 space-y-4 text-[15px] leading-7 text-[#55544f]">
+          {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+        </div>
+      </section>
       <div
         role="group"
         aria-label="Filter by fabric weight"

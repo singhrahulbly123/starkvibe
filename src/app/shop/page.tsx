@@ -30,7 +30,14 @@ export default function ShopPage() {
       </div>
       <Storefront hideRange>
         <main>
-          <ShopCatalogue />
+          <ShopCatalogue
+            introTitle="A practical cotton range, made to compare"
+            introParagraphs={[
+              "StarkVibe brings seven everyday clothing options into one clear cotton collection, from light 180 GSM tees to substantial 350 GSM fleece. Each piece is designed for repeat wear, with a focus on comfortable fabric, clean construction and simple styling. Use the filters to compare fabric weight, category, colour and price before you choose a product.",
+              "Start with the occasion and climate. A regular-fit tee is an easy base for daily wear, while an oversized tee gives a more relaxed streetwear shape. Polos add a sharper finish for teams and office events, and kids tees work well for active groups and birthday clothing. When the weather turns cooler, fleece sweatshirts and hoodies add warmth without losing the option of custom printing.",
+              "Every product can be reviewed by colour and size before you send an enquiry. For custom orders, share your artwork, quantity, size breakdown and required date so the team can confirm availability and the best fit for your group.",
+            ]}
+          />
         </main>
       </Storefront>
       <SiteFooter />
