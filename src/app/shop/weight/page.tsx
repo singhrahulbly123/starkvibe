@@ -6,6 +6,7 @@ import { Storefront } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Shop by Fabric Weight — StarkVibe",
   description: "Explore StarkVibe cotton clothing by fabric weight, from light 180 GSM tees to warm 350 GSM fleece.",
+  alternates: { canonical: "/shop/weight" },
 };
 
 export default function ShopByWeightPage() {

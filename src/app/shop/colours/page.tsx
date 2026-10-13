@@ -6,6 +6,7 @@ import { Storefront } from "@/components/storefront";
 export const metadata: Metadata = {
   title: "Shop by Colour — StarkVibe",
   description: "Browse StarkVibe cotton clothing in a considered range of everyday and statement colours.",
+  alternates: { canonical: "/shop/colours" },
 };
 
 export default function ShopByColourPage() {

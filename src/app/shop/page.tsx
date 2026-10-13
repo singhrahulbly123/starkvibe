@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Shop the Range — StarkVibe",
   description:
     "Seven pieces. 100% cotton. Shop StarkVibe tees, polos, kids wear and fleece by fabric weight, colour and price.",
+  alternates: { canonical: "/shop" },
 };
 export default function ShopPage() {
   return (
