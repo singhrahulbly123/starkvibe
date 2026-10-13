@@ -15,24 +15,30 @@ export function detailImage(product: Product, colour: Colour) {
     hoodie: "350-gsm-hoodie",
   };
   if (product.id === "terry")
-    return `/products/starkvibe/french-terry-240-gsm/${colour.file}-detail-v3.webp`;
+    return `/products/starkvibe/french-terry-240-gsm/${colour.file}-detail-v3-reference-logo.webp`;
+  if (product.id === "sweatshirt")
+    return `/products/starkvibe/catalogue-detail/350-gsm-sweatshirt/${colour.file}-polo-style-v3-reference-logo.webp`;
   const suffix = product.category === "fleece" ? "polo-style-v3" : "detail";
   if (product.id === "regular" && colour.file === "black")
     return "/products/starkvibe/catalogue-detail/180-gsm-regular-tee/black-starkvibe-print.webp";
+  if (product.id === "oversized")
+    return `/products/starkvibe/catalogue-detail/220-gsm-oversized-tee/${colour.file}-detail-reference-logo.webp`;
   return `/products/starkvibe/catalogue-detail/${folders[product.id]}/${colour.file}-${suffix}.webp`;
 }
 
 const titleImage: Record<string, string> = {
   oversized:
-    "/products/starkvibe/catalogue-detail/240-gsm-oversized-tee/starkvibe-oversized-poster.png",
+    "/products/Oversized220GSMTee/Starkvibe Oversized T-Shirt Advertisement.png",
+  terry:
+    "/products/Oversized240GSMFrenchTerry/Starkvibe Oversized Tee Editorial Ad.png",
   regular:
     "/products/RegularFit180GSM/Starkvibe Men’s T-Shirt Editorial Poster.png",
-  polo: "/products/Polo220GSMMatty/StarkVibe Premium White Polo Poster.png",
+  polo: "/products/Polo220GSMMattyTee/StarkVibe Premium White Polo Poster.png",
   kids: "/products/180GSMKidsCottonT-Shirt/Starkvibe Kids T-Shirt Poster.png",
   sweatshirt:
-    "/products/350GSMSweatshirt/Starkvibe Maroon Sweatshirt Showcase.png",
+    "/products/350GSMFleeceSweatshirt/Starkvibe Maroon Sweatshirt Showcase.png",
   hoodie:
-    "/products/350GSMHoodie/Starkvibe Premium Cotton Hoodie Advertisement.png",
+    "/products/350GSMFleeceHoodie/Starkvibe Premium Cotton Hoodie Advertisement.png",
 };
 
 export function galleryImage(product: Product, colour: Colour, view: string) {

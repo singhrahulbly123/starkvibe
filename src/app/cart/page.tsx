@@ -25,7 +25,7 @@ export default function CartPage() {
             Get in touch
           </a>
         </span>
-        <span className="text-[#b9b7ae]">Sale prices from ₹745</span>
+        <span className="text-[#b9b7ae]">Sale prices from ₹800</span>
       </div>
       <Storefront hideRange>
         <main>

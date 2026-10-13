@@ -28,7 +28,7 @@ const weights = [
         Kids Tee
       </>
     ),
-    price: "From ₹745",
+    price: "From ₹800",
     className: "bg-[#e2dfd6] lg:h-[440px]",
     number: "lg:text-[150px]",
   },
@@ -52,7 +52,7 @@ const weights = [
     label: "Structured and soft",
     image: "/categories/Starkvibe Premium T-Shirt Combo.png",
     name: <>Oversized French Terry Tee</>,
-    price: "₹880",
+    price: "₹1149",
     className: "bg-[#3b3a36] text-paper lg:h-[620px]",
     number: "lg:text-[170px]",
   },
@@ -67,7 +67,7 @@ const weights = [
         Fleece Hoodie
       </>
     ),
-    price: "From ₹1080",
+    price: "From ₹1470",
     className: "bg-ink text-paper lg:h-[720px]",
     number: "text-gold lg:text-[170px]",
   },

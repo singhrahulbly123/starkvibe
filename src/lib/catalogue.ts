@@ -9,9 +9,13 @@ export type Product = {
   colours: Colour[];
 };
 export function salePrice(product: Product) {
+  if (product.gsm === 350) return product.id === "hoodie" ? 1570 : 1470;
+  if (product.gsm === 240) return 1149;
   return product.price + 600;
 }
 export function mrpPrice(product: Product) {
+  if (product.gsm === 350) return 3230;
+  if (product.gsm === 240) return 1899;
   return product.price + 1500;
 }
 const colour = (name: string, hex: string, file: string): Colour => ({
@@ -123,6 +127,19 @@ export const products: Product[] = [
   },
 ];
 const suppliedProductImages: Record<string, Record<string, string>> = {
+  oversized: {
+    black: "Oversized220GSMTee/Starkvibe Oversized T-Shirt Advertisement.png",
+    brown: "Oversized220GSMTee/Starkvibe Oversized T-Shirt Editorial Ad.png",
+    "avocado-green": "Oversized220GSMTee/Starkvibe Avocado Oversized T-Shirt.png",
+    beige: "Oversized220GSMTee/Starkvibe Oversized T-Shirt Editorial Poster.png",
+    white: "Oversized220GSMTee/Starkvibe Oversized T-Shirt Poster.png",
+  },
+  terry: {
+    black: "Oversized240GSMFrenchTerry/Starkvibe Oversized Tee Editorial Ad.png",
+    "smokey-grey": "Oversized240GSMFrenchTerry/Starkvibe Oversized T-Shirt Lookbook.png",
+    beige: "Oversized240GSMFrenchTerry/Starkvibe Oversized Beige T-Shirt Poster.png",
+    white: "Oversized240GSMFrenchTerry/Starkvibe Oversized T-Shirt Campaign.png",
+  },
   regular: {
     black: "RegularFit180GSM/Starkvibe Men’s Black T-Shirt Promo.png",
     "sea-green": "RegularFit180GSM/Mint T-Shirt Editorial Advertisement.png",
@@ -131,8 +148,8 @@ const suppliedProductImages: Record<string, Record<string, string>> = {
     white: "RegularFit180GSM/Starkvibe Men’s T-Shirt Editorial Poster.png",
   },
   polo: {
-    black: "Polo220GSMMatty/StarkVibe Black Polo Advertisement.png",
-    white: "Polo220GSMMatty/StarkVibe Premium White Polo Poster.png",
+    black: "Polo220GSMMattyTee/StarkVibe Black Polo Advertisement.png",
+    white: "Polo220GSMMattyTee/StarkVibe Premium White Polo Poster.png",
   },
   kids: {
     black: "180GSMKidsCottonT-Shirt/Starkvibe Kids T-Shirt Poster.png",
@@ -142,18 +159,18 @@ const suppliedProductImages: Record<string, Record<string, string>> = {
     orange: "180GSMKidsCottonT-Shirt/Starkvibe Kids’ Orange T-Shirt Ad.png",
   },
   sweatshirt: {
-    black: "350GSMSweatshirt/Starkvibe Men’s Sweatshirt Showcase.png",
-    "navy-blue": "350GSMSweatshirt/Starkvibe Premium Navy Sweatshirt Ad.png",
-    "off-white": "350GSMSweatshirt/Starkvibe Men’s Sweatshirt Editorial Ad.png",
-    maroon: "350GSMSweatshirt/Starkvibe Maroon Sweatshirt Showcase.png",
-    lavender: "350GSMSweatshirt/Lavender Sweatshirt Premium Feature Showcase.png",
+    black: "350GSMFleeceSweatshirt/Starkvibe Men’s Sweatshirt Showcase.png",
+    "navy-blue": "350GSMFleeceSweatshirt/Starkvibe Premium Navy Sweatshirt Ad.png",
+    "off-white": "350GSMFleeceSweatshirt/Starkvibe Men’s Sweatshirt Editorial Ad.png",
+    maroon: "350GSMFleeceSweatshirt/Starkvibe Maroon Sweatshirt Showcase.png",
+    lavender: "350GSMFleeceSweatshirt/Lavender Sweatshirt Premium Feature Showcase.png",
   },
   hoodie: {
-    black: "350GSMHoodie/Starkvibe Men’s Hoodie Feature Poster.png",
-    "coffee-brown": "350GSMHoodie/Starkvibe Coffee-Brown Hoodie Advertisement.png",
-    "off-white": "350GSMHoodie/Starkvibe Premium Cotton Hoodie Advertisement.png",
-    "olive-green": "350GSMHoodie/Starkvibe Premium Olive Hoodie Poster.png",
-    beige: "350GSMHoodie/Premium Camel Hoodie Catalogue.png",
+    black: "350GSMFleeceHoodie/Starkvibe Men’s Hoodie Feature Poster.png",
+    "coffee-brown": "350GSMFleeceHoodie/Starkvibe Coffee-Brown Hoodie Advertisement.png",
+    "off-white": "350GSMFleeceHoodie/Starkvibe Premium Cotton Hoodie Advertisement.png",
+    "olive-green": "350GSMFleeceHoodie/Starkvibe Premium Olive Hoodie Poster.png",
+    beige: "350GSMFleeceHoodie/Premium Camel Hoodie Catalogue.png",
   },
 };
 
@@ -161,9 +178,9 @@ export function productImage(product: Product, colour: Colour) {
   const supplied = suppliedProductImages[product.id]?.[colour.file];
   if (supplied) return `/products/${supplied}`;
   if (product.id === "terry") {
-    return `/products/starkvibe/french-terry-240-gsm/${colour.file}-detail-v3.webp`;
+    return `/products/starkvibe/french-terry-240-gsm/${colour.file}-detail-v3-reference-logo.webp`;
   }
-  return `/products/starkvibe/catalogue-detail/220-gsm-oversized-tee/${colour.file}-detail.webp`;
+  return `/products/starkvibe/catalogue-detail/220-gsm-oversized-tee/${colour.file}-detail-reference-logo.webp`;
 }
 const swatchOrder = [
   "#000000",

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { products, productImage, salePrice } from "@/lib/catalogue";
+import { mrpPrice, products, productImage, salePrice } from "@/lib/catalogue";
 import { addBagItem, formatPrice, useBag } from "@/lib/bag";
 import { CartItem } from "./cart-item";
 import { CartSummary } from "./cart-summary";
@@ -25,6 +25,7 @@ export function CartPageContent() {
   const [note, setNote] = useState("");
   const [noteReady, setNoteReady] = useState(false);
   const [announcement, setAnnouncement] = useState("");
+  const [suggestionColours, setSuggestionColours] = useState<Record<string, number>>({});
   useEffect(() => {
     setNote(localStorage.getItem("starkvibe-order-note") || "");
     setNoteReady(true);
@@ -242,50 +243,78 @@ export function CartPageContent() {
             </Link>
           </div>
         </Reveal>
-        <div className="grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
-          {suggestions.map((product) => (
-            <article key={product.id} className="flex min-w-0 flex-col">
-              <Link
-                href={`/products/${product.id}`}
-                className="group relative h-[340px] overflow-hidden bg-[#e4e2da]"
-              >
-                <Image
-                  src={productImage(product, product.colours[0])}
-                  alt={`${product.name} in Black`}
-                  fill
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-[1.035]"
-                />
-                <span className="absolute top-3.5 left-3.5 bg-ink px-3 py-[7px] text-xs font-bold tracking-[.1em] text-paper">
-                  {product.gsm} GSM
-                </span>
-              </Link>
-              <div className="mt-[18px] flex items-start justify-between gap-4 text-lg leading-tight font-bold">
-                <h3 className="min-w-0 max-w-full truncate">{product.name}</h3>
-                <span className="shrink-0">{formatPrice(salePrice(product))}</span>
-              </div>
-              <p className="mt-1.5 text-sm text-[#55544f]">
-                Black · Size {product.id === "kids" ? "6–8 years" : "M"}
-              </p>
-              <button
-                aria-label={`Quick add ${product.name}`}
-                onClick={() => {
-                  const size = product.id === "kids" ? "6–8 years" : "M";
-                  addBagItem({
-                    key: `${product.id}-0-${size}`,
-                    product,
-                    colour: 0,
-                    size,
-                    quantity: 1,
-                  });
-                  setAnnouncement(`${product.name} added to your bag.`);
-                }}
-                className="mt-3.5 h-[52px] border border-ink text-[15px] font-bold transition-colors hover:bg-ink hover:text-paper"
-              >
-                Quick add
-              </button>
-            </article>
-          ))}
+        <div className="grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {suggestions.map((product) => {
+            const selected = suggestionColours[product.id] || 0;
+            const colour = product.colours[selected];
+            const size = product.id === "kids" ? "6–8 years" : "M";
+            return (
+              <article key={product.id} className="group flex min-w-0 flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)]">
+                <div className="relative">
+                  <Link
+                    href={`/products/${product.id}?colour=${colour.file}`}
+                    className="relative block h-[400px] w-full overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] p-1"
+                  >
+                    <Image
+                      src={productImage(product, colour)}
+                      alt={`${product.name} in ${colour.name}`}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"
+                    />
+                    <span className="absolute top-4 left-4 bg-ink px-3 py-2 text-xs font-bold tracking-[.1em] text-paper uppercase">
+                      {product.gsm} GSM
+                    </span>
+                  </Link>
+                  <div className="absolute inset-x-3 bottom-3 flex flex-wrap items-center rounded-md border border-ink/10 bg-paper/90 px-2 py-1 backdrop-blur-sm">
+                    {product.colours.map((c, index) => (
+                      <button
+                        key={c.file}
+                        aria-label={`${product.name}: ${c.name}`}
+                        aria-pressed={selected === index}
+                        onClick={() => setSuggestionColours({ ...suggestionColours, [product.id]: index })}
+                        className="flex size-9 items-center justify-center"
+                      >
+                        <span
+                          style={{ backgroundColor: c.hex }}
+                          className={`size-5 rounded-full border border-ink/20 ${selected === index ? "ring-2 ring-ink ring-offset-1 ring-offset-paper" : ""}`}
+                        />
+                      </button>
+                    ))}
+                    <span className="ml-1 text-xs font-semibold text-[#55544f]">
+                      {product.colours.length} colours
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-5 flex flex-col items-start gap-2 text-[17px] leading-tight font-bold">
+                  <h3 className="min-w-0 max-w-full truncate">{product.name}</h3>
+                  <span className="flex items-baseline gap-2">
+                    <del className="text-xs font-normal text-[#77756c]">MRP ₹{mrpPrice(product)}</del>
+                    <span>₹{salePrice(product)}</span>
+                  </span>
+                </div>
+                <p className="mt-2 min-h-[42px] text-sm leading-[1.5] text-[#55544f]">
+                  {product.note}
+                </p>
+                <button
+                  aria-label={`Quick add ${product.name}`}
+                  onClick={() => {
+                    addBagItem({
+                      key: `${product.id}-${selected}-${size}`,
+                      product,
+                      colour: selected,
+                      size,
+                      quantity: 1,
+                    });
+                    setAnnouncement(`${product.name} added to your bag.`);
+                  }}
+                  className="mt-3 flex h-[52px] items-center justify-center border border-ink text-[15px] font-bold transition-colors hover:bg-ink hover:text-paper"
+                >
+                  Quick add
+                </button>
+              </article>
+            );
+          })}
         </div>
       </section>
     </>

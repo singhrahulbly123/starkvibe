@@ -227,13 +227,6 @@ export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
       />
       <Storefront hideRange>
         <main>
-          <nav aria-label="Breadcrumb" className={`${container} py-4 text-sm text-[#55544f]`}>
-            <ol className="flex flex-wrap items-center gap-2">
-              <li><Link href="/" className="hover:text-olive">Home</Link></li>
-              <li aria-hidden="true">/</li>
-              <li aria-current="page" className="font-bold text-ink">{content.label}</li>
-            </ol>
-          </nav>
           <section className="bg-ink text-paper">
             <div className={`${container} py-10 lg:py-16`}>
               <Reveal className="mb-10">

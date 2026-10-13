@@ -6,12 +6,14 @@ import { addBagItem, useBag, type BagItem } from "@/lib/bag";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowUpRight,
+  ChevronRight,
   House,
   Menu,
   Palette,
   Search,
   ShoppingBag,
   Shirt,
+  UserRound,
   X,
 } from "lucide-react";
 import { filters, mrpPrice, productImage, products, salePrice } from "@/lib/catalogue";
@@ -70,6 +72,24 @@ export function Storefront({
     ["Custom gifting", "/custom-printing/gifting"],
     ["Campaign merchandise", "/custom-printing/political-campaigns"],
   ];
+  const desktopLinks = links.filter(([label]) => label !== "My account");
+  const ownBreadcrumbPages = ["/about", "/blog", "/contact", "/editorial-policy"];
+  const showSharedBreadcrumb =
+    pathname !== "/" &&
+    !ownBreadcrumbPages.includes(pathname) &&
+    !pathname.startsWith("/blog/");
+  const breadcrumbOnDark = pathname.startsWith("/custom-printing");
+  const breadcrumbLabel = pathname.startsWith("/products/")
+    ? products.find((product) => product.id === pathname.split("/")[2])?.name || "Product"
+    : pathname === "/cart"
+      ? "Your bag"
+      : pathname === "/my-account"
+        ? "My account"
+        : pathname === "/shop"
+          ? "Shop"
+          : pathname.startsWith("/shop/")
+            ? pathname.split("/")[2].replace(/-/g, " ")
+            : pathname.slice(1).replace(/-/g, " ");
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-[100] isolate mx-auto flex h-[60px] w-full flex-nowrap items-center gap-2 border-b border-ink/15 bg-paper/95 px-5 py-2 shadow-[0_6px_18px_rgba(13,13,12,.08)] backdrop-blur-md lg:h-[76px] lg:gap-3 lg:px-12">
@@ -77,7 +97,7 @@ export function Storefront({
           aria-label="Main navigation"
           className="hidden gap-6 whitespace-nowrap text-[13px] font-semibold tracking-[.02em] uppercase lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2"
         >
-          {links.map(([label, href]) => (
+          {desktopLinks.map(([label, href]) => (
             <Link
               key={href}
               href={href}
@@ -117,6 +137,14 @@ export function Storefront({
           >
             <Search size={22} />
           </button>
+          <Link
+            href="/my-account"
+            aria-label="My account"
+            aria-current={pathname === "/my-account" ? "page" : undefined}
+            className={`hidden size-11 shrink-0 items-center justify-center border border-ink/15 transition-colors hover:bg-ink hover:text-paper lg:flex ${pathname === "/my-account" ? "bg-ink text-paper" : ""}`}
+          >
+            <UserRound size={20} />
+          </Link>
           <Link
             href="/cart"
             aria-label={`Open cart (${count} items)`}
@@ -244,6 +272,33 @@ export function Storefront({
         )}
       </header>
       {/* <div aria-hidden="true" className="h-[60px] lg:h-[76px]" /> */}
+      {showSharedBreadcrumb && (
+        <div className={breadcrumbOnDark ? "w-full bg-ink" : ""}>
+          <div className="mx-auto max-w-[1400px] px-5 pt-[80px] lg:px-12 lg:pt-[92px]">
+            <nav
+              aria-label="Breadcrumb"
+              className={`inline-flex items-center gap-2 border px-3.5 py-2.5 text-[11px] font-semibold tracking-[.12em] uppercase ${breadcrumbOnDark ? "border-paper/15 bg-paper/5 text-paper shadow-none" : "border-ink/10 bg-[#eeece5]/65 text-[#6b6961] shadow-[0_6px_18px_rgba(13,13,12,.04)]"}`}
+            >
+              <Link
+                href="/"
+                className={`flex items-center gap-2 transition-colors ${breadcrumbOnDark ? "hover:text-gold" : "hover:text-olive"}`}
+              >
+                <House size={14} strokeWidth={1.8} />
+                <span>Home</span>
+              </Link>
+              <ChevronRight
+                size={14}
+                strokeWidth={1.6}
+                className={breadcrumbOnDark ? "text-paper/45" : "text-ink/35"}
+              />
+              <span className={`flex items-center gap-2 ${breadcrumbOnDark ? "text-paper" : "text-ink"}`}>
+                <span className="size-1.5 rounded-full bg-olive" />
+                <span className="capitalize">{breadcrumbLabel}</span>
+              </span>
+            </nav>
+          </div>
+        </div>
+      )}
       {children}
       {!hideRange && (
         <section
