@@ -610,6 +610,29 @@ export function ProductDetails({
           </div>
         </div>
       </section>
+      <section className={`${container} pt-16`}>
+        <div className="border-t border-ink pt-8">
+          <p className="text-xs font-bold tracking-[.2em] text-olive uppercase">Helpful guides</p>
+          <h2 className="mt-4 font-display text-4xl leading-none font-black uppercase">Read before you order.</h2>
+          <p className="mt-4 max-w-[720px] text-[15px] leading-7 text-[#55544f]">
+            Learn how fabric weight, care and artwork planning can affect the way
+            your {product.name.toLowerCase()} feels and performs.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-x-7 gap-y-3 text-sm font-bold">
+            <Link href="/blog/how-to-choose-the-right-gsm-t-shirt" className="underline decoration-1 underline-offset-4 hover:text-olive">
+              How to choose the right GSM T-shirt →
+            </Link>
+            {product.category === "fleece" && (
+              <Link href="/blog/how-to-care-for-cotton-t-shirts-and-fleece" className="underline decoration-1 underline-offset-4 hover:text-olive">
+                How to care for cotton and fleece →
+              </Link>
+            )}
+            <Link href="/blog/custom-t-shirt-printing-order-checklist" className="underline decoration-1 underline-offset-4 hover:text-olive">
+              Custom printing order checklist →
+            </Link>
+          </div>
+        </div>
+      </section>
       <section className="mt-20 bg-ink text-paper lg:mt-[136px]">
         <div
           className={`${container} grid items-end gap-14 py-20 lg:grid-cols-[1fr_1.2fr] lg:gap-24 lg:py-28`}
