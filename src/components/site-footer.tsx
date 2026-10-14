@@ -33,7 +33,7 @@ export function SiteFooter() {
                 alt="StarkVibe"
                 width={280}
                 height={88}
-                className="h-auto w-[190px]"
+                className="h-auto w-[190px] brightness-0 invert"
               />
             </a>
             <p className="mt-5 leading-[1.6] text-[#b9b7ae]">
