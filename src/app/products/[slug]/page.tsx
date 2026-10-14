@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProductBySlug, productImage, products, productSlug } from "@/lib/catalogue";
 import { productSku } from "@/lib/product-seo";
-import { buildMetadata, productMetaDescription, productMetaKeywords, productMetaTitle } from "@/lib/seo";
+import { buildMetadata, productMetaDescription, productMetaTitle } from "@/lib/seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
@@ -26,7 +26,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   return {
     ...metadata,
-    keywords: productMetaKeywords(product),
     other: { "product:sku": productSku(product) },
   };
 }

@@ -1,13 +1,13 @@
 import { LegalPage } from "@/components/legal-page";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata = buildMetadata({ title: "Returns Policy — StarkVibe", description: "StarkVibe returns, exchange and custom print policy.", path: "/returns-policy" });
+export const metadata = buildMetadata({ title: "Returns Policy — StarkVibe", description: "Read StarkVibe guidance for returns, exchanges and custom print issues, including order checks, size selection and production concerns. Review the policy", path: "/returns-policy" });
 
 export default function ReturnsPolicyPage() {
-  return <LegalPage title="Returns policy." intro="We want you to receive the right product and size. Please review the order details carefully before confirmation, especially for custom printing." sections={[
-    { title: "Standard products", body: "If a standard product arrives damaged, defective or materially different from the confirmed order, contact us with your order details and clear photos as soon as possible so we can review the issue." },
-    { title: "Custom printed products", body: "Personalised, printed and made-to-order products are generally not eligible for return due to a change of mind, incorrect customer-provided artwork or incorrect size selection. Print issues caused by our production error will be reviewed and resolved fairly." },
-    { title: "Size and colour", body: "Please use the size guide and confirm colour, quantity and size breakdown before production. Minor colour variation can occur between screens and fabric, so final production references should be confirmed before approval." },
-    { title: "How to contact us", body: "Email singhrahulbly123@gmail.com with your order number, issue description and photos. Do not send a parcel back without receiving return instructions from the team." },
+  return <LegalPage title="Returns policy." intro="TODO: Add the confirmed returns or exchange window and conditions." sections={[
+    { title: "Returns and exchanges", body: "TODO: Add the confirmed returns or exchange window and conditions." },
+    { title: "Custom printed products", body: "TODO: Add the confirmed return conditions for personalised, printed and made-to-order products." },
+    { title: "Size and colour", body: "Please use the size guide and confirm colour, quantity and size breakdown before production. TODO: Add any confirmed size or colour conditions." },
+    { title: "How to contact us", body: "TODO: Confirm the domain email and return-instruction process." },
   ]} />;
 }

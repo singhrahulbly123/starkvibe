@@ -71,9 +71,17 @@ function BrandingBanner() {
 export function ShopCatalogue({
   introTitle,
   introParagraphs,
+  heading = "The range.",
+  breadcrumbLabel = "Shop",
+  fixedCategory,
+  productIds,
 }: {
   introTitle: string;
   introParagraphs: string[];
+  heading?: string;
+  breadcrumbLabel?: string;
+  fixedCategory?: ShopFilters["category"];
+  productIds?: string[];
 }) {
   const [filters, setFilters] = useState<ShopFilters>(defaultShopFilters);
   const [filtersOpen, setFiltersOpen] = useState(true);
@@ -88,11 +96,11 @@ export function ShopCatalogue({
       weight: weightOptions.includes(Number(params.get("weight")))
         ? Number(params.get("weight"))
         : 0,
-      category: ["all", "tees", "polo", "kids", "fleece"].includes(
+      category: fixedCategory || ["all", "tees", "polo", "kids", "fleece"].includes(
         params.get("category") || "",
       )
-        ? params.get("category")!
-        : "all",
+        ? fixedCategory || params.get("category")!
+        : fixedCategory || "all",
       colour: shopColours.some((c) => c.name === params.get("colour"))
         ? params.get("colour")!
         : "",
@@ -122,7 +130,7 @@ export function ShopCatalogue({
   }, [saved, loaded]);
 
   function changeFilters(change: Partial<ShopFilters>) {
-    const next = { ...filters, ...change };
+    const next = { ...filters, ...change, ...(fixedCategory ? { category: fixedCategory } : {}) };
     setFilters(next);
     const params = new URLSearchParams();
     if (next.weight) params.set("weight", String(next.weight));
@@ -143,7 +151,9 @@ export function ShopCatalogue({
     );
   }
   const shown = sortProducts(
-    products.filter((p) => matchesFilters(p, filters, saved)),
+    products.filter(
+      (p) => (!productIds || productIds.includes(p.id)) && matchesFilters(p, filters, saved),
+    ),
     filters.sort,
   );
   const colourFilter = shopColours.find((c) => c.name === filters.colour);
@@ -174,20 +184,9 @@ export function ShopCatalogue({
   };
   return (
     <div className="mx-auto max-w-[1440px] px-5 pt-7 lg:px-12 lg:pt-9">
-      <nav aria-label="Breadcrumb" className="mb-8 text-sm text-[#55544f]">
-        <ol className="flex gap-3">
-          <li>
-            <Link href="/">Home</Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page" className="font-bold text-ink">
-            Shop
-          </li>
-        </ol>
-      </nav>
       <div className="mb-10 flex flex-wrap items-end justify-between gap-7">
         <h1 className="font-display text-[clamp(64px,10vw,156px)] leading-[.85] font-black tracking-[-.015em] uppercase">
-          The <span className="text-olive">range.</span>
+          {heading}
         </h1>
         <div className="max-w-[420px]">
           <p className="text-[17px] leading-[1.6] text-[#55544f]">

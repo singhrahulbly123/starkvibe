@@ -5,7 +5,14 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/cart", "/checkout", "/my-account"],
+      disallow: [
+        "/api/",
+        "/cart",
+        "/checkout",
+        "/my-account",
+        "/shop?",
+        "/search?",
+      ],
     },
     sitemap: "https://starkvibe.com/sitemap.xml",
     host: "https://starkvibe.com",

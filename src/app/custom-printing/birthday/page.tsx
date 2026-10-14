@@ -4,7 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata = buildMetadata({
   title: "Custom Birthday T-Shirts & Hoodies — StarkVibe",
   description:
-    "Create custom birthday t-shirts, hoodies and group outfits for friends, family and party celebrations.",
+    "Create custom birthday T-shirts, hoodies and group outfits for friends, family and party celebrations with StarkVibe printing support. Share your brief.",
   path: "/custom-printing/birthday",
 });
 

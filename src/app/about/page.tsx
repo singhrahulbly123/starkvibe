@@ -2,11 +2,12 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 
 export const metadata = buildMetadata({
   title: "About StarkVibe | Premium Cotton Wear",
   description:
-    "Learn about StarkVibe, a premium cotton wear brand creating comfortable T-shirts, polos, kidswear, fleece and custom printed apparel.",
+    "Learn how StarkVibe makes premium cotton T-shirts, polos, kidswear, fleece and custom printed apparel for everyday wear, teams and special occasions too.",
   path: "/about",
 });
 
@@ -29,7 +30,7 @@ export default function AboutPage() {
     <>
       <Storefront hideRange>{null}</Storefront>
       <main className="bg-paper text-ink">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        <JsonLd data={jsonLd} />
         <section className="mx-auto max-w-[1400px] px-5 pt-16 pb-20 lg:px-12 lg:pt-24 lg:pb-32">
           <nav aria-label="Breadcrumb" className="mb-14 text-sm text-[#5d5b55]">
             <Link href="/" className="hover:text-olive">Home</Link><span className="mx-3">/</span><span>About StarkVibe</span>
@@ -50,6 +51,17 @@ export default function AboutPage() {
             <div><p className="mb-4 text-xs font-bold tracking-[.2em] text-olive uppercase">Made for real use</p><h2 className="font-display text-5xl leading-none font-black uppercase">From one favourite tee to a full team order.</h2></div>
             <div className="space-y-5 leading-7 text-[#55544f]"><p>Choose from T-shirts, polos, kidswear, sweatshirts and hoodies, then select the fabric weight, colour and fit that suit your day.</p><p>Need something personal? Our custom printing service helps with birthdays, gifting, office teams, anniversaries, campaigns and one-off designs.</p><div className="flex flex-wrap gap-3 pt-3"><Link href="/shop" className="bg-ink px-6 py-3 font-bold text-paper hover:bg-olive">Shop the range</Link><Link href="/custom-printing" className="border border-ink px-6 py-3 font-bold hover:bg-gold">Explore custom printing</Link></div></div>
           </div>
+          <section className="mt-20 border-t border-ink pt-12" aria-labelledby="company-details-heading">
+            <p className="mb-4 text-xs font-bold tracking-[.2em] text-olive uppercase">Company details</p>
+            <h2 id="company-details-heading" className="font-display text-5xl leading-none font-black uppercase">The details behind the brand.</h2>
+            <div className="mt-8 grid gap-4 text-[16px] leading-7 text-[#55544f] sm:grid-cols-2">
+              <p><strong>Legal name:</strong> TODO: Add the confirmed legal name.</p>
+              <p><strong>Registered address:</strong> TODO: Add the confirmed registered address.</p>
+              <p><strong>GST:</strong> TODO: Add the confirmed GST details, if applicable.</p>
+              <p><strong>Started:</strong> TODO: Add the confirmed year started.</p>
+              <p><strong>Run by:</strong> TODO: Add the confirmed information about who runs StarkVibe.</p>
+            </div>
+          </section>
         </section>
       </main>
       <SiteFooter />

@@ -6,7 +6,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata = {
   ...buildMetadata({
   title: "My Account — StarkVibe",
-  description: "View your StarkVibe profile, order requests and cancellation status.",
+  description: "View your StarkVibe profile, order requests and cancellation status while keeping your account details available for future shopping. Sign in to continue.",
   path: "/my-account",
   }),
   robots: { index: false, follow: false },

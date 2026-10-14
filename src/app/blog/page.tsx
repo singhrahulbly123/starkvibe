@@ -3,16 +3,23 @@ import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { blogPosts } from "@/lib/blog";
 import { buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = buildMetadata({
   title: "StarkVibe Journal | Cotton Wear & Custom Printing Guides",
-  description: "Helpful guides from StarkVibe on GSM, cotton fabric, custom T-shirt printing, bulk apparel orders and garment care.",
+  description: "Read StarkVibe guides on GSM, cotton fabric, custom T-shirt printing, bulk apparel orders and garment care before choosing your next garment. Start here.",
   path: "/blog",
 });
 
 export default function BlogPage() {
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Journal", path: "/blog" },
+  ]);
   return (
     <>
+      <JsonLd data={breadcrumbSchema} />
       <Storefront hideRange>{null}</Storefront>
       <main className="bg-paper text-ink">
         <section className="mx-auto max-w-[1400px] px-5 pt-16 pb-24 lg:px-12 lg:pt-24">

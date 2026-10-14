@@ -36,23 +36,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   themeColor: "#f1efe8",
 };
-const organizationJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "StarkVibe",
-  url: "https://starkvibe.com",
-  logo: "https://starkvibe.com/branding/starkvibe-wordmark-premium.png",
-  email: "singhrahulbly123@gmail.com",
-  telephone: "+91-7060421033",
-  areaServed: { "@type": "Country", name: "India" },
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "customer service",
-    telephone: "+91-7060421033",
-    email: "singhrahulbly123@gmail.com",
-    availableLanguage: ["English", "Hindi"],
-  },
-};
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -61,7 +44,6 @@ export default function RootLayout({
       <body
         className={`${shoulders.variable} ${hanken.variable} font-sans antialiased`}
       >
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
         <Suspense fallback={null}>
           <SiteAnalytics />
         </Suspense>

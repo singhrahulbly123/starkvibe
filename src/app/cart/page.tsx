@@ -7,7 +7,7 @@ export const metadata = {
   ...buildMetadata({
   title: "Your Bag — StarkVibe",
   description:
-    "Review your StarkVibe pieces, update quantities and request order confirmation or custom printing.",
+    "Review your StarkVibe pieces, update quantities and request order confirmation or custom printing before you complete your order. No payment is taken yet.",
   path: "/cart",
   }),
   robots: { index: false, follow: false },

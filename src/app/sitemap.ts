@@ -13,6 +13,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/blog", 0.7, "monthly"],
     ["/editorial-policy", 0.3, "yearly"],
     ["/shop", 0.9, "weekly"],
+    ["/shop/t-shirts", 0.8, "weekly"],
+    ["/shop/polos", 0.8, "weekly"],
+    ["/shop/kids", 0.8, "weekly"],
+    ["/shop/sweatshirts", 0.8, "weekly"],
+    ["/shop/hoodies", 0.8, "weekly"],
+    ["/size-guide", 0.7, "monthly"],
     ["/shop/weight", 0.8, "monthly"],
     ["/shop/fabric", 0.8, "monthly"],
     ["/shop/colours", 0.8, "monthly"],
@@ -33,13 +39,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...pages.map(([path, priority, changeFrequency]) => ({
       url: `${baseUrl}${path}`,
-      lastModified: new Date(),
       changeFrequency,
       priority,
     })),
     ...products.map((product) => ({
       url: `${baseUrl}/products/${productSlug(product)}`,
-      lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.9,
       images: [
@@ -54,7 +58,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...locations.map((location) => ({
       url: `${baseUrl}/locations/${location.slug}`,
-      lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     })),

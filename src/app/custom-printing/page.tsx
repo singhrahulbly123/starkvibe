@@ -4,7 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata = buildMetadata({
   title: "Custom Printing for Every Occasion — StarkVibe",
   description:
-    "Custom printed t-shirts, hoodies and polos for birthdays, office teams, anniversaries, events and personalised gifts.",
+    "Plan custom printed T-shirts, hoodies and polos for birthdays, office teams, anniversaries, events and personalised gifts with StarkVibe. Start your enquiry.",
   path: "/custom-printing",
 });
 

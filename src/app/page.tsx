@@ -1,16 +1,19 @@
 import { SiteFooter } from "@/components/site-footer";
 import Image from "next/image";
+import Link from "next/link";
 import { Storefront } from "@/components/storefront";
 import { Reveal } from "@/components/reveal";
 import { QuoteForm } from "@/components/quote-form";
 import { swatches } from "@/lib/catalogue";
 import { AbHeroCopy } from "@/components/ab-hero-copy";
 import { buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { faqPageJsonLd } from "@/lib/structured-data";
 
 export const metadata = buildMetadata({
-  title: "StarkVibe — Heavy Cotton. Honest Finish.",
+  title: "Premium Cotton T-Shirts & Custom Printing India | StarkVibe",
   description:
-    "Premium 100% cotton tees, polos, sweatshirts and hoodies from 180 to 350 GSM. Shop everyday fits and custom printing for birthdays, events and teams.",
+    "100% cotton tees, polos, sweatshirts and hoodies from 180 to 350 GSM. Custom printing for birthdays, offices and teams. Prices from ₹745.",
   path: "/",
 });
 
@@ -29,7 +32,7 @@ const weights = [
   {
     gsm: 180,
     label: "Light and easy",
-    image: "/categories/Starkvibe Premium T-Shirt Combo.png",
+    image: "/categories/starkvibe-premium-t-shirt-combo.png",
     name: (
       <>
         Regular Fit Tee
@@ -44,7 +47,7 @@ const weights = [
   {
     gsm: 220,
     label: "Everyday standard",
-    image: "/categories/Starkvibe Premium Polo Combo Pack.png",
+    image: "/categories/starkvibe-premium-polo-combo-pack.png",
     name: (
       <>
         Oversized Tee
@@ -59,7 +62,7 @@ const weights = [
   {
     gsm: 240,
     label: "Structured and soft",
-    image: "/categories/Starkvibe Premium T-Shirt Combo.png",
+    image: "/categories/starkvibe-premium-t-shirt-combo.png",
     name: <>Oversized French Terry Tee</>,
     price: "₹1149",
     className: "bg-[#3b3a36] text-paper lg:h-[620px]",
@@ -68,7 +71,7 @@ const weights = [
   {
     gsm: 350,
     label: "Cotton fleece",
-    image: "/categories/Starkvibe Sweatshirts Combo Pack.png",
+    image: "/categories/starkvibe-sweatshirts-combo-pack.png",
     name: (
       <>
         Fleece Sweatshirt
@@ -85,41 +88,41 @@ const categories = [
   {
     label: "T-shirts",
     eyebrow: "Everyday essentials",
-    image: "/categories/Starkvibe Premium T-Shirt Combo.png",
+    image: "/categories/starkvibe-premium-t-shirt-combo.png",
     description: "Clean fits, premium cotton and easy everyday comfort.",
-    href: "/shop?category=tees",
+    href: "/shop/t-shirts",
     cardClass: "col-span-2 min-h-[320px] sm:col-span-2 lg:col-span-1 lg:min-h-[295px]",
   },
   {
     label: "Polos",
     eyebrow: "Polished comfort",
-    image: "/categories/Starkvibe Premium Polo Combo Pack.png",
+    image: "/categories/starkvibe-premium-polo-combo-pack.png",
     description: "Breathable Matty fabric with a sharper everyday finish.",
-    href: "/shop?category=polo",
+    href: "/shop/polos",
     cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
   },
   {
     label: "Kids",
     eyebrow: "Made to move",
-    image: "/categories/Starkvibe Kids Combo Pack.png",
+    image: "/categories/starkvibe-kids-combo-pack.png",
     description: "Soft, flexible pieces for active days and special moments.",
-    href: "/shop?category=kids",
+    href: "/shop/kids",
     cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
   },
   {
     label: "Sweatshirts",
     eyebrow: "Warm layers",
-    image: "/categories/Starkvibe Sweatshirts Combo Pack.png",
+    image: "/categories/starkvibe-sweatshirts-combo-pack.png",
     description: "350 GSM fleece with warmth, softness and structure.",
-    href: "/shop?category=fleece",
+    href: "/shop/sweatshirts",
     cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
   },
   {
     label: "Hoodies",
     eyebrow: "Heavy cotton fleece",
-    image: "/categories/Starkvibe Premium Hoodie Combo.png",
+    image: "/categories/starkvibe-premium-hoodie-combo.png",
     description: "Substantial layers built for streetwear and custom prints.",
-    href: "/shop?category=fleece",
+    href: "/shop/hoodies",
     cardClass: "col-span-2 min-h-[300px] sm:col-span-3 lg:col-span-1 lg:min-h-[295px]",
   },
 ];
@@ -160,13 +163,41 @@ const faqs = [
   ],
   [
     "Delivery and returns",
-    "Delivery timelines, shipping charges and return terms will be confirmed before your order is placed. For custom branded orders, confirm your artwork, sizes and quantities with the team.",
+    "TODO: Add confirmed delivery days, shipping charge, free-shipping threshold, returns window and return conditions.",
   ],
 ];
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "StarkVibe",
+  url: "https://starkvibe.com",
+  logo: "https://starkvibe.com/branding/starkvibe-wordmark-premium.png",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+91-7060421033",
+    contactType: "customer service",
+    areaServed: "IN",
+  },
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "StarkVibe",
+  url: "https://starkvibe.com",
+};
 
 export default function Home() {
   return (
     <>
+      <JsonLd data={organizationJsonLd} />
+      <JsonLd data={websiteJsonLd} />
+      <JsonLd
+        data={faqPageJsonLd(
+          faqs.map(([question, answer]) => ({ question, answer })),
+        )}
+      />
       <a
         href="#range"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-gold focus:p-4"
@@ -200,7 +231,7 @@ export default function Home() {
               </span>
               <div className="absolute top-[7%] -right-[2%] w-[58%] rotate-[7deg] overflow-hidden shadow-xl transition-transform duration-700 hover:rotate-0">
                 <Image
-                  src="/products/RegularFit180GSM/Mint T-Shirt Editorial Advertisement.png"
+                  src="/products/regular-fit-180-gsm/mint-t-shirt-editorial-advertisement.png"
                   width={600}
                   height={900}
                   alt="Mint regular fit 180 GSM cotton tee"
@@ -211,7 +242,7 @@ export default function Home() {
               </div>
               <div className="absolute top-[23%] left-[4%] w-[62%] -rotate-[8deg] overflow-hidden shadow-2xl transition-transform duration-700 hover:rotate-0">
                 <Image
-                  src="/products/RegularFit180GSM/Starkvibe Men’s Black T-Shirt Promo.png"
+                  src="/products/regular-fit-180-gsm/starkvibe-mens-black-t-shirt-promo.png"
                   width={600}
                   height={900}
                   alt="Black regular fit 180 GSM cotton tee"
@@ -221,7 +252,7 @@ export default function Home() {
               </div>
               <div className="absolute bottom-[3%] left-[28%] w-[48%] -rotate-2 overflow-hidden shadow-xl transition-transform duration-700 hover:rotate-0">
                 <Image
-                  src="/products/RegularFit180GSM/Starkvibe Maroon T-Shirt Showcase.png"
+                  src="/products/regular-fit-180-gsm/starkvibe-maroon-t-shirt-showcase.png"
                   width={600}
                   height={900}
                   alt="Maroon regular fit 180 GSM cotton tee"
@@ -313,6 +344,35 @@ export default function Home() {
             </div>
           </section>
         </Storefront>
+        <section className="border-y border-ink/20 bg-[#eeece5] py-20 lg:py-28" aria-labelledby="who-starkvibe-is-for">
+          <div className={`${container} grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-24`}>
+            <Reveal>
+              <p className={`${eyebrow} text-olive`}>A clearer way to choose</p>
+              <h2 id="who-starkvibe-is-for" className="font-display text-[clamp(50px,6vw,88px)] leading-[.88] font-black uppercase">Built for the people who wear it.</h2>
+            </Reveal>
+            <div className="space-y-9 text-[16px] leading-[1.7] text-[#3f3e3a]">
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">For groups, teams and thoughtful gifts</h3>
+                <p>StarkVibe is for college groups, offices, families, event crews and people looking for a personal gift. Start with an everyday T-shirt, a polished polo, a kids tee or a warmer fleece layer, then choose the colour and fit that make sense for the people wearing it. The range is designed to work for a single favourite piece as well as coordinated clothing for a shared occasion.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">Why cotton, and which GSM?</h3>
+                <p>Every piece is made from 100% cotton, with options from 180 to 350 GSM. Choose 180 GSM for a light, breathable everyday tee or kids tee. Move to 220–240 GSM when you want more body, a structured feel or an oversized and French Terry look. At 350 GSM, cotton fleece gives sweatshirts and hoodies a warmer, more substantial layer. Our <Link href="/shop/t-shirts" className="font-bold underline underline-offset-4 hover:text-olive">T-shirts</Link> and <Link href="/shop/hoodies" className="font-bold underline underline-offset-4 hover:text-olive">hoodies</Link> pages make those choices easier to compare.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">From enquiry to finished order</h3>
+                <p>For custom printed t-shirts and bulk t-shirt orders, the process starts with an enquiry. Share the occasion, garment preference, colours, sizes, quantity and artwork—or describe the idea if the design is not ready. The next steps are artwork review, a quote, and production after the final details are approved. Visit <Link href="/custom-printing" className="font-bold underline underline-offset-4 hover:text-olive">custom printing</Link> to begin, or check the <Link href="/size-guide" className="font-bold underline underline-offset-4 hover:text-olive">size guide</Link> before sending your size list.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">A practical place to start</h3>
+                <p>Choose the occasion first, then the garment weight and fit. A regular fit is a straightforward daily base, while an oversized tee gives a relaxed streetwear shape. Polos bring a sharper everyday look, kids tees keep group dressing simple, and fleece adds warmth for cooler days. If the order includes different ages or preferences, make a clear size and colour list before sharing the enquiry. That gives the artwork and product choices a useful starting point without making the brief complicated.</p>
+              </div>
+              <div className="border-t border-ink/20 pt-6">
+                <p>Want a little more context? Read our guides on <Link href="/blog/how-to-choose-the-right-gsm-t-shirt" className="font-bold underline underline-offset-4 hover:text-olive">choosing the right GSM</Link> and the <Link href="/blog/custom-t-shirt-printing-order-checklist" className="font-bold underline underline-offset-4 hover:text-olive">custom printing order checklist</Link>.</p>
+              </div>
+            </div>
+          </div>
+        </section>
         <section id="fabric" className="mt-20 bg-ink text-paper lg:mt-36">
           <div
             className={`${container} grid gap-12 py-20 lg:grid-cols-[1fr_1.1fr] lg:gap-24 lg:py-32`}
@@ -320,7 +380,7 @@ export default function Home() {
             <Reveal className="relative flex min-h-[450px] flex-col justify-between overflow-hidden bg-[#e2dfd6] p-8 text-ink lg:min-h-[680px]">
               <Image
                 src="/branding/cotton-process-bg.png"
-                alt="StarkVibe 100% cotton fibres and woven cotton fabric texture"
+                alt=""
                 fill
                 sizes="(min-width: 1024px) 45vw, 100vw"
                 className="object-cover opacity-65"
@@ -393,8 +453,7 @@ export default function Home() {
                   0.114 * parseInt(h.slice(4, 6), 16)) /
                 255;
               return (
-                <a
-                  href="#range"
+                <span
                   key={c.hex}
                   style={{
                     backgroundColor: c.hex,
@@ -408,7 +467,7 @@ export default function Home() {
                   <span className="mt-1 text-[11px] tracking-[.08em]">
                     {c.hex.toUpperCase()}
                   </span>
-                </a>
+                </span>
               );
             })}
           </div>

@@ -1,7 +1,9 @@
 import { Storefront } from "@/components/storefront";
 import { SiteFooter } from "@/components/site-footer";
 import { ShopCatalogue } from "@/components/shop-catalogue";
-import { buildMetadata, categoryMetaDescription, categoryMetaKeywords, categoryMetaTitle } from "@/lib/seo";
+import { buildMetadata, categoryMetaDescription, categoryMetaTitle } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   ...buildMetadata({
@@ -9,11 +11,15 @@ export const metadata = {
   description: categoryMetaDescription("cotton clothing"),
   path: "/shop",
   }),
-  keywords: categoryMetaKeywords("cotton clothing collection"),
 };
 export default function ShopPage() {
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Shop", path: "/shop" },
+  ]);
   return (
     <>
+      <JsonLd data={breadcrumbSchema} />
       <a
         href="#shop-products"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-gold focus:p-4"

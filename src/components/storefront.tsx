@@ -6,7 +6,6 @@ import { addBagItem, useBag, type BagItem } from "@/lib/bag";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowUpRight,
-  ChevronRight,
   House,
   Menu,
   Palette,
@@ -18,6 +17,7 @@ import {
 } from "lucide-react";
 import { filters, getProductBySlug, mrpPrice, productImage, products, productSlug, salePrice } from "@/lib/catalogue";
 import { Reveal } from "./reveal";
+import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
 
 export function Storefront({
   children,
@@ -65,7 +65,7 @@ export function Storefront({
   );
   const links = [
     ["Shop", "/shop"],
-    ["My account", "/my-account"],
+    ["Account", "/my-account"],
     ["Birthday printing", "/custom-printing/birthday"],
     ["Office & bulk", "/custom-printing/office-bulk"],
     ["Anniversary wear", "/custom-printing/anniversary"],
@@ -77,19 +77,40 @@ export function Storefront({
   const showSharedBreadcrumb =
     pathname !== "/" &&
     !ownBreadcrumbPages.includes(pathname) &&
-    !pathname.startsWith("/blog/");
+    !pathname.startsWith("/blog/") &&
+    !pathname.startsWith("/locations/");
   const breadcrumbOnDark = pathname.startsWith("/custom-printing");
-  const breadcrumbLabel = pathname.startsWith("/products/")
-    ? getProductBySlug(pathname.split("/")[2])?.name || "Product"
-    : pathname === "/cart"
-      ? "Your bag"
-      : pathname === "/my-account"
-        ? "My account"
-        : pathname === "/shop"
-          ? "Shop"
-          : pathname.startsWith("/shop/")
-            ? pathname.split("/")[2].replace(/-/g, " ")
-            : pathname.slice(1).replace(/-/g, " ");
+  const titleCase = (value: string) =>
+    value
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ")
+      .replace("T Shirts", "T-shirts");
+  const pathParts = pathname.split("/").filter(Boolean);
+  const breadcrumbItems: BreadcrumbItem[] = [{ name: "Home", path: "/" }];
+  if (pathname.startsWith("/products/")) {
+    const product = getProductBySlug(pathParts[1]);
+    breadcrumbItems.push({ name: "Shop", path: "/shop" });
+    breadcrumbItems.push({
+      name: product?.name || "Product",
+      path: pathname.split("?")[0],
+    });
+  } else if (pathParts[0] === "locations") {
+    breadcrumbItems.push({ name: "Locations", path: "/locations" });
+    if (pathParts[1]) breadcrumbItems.push({ name: titleCase(pathParts[1]), path: pathname });
+  } else if (pathParts[0] === "custom-printing") {
+    breadcrumbItems.push({ name: "Custom Printing", path: "/custom-printing" });
+    if (pathParts[1]) breadcrumbItems.push({ name: titleCase(pathParts[1]), path: pathname });
+  } else if (pathParts[0] === "shop") {
+    breadcrumbItems.push({ name: "Shop", path: "/shop" });
+    if (pathParts[1]) breadcrumbItems.push({ name: titleCase(pathParts[1]), path: pathname });
+  } else if (pathname === "/cart") {
+    breadcrumbItems.push({ name: "Your bag", path: "/cart" });
+  } else if (pathname === "/my-account") {
+    breadcrumbItems.push({ name: "Account", path: "/my-account" });
+  } else if (pathParts[0]) {
+    breadcrumbItems.push({ name: titleCase(pathParts[pathParts.length - 1]), path: pathname });
+  }
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-[100] isolate mx-auto flex h-[60px] w-full flex-nowrap items-center gap-2 border-b border-ink/15 bg-paper/95 px-5 py-2 shadow-[0_6px_18px_rgba(13,13,12,.08)] backdrop-blur-md lg:h-[76px] lg:gap-3 lg:px-12">
@@ -273,31 +294,7 @@ export function Storefront({
       </header>
       {/* <div aria-hidden="true" className="h-[60px] lg:h-[76px]" /> */}
       {showSharedBreadcrumb && (
-        <div className={breadcrumbOnDark ? "w-full bg-ink" : ""}>
-          <div className="mx-auto max-w-[1400px] px-5 pt-[80px] lg:px-12 lg:pt-[92px]">
-            <nav
-              aria-label="Breadcrumb"
-              className={`inline-flex items-center gap-2 border px-3.5 py-2.5 text-[11px] font-semibold tracking-[.12em] uppercase ${breadcrumbOnDark ? "border-paper/15 bg-paper/5 text-paper shadow-none" : "border-ink/10 bg-[#eeece5]/65 text-[#6b6961] shadow-[0_6px_18px_rgba(13,13,12,.04)]"}`}
-            >
-              <Link
-                href="/"
-                className={`flex items-center gap-2 transition-colors ${breadcrumbOnDark ? "hover:text-gold" : "hover:text-olive"}`}
-              >
-                <House size={14} strokeWidth={1.8} />
-                <span>Home</span>
-              </Link>
-              <ChevronRight
-                size={14}
-                strokeWidth={1.6}
-                className={breadcrumbOnDark ? "text-paper/45" : "text-ink/35"}
-              />
-              <span className={`flex items-center gap-2 ${breadcrumbOnDark ? "text-paper" : "text-ink"}`}>
-                <span className="size-1.5 rounded-full bg-olive" />
-                <span className="capitalize">{breadcrumbLabel}</span>
-              </span>
-            </nav>
-          </div>
-        </div>
+        <Breadcrumbs items={breadcrumbItems} dark={breadcrumbOnDark} emitJsonLd={false} />
       )}
       {children}
       {!hideRange && (

@@ -1,7 +1,9 @@
 import { ShopCatalogue } from "@/components/shop-catalogue";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
-import { buildMetadata, categoryMetaDescription, categoryMetaKeywords, categoryMetaTitle } from "@/lib/seo";
+import { buildMetadata, categoryMetaDescription, categoryMetaTitle } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   ...buildMetadata({
@@ -9,12 +11,17 @@ export const metadata = {
   description: categoryMetaDescription("cotton fabric clothing"),
   path: "/shop/fabric",
   }),
-  keywords: categoryMetaKeywords("cotton fabric clothing"),
 };
 
 export default function ShopByFabricPage() {
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Shop", path: "/shop" },
+    { name: "Fabric", path: "/shop/fabric" },
+  ]);
   return (
     <>
+      <JsonLd data={breadcrumbSchema} />
       <Storefront hideRange>
         <main><ShopCatalogue
           introTitle="Find the fabric feel that suits the day"

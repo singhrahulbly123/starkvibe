@@ -1,7 +1,9 @@
 import { ShopCatalogue } from "@/components/shop-catalogue";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
-import { buildMetadata, categoryMetaDescription, categoryMetaKeywords, categoryMetaTitle } from "@/lib/seo";
+import { buildMetadata, categoryMetaDescription, categoryMetaTitle } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = {
   ...buildMetadata({
@@ -9,12 +11,17 @@ export const metadata = {
   description: categoryMetaDescription("cotton clothing by colour"),
   path: "/shop/colours",
   }),
-  keywords: categoryMetaKeywords("cotton clothing by colour"),
 };
 
 export default function ShopByColourPage() {
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Shop", path: "/shop" },
+    { name: "Colours", path: "/shop/colours" },
+  ]);
   return (
     <>
+      <JsonLd data={breadcrumbSchema} />
       <Storefront hideRange>
         <main><ShopCatalogue
           introTitle="Choose a colour that earns repeat wear"

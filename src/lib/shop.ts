@@ -11,14 +11,15 @@ export const shopCategories = [
 export const shopColours = [
   { name: "Black", hex: "#000000", files: ["black"] },
   { name: "White", hex: "#ffffff", files: ["white", "off-white"] },
-  { name: "Navy", hex: "#020629", files: ["navy", "navy-blue"] },
-  { name: "Maroon", hex: "#8f292b", files: ["maroon"] },
+  { name: "Midnight Navy", hex: "#020629", files: ["navy"] },
+  { name: "Navy Blue", hex: "#000b27", files: ["navy-blue"] },
+  { name: "Wine Maroon", hex: "#8f292b", files: ["maroon"] },
   {
     name: "Green",
     hex: "#336000",
     files: ["avocado-green", "olive-green", "sea-green"],
   },
-  { name: "Beige", hex: "#e6c173", files: ["beige"] },
+  { name: "Sand Beige", hex: "#e6c173", files: ["beige"] },
   { name: "Brown", hex: "#541501", files: ["brown", "coffee-brown"] },
   { name: "Grey", hex: "#303030", files: ["smokey-grey"] },
   { name: "Pink", hex: "#bf4b76", files: ["pink"] },

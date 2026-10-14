@@ -4,7 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata = buildMetadata({
   title: "Political Campaign T-Shirts & Bulk Merchandise — StarkVibe",
   description:
-    "Custom printed t-shirts, polos and hoodies for campaign teams, volunteers, public events and community programmes.",
+    "Plan custom printed T-shirts, polos and hoodies for campaign teams, volunteers, public events and community programmes with StarkVibe. Share your brief.",
   path: "/custom-printing/political-campaigns",
 });
 

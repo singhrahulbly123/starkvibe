@@ -2,8 +2,10 @@ export type BlogPost = {
   slug: string;
   title: string;
   description: string;
+  image?: string;
   category: string;
   published: string;
+  updated: string;
   readTime: string;
   intro: string;
   sections: { heading: string; paragraphs: string[]; bullets?: string[] }[];
@@ -17,6 +19,7 @@ export const blogPosts: BlogPost[] = [
     description: "A simple guide to GSM, fabric weight, comfort and choosing the right cotton T-shirt for everyday wear or custom printing.",
     category: "Fabric guide",
     published: "2026-10-01",
+    updated: "2026-10-01",
     readTime: "5 min read",
     intro: "GSM means grams per square metre, a practical way to understand how light or substantial a garment fabric feels. It is not a quality score on its own: the right GSM depends on the season, fit, activity and the kind of print you want.",
     sections: [
@@ -33,6 +36,7 @@ export const blogPosts: BlogPost[] = [
     description: "Planning custom printed T-shirts, polos or hoodies? Use this checklist for artwork, sizes, colours, quantity and delivery details.",
     category: "Custom printing",
     published: "2026-10-03",
+    updated: "2026-10-03",
     readTime: "6 min read",
     intro: "A custom apparel order becomes much easier when the important decisions are collected before the quote. Whether you need one personalised gift or a team order, these details help prevent last-minute changes and make the final result more predictable.",
     sections: [
@@ -50,6 +54,7 @@ export const blogPosts: BlogPost[] = [
     description: "Simple washing, drying and storage tips to help cotton T-shirts, polos, sweatshirts and hoodies keep their shape and finish.",
     category: "Care guide",
     published: "2026-10-05",
+    updated: "2026-10-05",
     readTime: "4 min read",
     intro: "Good care helps cotton garments stay comfortable and keeps custom prints looking cleaner for longer. Always check the garment label first, then use these simple habits for everyday maintenance.",
     sections: [
@@ -67,6 +72,7 @@ export const blogPosts: BlogPost[] = [
     description: "Learn how to compare cotton T-shirts by fabric, GSM, fit, finish and colour so you can choose a comfortable premium everyday tee.",
     category: "Buying guide",
     published: "2026-10-08",
+    updated: "2026-10-08",
     readTime: "5 min read",
     intro: "A premium cotton T-shirt should feel good when you first put it on and continue to work after repeated wear. Instead of judging a tee only by its appearance, check the fabric weight, construction, fit, finish and care instructions together. This guide explains the details that make a cotton T-shirt comfortable, versatile and worth adding to your regular rotation.",
     sections: [
@@ -84,6 +90,7 @@ export const blogPosts: BlogPost[] = [
     description: "Simple styling ideas for cotton T-shirts, polos, sweatshirts and hoodies, from clean everyday outfits to relaxed layered looks.",
     category: "Style guide",
     published: "2026-10-10",
+    updated: "2026-10-10",
     readTime: "5 min read",
     intro: "Cotton clothing is easy to style because it can move between everyday comfort, smart-casual dressing and relaxed streetwear. The best outfits usually come from balancing the fit, colour and weight of each layer. Use these styling tips to get more combinations from your cotton T-shirts, polos, sweatshirts and hoodies without overcomplicating your wardrobe.",
     sections: [

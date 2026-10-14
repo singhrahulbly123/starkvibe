@@ -1,12 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = {
+  ...buildMetadata({
   title: "Page Not Found — StarkVibe",
-  description: "The StarkVibe page you requested could not be found. Explore the collection or start a custom printing enquiry.",
+  description: "The StarkVibe page you requested could not be found. Explore the collection or start a custom printing enquiry, then return to the shop for cotton clothing.",
+  path: "/404",
+  }),
   robots: { index: true, follow: true },
 };
 

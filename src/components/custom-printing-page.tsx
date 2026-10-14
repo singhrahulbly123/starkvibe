@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
 import { CustomDesignForm } from "./custom-design-form";
+import { JsonLd } from "./json-ld";
 import { Reveal } from "./reveal";
 import { SiteFooter } from "./site-footer";
 import { Storefront } from "./storefront";
+import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/structured-data";
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 
@@ -39,7 +41,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ),
     description:
       "Custom printed t-shirts, hoodies and polos for the moments people remember. Share your idea, choose your pieces and let us help bring the design to life.",
-    image: "/products/t-adda/180-gsm-regular-tee-black.webp",
+    image: "/products/starkvibe-custom-apparel/180-gsm-regular-tee-black.webp",
     imageAlt: "Black custom-printing t-shirt",
     introTitle: "Print the moment, not just the garment.",
     intro:
@@ -68,7 +70,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ),
     description:
       "Matching birthday t-shirts and hoodies for the people who make the day special. One idea, many sizes, a memory everyone can wear.",
-    image: "/products/t-adda/180-gsm-kids-regular-tee-sea-green.webp",
+    image: "/products/starkvibe-custom-apparel/180-gsm-kids-regular-tee-sea-green.webp",
     imageAlt: "Custom birthday t-shirt for a group celebration",
     introTitle: "From first birthdays to big ones.",
     intro:
@@ -80,9 +82,9 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
       "Small or larger orders with a clear size and colour breakdown",
     ],
     productLinks: [
-      { title: "Kids cotton tees", text: "Soft bases for little guests.", href: "/products/kids" },
-      { title: "Regular fit tees", text: "An easy group uniform.", href: "/products/regular" },
-      { title: "Oversized tees", text: "Relaxed party energy.", href: "/products/oversized" },
+      { title: "Kids cotton tees", text: "Soft bases for little guests.", href: "/products/kids-regular-180-gsm-tee" },
+      { title: "Regular fit tees", text: "An easy group uniform.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Oversized tees", text: "Relaxed party energy.", href: "/products/oversized-220-gsm-tee" },
       { title: "Request a birthday quote", text: "Tell us the plan.", href: "/custom-printing#enquiry" },
     ],
   },
@@ -96,7 +98,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ),
     description:
       "Professional custom t-shirts, polos, sweatshirts and hoodies for employees, events, campaigns and bulk team orders.",
-    image: "/products/t-adda/350-gsm-hoodie-black.webp",
+    image: "/products/starkvibe-custom-apparel/350-gsm-hoodie-black.webp",
     imageAlt: "Custom office and bulk order hoodie",
     introTitle: "A better uniform for the people behind the work.",
     intro:
@@ -108,9 +110,9 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
       "Artwork and production details confirmed before the order begins",
     ],
     productLinks: [
-      { title: "Cotton polos", text: "Smart, breathable teamwear.", href: "/products/polo" },
-      { title: "Fleece hoodies", text: "Warm layers for your crew.", href: "/products/hoodie" },
-      { title: "Fleece sweatshirts", text: "A clean event essential.", href: "/products/sweatshirt" },
+      { title: "Cotton polos", text: "Smart, breathable teamwear.", href: "/products/polo-220-gsm-matty-tee" },
+      { title: "Fleece hoodies", text: "Warm layers for your crew.", href: "/products/350-gsm-fleece-hoodie" },
+      { title: "Fleece sweatshirts", text: "A clean event essential.", href: "/products/350-gsm-fleece-sweatshirt" },
       { title: "Start a bulk enquiry", text: "Share your quantity.", href: "/custom-printing#enquiry" },
     ],
   },
@@ -125,7 +127,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ),
     description:
       "Personalised anniversary t-shirts, hoodies and keepsakes for couples, families and the milestones worth celebrating together.",
-    image: "/products/t-adda/350-gsm-sweatshirt-maroon.webp",
+    image: "/products/starkvibe-custom-apparel/350-gsm-sweatshirt-maroon.webp",
     imageAlt: "Custom anniversary sweatshirt",
     introTitle: "Make the date wearable.",
     intro:
@@ -137,9 +139,9 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
       "Gift-ready custom pieces designed around your story",
     ],
     productLinks: [
-      { title: "Premium sweatshirts", text: "A warmer anniversary gift.", href: "/products/sweatshirt" },
-      { title: "Regular fit tees", text: "Simple, personal and wearable.", href: "/products/regular" },
-      { title: "Oversized hoodies", text: "Comfort with character.", href: "/products/hoodie" },
+      { title: "Premium sweatshirts", text: "A warmer anniversary gift.", href: "/products/350-gsm-fleece-sweatshirt" },
+      { title: "Regular fit tees", text: "Simple, personal and wearable.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Oversized hoodies", text: "Comfort with character.", href: "/products/350-gsm-fleece-hoodie" },
       { title: "Plan an anniversary print", text: "Send the story.", href: "/custom-printing#enquiry" },
     ],
   },
@@ -154,7 +156,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ),
     description:
       "Custom printed clothing for thoughtful gifts: a design they will recognise, in a garment they will actually wear.",
-    image: "/products/t-adda/220-gsm-polo-white.webp",
+    image: "/products/starkvibe-custom-apparel/220-gsm-polo-white.webp",
     imageAlt: "Personalised custom printed polo gift",
     introTitle: "A good gift has a point of view.",
     intro:
@@ -166,9 +168,9 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
       "Single gifts or coordinated sets for a group of recipients",
     ],
     productLinks: [
-      { title: "Premium polos", text: "A polished gift choice.", href: "/products/polo" },
-      { title: "Everyday cotton tees", text: "Easy to personalise.", href: "/products/regular" },
-      { title: "Warm fleece layers", text: "Comfort they can keep.", href: "/products/sweatshirt" },
+      { title: "Premium polos", text: "A polished gift choice.", href: "/products/polo-220-gsm-matty-tee" },
+      { title: "Everyday cotton tees", text: "Easy to personalise.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Warm fleece layers", text: "Comfort they can keep.", href: "/products/350-gsm-fleece-sweatshirt" },
       { title: "Create a gift enquiry", text: "Tell us who it is for.", href: "/custom-printing#enquiry" },
     ],
   },
@@ -183,7 +185,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ),
     description:
       "Custom printed t-shirts, polos and hoodies for campaign teams, volunteers, public events and organised community programmes.",
-    image: "/products/t-adda/180-gsm-regular-tee-navy.webp",
+    image: "/products/starkvibe-custom-apparel/180-gsm-regular-tee-navy.webp",
     imageAlt: "Custom campaign merchandise t-shirt",
     introTitle: "One team. One clear identity.",
     intro:
@@ -195,9 +197,9 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
       "Artwork review before production so names, symbols and details are clear",
     ],
     productLinks: [
-      { title: "Regular fit tees", text: "A reliable campaign base.", href: "/products/regular" },
-      { title: "Cotton polos", text: "A polished organiser layer.", href: "/products/polo" },
-      { title: "Fleece hoodies", text: "For long event days.", href: "/products/hoodie" },
+      { title: "Regular fit tees", text: "A reliable campaign base.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Cotton polos", text: "A polished organiser layer.", href: "/products/polo-220-gsm-matty-tee" },
+      { title: "Fleece hoodies", text: "For long event days.", href: "/products/350-gsm-fleece-hoodie" },
       { title: "Start a campaign enquiry", text: "Share your approved artwork.", href: "/custom-printing#enquiry" },
     ],
   },
@@ -205,26 +207,24 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
 
 export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
   const content = pages[page];
+  const pagePath = page === "overview" ? "/custom-printing" : `/custom-printing/${page}`;
   const faq = [
     ["Can I order a single custom printed garment?", "Yes. Single personalised pieces and larger group or bulk orders can be discussed. Share the garment, colour, size and artwork so the team can confirm the quote."],
     ["Which garments can be custom printed?", "StarkVibe offers cotton t-shirts, polos, kids tees, sweatshirts and hoodies. The best option depends on your artwork, occasion, colour and quantity."],
     ["What details are needed for a custom printing quote?", "Send your artwork or idea, garment preference, colour, size breakdown, quantity and required delivery date. The team will confirm production and delivery details before approval."],
   ];
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faq.map(([question, answer]) => ({
-      "@type": "Question",
-      name: question,
-      acceptedAnswer: { "@type": "Answer", text: answer },
-    })),
-  };
+  const faqSchema = faqPageJsonLd(
+    faq.map(([question, answer]) => ({ question, answer })),
+  );
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Custom printing", path: "/custom-printing" },
+    ...(page === "overview" ? [] : [{ name: content.label, path: pagePath }]),
+  ]);
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <Storefront hideRange>
         <main>
           <section className="bg-ink text-paper">
@@ -311,6 +311,12 @@ export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
                 <p><strong>03. Confirm the plan.</strong><br />We review the design and confirm the quote, production timeline and delivery details.</p>
               </div>
             </Reveal>
+          </section>
+          <section className="border-t border-ink/20 bg-gold py-14 lg:py-20" aria-labelledby="pricing-minimums-heading">
+            <div className={`${container} grid gap-8 lg:grid-cols-[.7fr_1.3fr]`}>
+              <h2 id="pricing-minimums-heading" className="font-display text-[clamp(48px,6vw,82px)] leading-[.88] font-black uppercase">Pricing and minimums.</h2>
+              <p className="max-w-[720px] text-lg leading-8 text-ink">TODO: Add the confirmed MOQ, custom-order turnaround and advance-payment requirement.</p>
+            </div>
           </section>
           <section className="border-t border-ink/20 bg-[#eeece5] py-16 lg:py-24">
             <div className={`${container} grid gap-10 lg:grid-cols-[.7fr_1.3fr]`}>

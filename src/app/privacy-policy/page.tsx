@@ -1,7 +1,7 @@
 import { LegalPage } from "@/components/legal-page";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata = buildMetadata({ title: "Privacy Policy — StarkVibe", description: "How StarkVibe collects, uses and protects customer information.", path: "/privacy-policy" });
+export const metadata = buildMetadata({ title: "Privacy Policy — StarkVibe", description: "Read how StarkVibe collects, uses and protects customer information for orders, enquiries, custom artwork, support and privacy requests. Understand your choices", path: "/privacy-policy" });
 
 export default function PrivacyPolicyPage() {
   return <LegalPage title="Privacy policy." intro="We keep customer information limited to what is needed to process orders, answer enquiries and improve your experience with StarkVibe." sections={[

@@ -5,7 +5,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata = buildMetadata({
   title: "Editorial Policy | StarkVibe Journal",
-  description: "How StarkVibe creates, reviews and updates educational content about cotton wear and custom printing.",
+  description: "Learn how StarkVibe creates, reviews and updates educational content about cotton wear, GSM, custom printing and practical garment care. Read our policy.",
   path: "/editorial-policy",
 });
 

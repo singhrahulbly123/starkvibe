@@ -11,6 +11,9 @@ import { ProductGallery } from "./product-gallery";
 import { ProductReviews } from "./product-reviews";
 import { Reveal } from "./reveal";
 import { ShopProductCard } from "./shop-product-card";
+import { Breadcrumbs } from "./breadcrumbs";
+import { JsonLd } from "./json-ld";
+import { faqPageJsonLd } from "@/lib/structured-data";
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const sectionHeading =
@@ -241,72 +244,30 @@ export function ProductDetails({
       },
     },
   };
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: accordion.map(([question, answer]) => ({
-      "@type": "Question",
-      name: question,
-      acceptedAnswer: { "@type": "Answer", text: answer },
-    })),
-  };
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://starkvibe.com/" },
-      { "@type": "ListItem", position: 2, name: "Shop", item: "https://starkvibe.com/shop" },
-      { "@type": "ListItem", position: 3, name: product.name, item: `https://starkvibe.com/products/${productSlug(product)}` },
-    ],
-  };
+  const faqSchema = faqPageJsonLd(
+    accordion.map(([question, answer]) => ({ question, answer })),
+  );
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      <JsonLd data={productSchema} />
+      <JsonLd data={faqSchema} />
+      <Breadcrumbs
+        compact
+        className="pt-1 pb-6"
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Shop", path: "/shop" },
+          { name: product.name, path: `/products/${productSlug(product)}` },
+        ]}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <nav
-        aria-label="Breadcrumb"
-        className={`${container} flex flex-wrap justify-between gap-x-6 gap-y-2 pt-1 pb-6 text-sm text-[#55544f]`}
-      >
-        <ol className="flex flex-wrap items-center gap-2.5">
-          <li>
-            <Link href="/" className="inline-block py-2.5">
-              Home
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li>
-            <Link href="/shop" className="inline-block py-2.5">
-              {product.category === "fleece"
-                ? "Fleece"
-                : product.category === "polo"
-                  ? "Polos"
-                  : product.category === "kids"
-                    ? "Kids"
-                    : "T-shirts"}
-            </Link>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page" className="font-bold text-ink">
-            {product.name}
-          </li>
-        </ol>
+      <div className={`${container} flex justify-end pb-6`}>
         <Link
           href="/shop"
           className="border-b border-ink py-2.5 font-bold text-ink"
         >
           ← Back to the range
         </Link>
-      </nav>
+      </div>
       <section
         id="product"
         className={`${container} grid items-start gap-10 lg:grid-cols-[minmax(0,1.45fr)_minmax(360px,1fr)] lg:gap-12 xl:gap-[72px]`}

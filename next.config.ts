@@ -10,18 +10,68 @@ const productRedirects = [
   ["hoodie", "350-gsm-fleece-hoodie"],
 ] as const;
 
+const locationRedirects = [
+  ["delhi", "/locations/delhi-ncr"],
+  ["ghaziabad", "/locations/delhi-ncr"],
+  ["amaravati", "/locations"],
+  ["itanagar", "/locations"],
+  ["dispur", "/locations"],
+  ["patna", "/locations"],
+  ["raipur", "/locations"],
+  ["panaji", "/locations"],
+  ["gandhinagar", "/locations"],
+  ["chandigarh", "/locations"],
+  ["shimla", "/locations"],
+  ["ranchi", "/locations"],
+  ["thiruvananthapuram", "/locations"],
+  ["bhopal", "/locations"],
+  ["imphal", "/locations"],
+  ["shillong", "/locations"],
+  ["aizawl", "/locations"],
+  ["kohima", "/locations"],
+  ["bhubaneswar", "/locations"],
+  ["gangtok", "/locations"],
+  ["chennai", "/locations"],
+  ["agartala", "/locations"],
+  ["kolkata", "/locations"],
+  ["indore", "/locations"],
+  ["gurgaon", "/locations"],
+  ["rudrapur", "/locations"],
+  ["varanasi", "/locations"],
+] as const;
+
+const shopCategoryRedirects = [
+  ["tees", "/shop/t-shirts"],
+  ["polo", "/shop/polos"],
+  ["kids", "/shop/kids"],
+] as const;
+
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [75],
   },
   async redirects() {
-    return productRedirects.map(([oldSlug, newSlug]) => ({
-      source: `/products/${oldSlug}`,
-      destination: `/products/${newSlug}`,
-      statusCode: 301,
-    }));
+    return [
+      ...productRedirects.map(([oldSlug, newSlug]) => ({
+        source: `/products/${oldSlug}`,
+        destination: `/products/${newSlug}`,
+        statusCode: 301,
+      })),
+      ...locationRedirects.map(([slug, destination]) => ({
+        source: `/locations/${slug}`,
+        destination,
+        statusCode: 301,
+      })),
+      ...shopCategoryRedirects.map(([category, destination]) => ({
+        source: "/shop",
+        has: [{ type: "query" as const, key: "category", value: category }],
+        destination,
+        statusCode: 301,
+      })),
+    ];
   },
   async headers() {
     return [

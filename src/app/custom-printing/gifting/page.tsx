@@ -4,7 +4,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata = buildMetadata({
   title: "Personalised Custom Printed Gifts — StarkVibe",
   description:
-    "Give personalised cotton t-shirts, polos, sweatshirts and hoodies made for birthdays, family, friends and special occasions.",
+    "Choose personalised cotton T-shirts, polos, sweatshirts and hoodies as custom printed gifts for birthdays, family, friends and special occasions. Shop ideas.",
   path: "/custom-printing/gifting",
 });
 

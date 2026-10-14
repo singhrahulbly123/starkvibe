@@ -1,4 +1,8 @@
-export type LocationPage = {
+import { locationDetails, type LocationDetails } from "@/data/locations";
+
+export type LocationPage = LocationDetails;
+
+type LegacyLocationPage = {
   slug: string;
   city: string;
   state: string;
@@ -7,7 +11,7 @@ export type LocationPage = {
   occasions: string;
 };
 
-export const locations: LocationPage[] = [
+const legacyLocations: LegacyLocationPage[] = [
   { slug: "amaravati", city: "Amaravati", state: "Andhra Pradesh", intro: "Order premium cotton tees, polos and fleece layers online for teams, celebrations and everyday wear across Amaravati.", usp: "For Amaravati customers, StarkVibe keeps the process simple for growing teams and event groups: choose the fabric weight, share the artwork and confirm the size mix online.", occasions: "college groups, office teams and family celebrations" },
   { slug: "itanagar", city: "Itanagar", state: "Arunachal Pradesh", intro: "Find comfortable cotton clothing and custom printed apparel online for Itanagar teams, events and personal gifting.", usp: "Itanagar orders can be planned around practical layering: lighter cotton tees for active days and 350 GSM fleece for cooler travel or outdoor gatherings.", occasions: "outdoor groups, local events and personalised gifts" },
   { slug: "dispur", city: "Dispur", state: "Assam", intro: "Shop StarkVibe cotton tees, polos, sweatshirts and hoodies online for Dispur and wider Assam delivery requirements.", usp: "Dispur customers can build breathable everyday uniforms for a warm, humid climate, then add fleece layers when teams need a more substantial option.", occasions: "office uniforms, student groups and event merchandise" },
@@ -42,6 +46,8 @@ export const locations: LocationPage[] = [
   { slug: "bareilly", city: "Bareilly", state: "Uttar Pradesh", intro: "Create custom cotton apparel online for Bareilly birthdays, offices, college groups and local events.", usp: "Bareilly customers can plan mixed-size group orders remotely, with fabric weight and colour choices suited to everyday wear or seasonal gifting.", occasions: "birthday groups, college teams and office orders" },
   { slug: "moradabad", city: "Moradabad", state: "Uttar Pradesh", intro: "Find premium cotton tees, polos and fleece layers online for Moradabad teams, events and gifting.", usp: "Moradabad buyers can use durable double-stitched garments for coordinated groups and choose breathable cotton or heavier fleece for the season.", occasions: "business groups, family events and custom merchandise" },
 ];
+
+export const locations: LocationPage[] = locationDetails;
 
 export function getLocation(slug: string) {
   return locations.find((location) => location.slug === slug);

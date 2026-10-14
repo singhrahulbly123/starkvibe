@@ -1,7 +1,7 @@
 import { LegalPage } from "@/components/legal-page";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata = buildMetadata({ title: "Terms and Conditions — StarkVibe", description: "Terms for using the StarkVibe website and ordering products or custom printing.", path: "/terms-and-conditions" });
+export const metadata = buildMetadata({ title: "Terms and Conditions — StarkVibe", description: "Review the StarkVibe terms for products, pricing, custom artwork, orders, payment, website use and contact before placing an order. Read the full terms.", path: "/terms-and-conditions" });
 
 export default function TermsPage() {
   return <LegalPage title="Terms & conditions." intro="By using this website or placing an order, you agree to these terms. Product, delivery and custom printing details are confirmed before an order is accepted." sections={[

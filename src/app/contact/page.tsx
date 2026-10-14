@@ -3,11 +3,12 @@ import { QuoteForm } from "@/components/quote-form";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
 
 export const metadata = buildMetadata({
   title: "Contact StarkVibe | Custom Printing & Bulk Orders",
   description:
-    "Contact StarkVibe for custom printed T-shirts, polos, hoodies, teamwear, birthday orders and bulk apparel quotes.",
+    "Contact StarkVibe for custom printed T-shirts, polos, hoodies, teamwear, birthday orders and bulk apparel quotes. Share your requirements with our team.",
   path: "/contact",
 });
 
@@ -52,8 +53,8 @@ export default function ContactPage() {
     <>
       <Storefront hideRange>{null}</Storefront>
       <main className="bg-paper text-ink">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <JsonLd data={jsonLd} />
+        <JsonLd data={faqJsonLd} />
         <section className="mx-auto max-w-[1400px] px-5 pt-16 pb-20 lg:px-12 lg:pt-24 lg:pb-32">
           <nav aria-label="Breadcrumb" className="mb-14 text-sm text-[#5d5b55]"><Link href="/" className="hover:text-olive">Home</Link><span className="mx-3">/</span><span>Contact</span></nav>
           <div className="mb-14 max-w-[850px]"><p className="mb-5 text-xs font-bold tracking-[.22em] text-olive uppercase">We are here to help</p><h1 className="font-display text-[clamp(58px,9vw,132px)] leading-[.84] font-black uppercase">Let&apos;s make it<br /><span className="text-olive">wearable.</span></h1><p className="mt-7 max-w-[650px] text-lg leading-8 text-[#494842]">Tell us what you need, from one custom T-shirt to a complete office, birthday or campaign order. Share the details and we&apos;ll help you choose the right product, size and print approach.</p></div>

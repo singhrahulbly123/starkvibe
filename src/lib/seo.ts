@@ -35,7 +35,7 @@ export function buildMetadata({
       title,
       description,
       url,
-      images: [{ url: imageUrl, alt: title }],
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       title,
@@ -46,25 +46,12 @@ export function buildMetadata({
 }
 
 export function productMetaTitle(product: Product) {
-  return `${product.name} | Premium Cotton T-Shirt & Clothing | StarkVibe`;
+  return `${product.name} | Cotton Wear | StarkVibe`;
 }
 
 export function productMetaDescription(product: Product) {
-  return `Shop the StarkVibe ${product.name}, a premium cotton clothing choice in ${product.gsm} GSM 100% cotton. Comfortable fabric, dependable fit and colour options for every-season wear or custom printing.`;
-}
-
-export function productMetaKeywords(product: Product) {
-  return [
-    "premium T-shirt",
-    `${product.name} premium cotton clothing`,
-    `${product.gsm} GSM cotton ${product.category}`,
-    "comfortable cotton",
-    "comfortable cotton fabric",
-    "all-season clothing",
-    "best fit cotton clothing",
-    "custom printed cotton clothing",
-    "StarkVibe India",
-  ];
+  const description = `Shop ${product.name}: premium cotton for everyday wear, custom printing and group orders. Compare fit, colours and GSM before ordering.`;
+  return description.length < 150 ? `${description} Shop online.` : description;
 }
 
 export function categoryMetaTitle(category: string) {
@@ -72,23 +59,20 @@ export function categoryMetaTitle(category: string) {
 }
 
 export function categoryMetaDescription(category: string) {
-  return `Explore StarkVibe men's cotton T-shirts and ${category.toLowerCase()} in high-quality 100% cotton clothing. Choose comfortable cotton, practical fits and all-season clothing for everyday wear, teams and custom printing.`;
+  const description = `Explore ${category.toLowerCase()} at StarkVibe: cotton T-shirts, polos, sweatshirts and hoodies for everyday wear, teams and custom printing. Compare fits and GSM.`;
+  return description.length > 160 ? description.replace(" Compare fits and GSM.", " Compare fits.") : description;
 }
 
-export function categoryMetaKeywords(category: string) {
-  return [
-    category,
-    "men's cotton T-shirts",
-    "premium T-shirt",
-    "cotton t-shirts",
-    "100% cotton clothing",
-    "comfortable cotton",
-    "comfortable fabric",
-    "all-season clothing",
-    "best fit everyday wear",
-    "custom printing India",
-    "StarkVibe",
-  ];
+const blogDescriptionSuffixes: Record<string, string> = {
+  "how-to-choose-the-right-gsm-t-shirt": " Compare weights before you buy.",
+  "custom-t-shirt-printing-order-checklist": " Keep order details clear.",
+  "how-to-care-for-cotton-t-shirts-and-fleece": " Keep garments looking good.",
+  "how-to-choose-a-premium-cotton-t-shirt": " Make a better everyday choice.",
+  "cotton-clothing-styling-tips": " Build easy outfits every day.",
+};
+
+export function blogMetaDescription(slug: string, description: string) {
+  return `${description}${blogDescriptionSuffixes[slug] || " Read the practical guide before you choose."}`;
 }
 
 export function locationMetaTitle(city: string) {
@@ -96,21 +80,6 @@ export function locationMetaTitle(city: string) {
 }
 
 export function locationMetaDescription(city: string) {
-  return `Shop StarkVibe online for ${city} cotton clothing: premium T-shirts, polos, sweatshirts and hoodies in comfortable cotton for every season, with custom printing for teams, events and gifting.`;
-}
-
-export function locationMetaKeywords(city: string) {
-  return [
-    `${city} cotton clothing store`,
-    `${city} cotton clothing`,
-    `premium T-shirt in ${city}`,
-    `cotton T-shirts in ${city}`,
-    `${city} custom printed T-shirts`,
-    `${city} bulk teamwear`,
-    "comfortable cotton",
-    "comfortable cotton fabric",
-    "all-season clothing",
-    "best fit cotton clothing",
-    "StarkVibe online",
-  ];
+  const description = `Shop ${city} cotton clothing online: premium T-shirts, polos, sweatshirts and hoodies for teams, events, gifting and custom printing with StarkVibe.`;
+  return description.length < 150 ? `${description} nationwide` : description;
 }

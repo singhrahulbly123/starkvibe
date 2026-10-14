@@ -5,7 +5,7 @@ export const metadata = {
   ...buildMetadata({
   title: "Checkout — StarkVibe",
   description:
-    "Your bag, delivery details and preferred payment method, all in one place.",
+    "Review your bag, delivery details and preferred payment method before sending a StarkVibe order request for confirmation. Shipping is confirmed separately.",
   path: "/checkout",
   }),
   robots: { index: false, follow: false },

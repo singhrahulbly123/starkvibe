@@ -1,13 +1,13 @@
 import { LegalPage } from "@/components/legal-page";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata = buildMetadata({ title: "Shipping Policy — StarkVibe", description: "StarkVibe shipping and delivery information.", path: "/shipping-policy" });
+export const metadata = buildMetadata({ title: "Shipping Policy — StarkVibe", description: "Read StarkVibe shipping guidance covering order processing, delivery details, custom and bulk production, tracking and support for each order. Plan ahead.", path: "/shipping-policy" });
 
 export default function ShippingPolicyPage() {
-  return <LegalPage title="Shipping policy." intro="We confirm delivery availability, shipping charges and the expected timeline before accepting your order." sections={[
-    { title: "Processing time", body: "Standard products are prepared after order confirmation. Custom printed and bulk orders require additional production time, which is confirmed after artwork, quantity, sizes and colours are reviewed." },
-    { title: "Delivery details", body: "Delivery timelines can vary by destination, product availability and order size. Please provide a complete address, PIN code and reachable phone number. Delays caused by incorrect address, courier issues or events outside our control may affect delivery." },
-    { title: "Custom and bulk orders", body: "Production begins after the final design and order details are approved. A quote or WhatsApp confirmation will mention the expected dispatch and delivery timeline for your specific order." },
-    { title: "Tracking and support", body: "When tracking information is available, we will share it through the contact details provided with the order. Contact singhrahulbly123@gmail.com if your parcel needs attention." },
+  return <LegalPage title="Shipping policy." intro="TODO: Add the confirmed delivery days, shipping charge and free-shipping threshold." sections={[
+    { title: "Delivery timeline", body: "TODO: Add the confirmed delivery days and any conditions that affect delivery." },
+    { title: "Shipping charges", body: "TODO: Add the confirmed shipping charge and free-shipping threshold." },
+    { title: "Custom and bulk orders", body: "TODO: Add the confirmed custom-order turnaround and any delivery conditions." },
+    { title: "Tracking and support", body: "TODO: Confirm the support contact details and tracking process." },
   ]} />;
 }

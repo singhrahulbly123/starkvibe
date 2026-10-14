@@ -3,16 +3,23 @@ import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { locations } from "@/lib/locations";
 import { buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/json-ld";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 export const metadata = buildMetadata({
   title: "Online Custom Clothing Across India — StarkVibe Locations",
-  description: "Explore StarkVibe online cotton clothing and custom printing service pages for Delhi NCR, Bengaluru, Chennai, state capitals and cities across India.",
+  description: "Explore StarkVibe online cotton clothing and custom printing pages for Delhi NCR, Bengaluru, Chennai, state capitals and cities across India. Browse locations.",
   path: "/locations",
 });
 
 export default function LocationsPage() {
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Locations", path: "/locations" },
+  ]);
   return (
     <>
+      <JsonLd data={breadcrumbSchema} />
       <Storefront hideRange>
         <main className="bg-paper text-ink">
           <section className="mx-auto max-w-[1400px] px-5 pt-16 pb-24 lg:px-12 lg:pt-24">

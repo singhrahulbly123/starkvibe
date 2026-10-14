@@ -28,17 +28,17 @@ export function detailImage(product: Product, colour: Colour) {
 
 const titleImage: Record<string, string> = {
   oversized:
-    "/products/Oversized220GSMTee/Starkvibe Oversized T-Shirt Advertisement.png",
+    "/products/oversized-220-gsm-tee/starkvibe-oversized-t-shirt-advertisement.png",
   terry:
-    "/products/Oversized240GSMFrenchTerry/Starkvibe Oversized Tee Editorial Ad.png",
+    "/products/oversized-240-gsm-french-terry/starkvibe-oversized-tee-editorial-ad.png",
   regular:
-    "/products/RegularFit180GSM/Starkvibe Men’s T-Shirt Editorial Poster.png",
-  polo: "/products/Polo220GSMMattyTee/StarkVibe Premium White Polo Poster.png",
-  kids: "/products/180GSMKidsCottonT-Shirt/Starkvibe Kids T-Shirt Poster.png",
+    "/products/regular-fit-180-gsm/starkvibe-mens-t-shirt-editorial-poster.png",
+  polo: "/products/polo-220-gsm-matty-tee/starkvibe-premium-white-polo-poster.png",
+  kids: "/products/180-gsm-kids-cotton-t-shirt/starkvibe-kids-t-shirt-poster.png",
   sweatshirt:
-    "/products/350GSMFleeceSweatshirt/Starkvibe Maroon Sweatshirt Showcase.png",
+    "/products/350-gsm-fleece-sweatshirt/starkvibe-maroon-sweatshirt-showcase.png",
   hoodie:
-    "/products/350GSMFleeceHoodie/Starkvibe Premium Cotton Hoodie Advertisement.png",
+    "/products/350-gsm-fleece-hoodie/starkvibe-premium-cotton-hoodie-advertisement.png",
 };
 
 export function galleryImage(product: Product, colour: Colour, view: string) {
