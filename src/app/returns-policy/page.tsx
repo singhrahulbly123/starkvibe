@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { LegalPage } from "@/components/legal-page";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Returns Policy — StarkVibe", description: "StarkVibe returns, exchange and custom print policy." };
+export const metadata = buildMetadata({ title: "Returns Policy — StarkVibe", description: "StarkVibe returns, exchange and custom print policy.", path: "/returns-policy" });
 
 export default function ReturnsPolicyPage() {
   return <LegalPage title="Returns policy." intro="We want you to receive the right product and size. Please review the order details carefully before confirmation, especially for custom printing." sections={[

@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import { ShopCatalogue } from "@/components/shop-catalogue";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
-import { categoryMetaDescription, categoryMetaKeywords, categoryMetaTitle } from "@/lib/seo";
+import { buildMetadata, categoryMetaDescription, categoryMetaKeywords, categoryMetaTitle } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = {
+  ...buildMetadata({
   title: categoryMetaTitle("Cotton Fabric Clothing"),
   description: categoryMetaDescription("cotton fabric clothing"),
+  path: "/shop/fabric",
+  }),
   keywords: categoryMetaKeywords("cotton fabric clothing"),
-  alternates: { canonical: "/shop/fabric" },
 };
 
 export default function ShopByFabricPage() {

@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { locations } from "@/lib/locations";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "Online Custom Clothing Across India — StarkVibe Locations",
   description: "Explore StarkVibe online cotton clothing and custom printing service pages for Delhi NCR, Bengaluru, Chennai, state capitals and cities across India.",
-  alternates: { canonical: "/locations" },
-};
+  path: "/locations",
+});
 
 export default function LocationsPage() {
   return (

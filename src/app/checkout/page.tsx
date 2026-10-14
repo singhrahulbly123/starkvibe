@@ -1,10 +1,13 @@
-import type { Metadata } from "next";
 import { Checkout } from "@/components/checkout";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = {
+  ...buildMetadata({
   title: "Checkout — StarkVibe",
   description:
     "Your bag, delivery details and preferred payment method, all in one place.",
+  path: "/checkout",
+  }),
   robots: { index: false, follow: false },
 };
 

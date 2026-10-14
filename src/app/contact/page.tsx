@@ -1,21 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { QuoteForm } from "@/components/quote-form";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "Contact StarkVibe | Custom Printing & Bulk Orders",
   description:
     "Contact StarkVibe for custom printed T-shirts, polos, hoodies, teamwear, birthday orders and bulk apparel quotes.",
-  alternates: { canonical: "/contact" },
-  openGraph: {
-    title: "Contact StarkVibe | Custom Printing & Bulk Orders",
-    description: "Request a custom printing or bulk apparel quote from StarkVibe.",
-    url: "/contact",
-    type: "website",
-  },
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   const faqs = [

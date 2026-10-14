@@ -5,7 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { getLocation, locations } from "@/lib/locations";
-import { locationMetaDescription, locationMetaKeywords, locationMetaTitle } from "@/lib/seo";
+import { buildMetadata, locationMetaDescription, locationMetaKeywords, locationMetaTitle } from "@/lib/seo";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -15,18 +15,14 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const location = getLocation((await params).city);
-  if (!location) return { title: "Location not found — StarkVibe" };
+  if (!location) return buildMetadata({ title: "Location not found — StarkVibe", description: "The requested StarkVibe location could not be found.", path: "/locations" });
   return {
-    title: locationMetaTitle(location.city),
-    description: locationMetaDescription(location.city),
-    keywords: locationMetaKeywords(location.city),
-    alternates: { canonical: `/locations/${location.slug}` },
-    openGraph: {
+    ...buildMetadata({
       title: locationMetaTitle(location.city),
       description: locationMetaDescription(location.city),
-      url: `https://starkvibe.com/locations/${location.slug}`,
-      type: "website",
-    },
+      path: `/locations/${location.slug}`,
+    }),
+    keywords: locationMetaKeywords(location.city),
   };
 }
 

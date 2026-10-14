@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
 import { LegalPage } from "@/components/legal-page";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Shipping Policy — StarkVibe", description: "StarkVibe shipping and delivery information." };
+export const metadata = buildMetadata({ title: "Shipping Policy — StarkVibe", description: "StarkVibe shipping and delivery information.", path: "/shipping-policy" });
 
 export default function ShippingPolicyPage() {
   return <LegalPage title="Shipping policy." intro="We confirm delivery availability, shipping charges and the expected timeline before accepting your order." sections={[

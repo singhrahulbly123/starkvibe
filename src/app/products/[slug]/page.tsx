@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProductBySlug, productImage, products, productSlug } from "@/lib/catalogue";
 import { productSku } from "@/lib/product-seo";
-import { productMetaDescription, productMetaKeywords, productMetaTitle } from "@/lib/seo";
+import { buildMetadata, productMetaDescription, productMetaKeywords, productMetaTitle } from "@/lib/seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
@@ -17,25 +17,17 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const product = getProductBySlug(slug);
+  if (!product) return buildMetadata({ title: "Product not found — StarkVibe", description: "The requested StarkVibe product could not be found.", path: `/products/${slug}` });
+  const metadata = buildMetadata({
+    title: productMetaTitle(product),
+    description: productMetaDescription(product),
+    path: `/products/${productSlug(product)}`,
+    image: productImage(product, product.colours[0]),
+  });
   return {
-    title: product
-      ? productMetaTitle(product)
-      : "Product not found — StarkVibe",
-    description: product ? productMetaDescription(product) : undefined,
-    keywords: product ? productMetaKeywords(product) : undefined,
-    other: product ? { "product:sku": productSku(product) } : undefined,
-    alternates: product
-      ? { canonical: `/products/${productSlug(product)}` }
-      : undefined,
-    openGraph: product
-      ? {
-          type: "website",
-          title: productMetaTitle(product),
-          description: productMetaDescription(product),
-          url: `https://starkvibe.com/products/${productSlug(product)}`,
-          images: [{ url: productImage(product, product.colours[0]), alt: product.name }],
-        }
-      : undefined,
+    ...metadata,
+    keywords: productMetaKeywords(product),
+    other: { "product:sku": productSku(product) },
   };
 }
 export default async function ProductPage({ params, searchParams }: Props) {

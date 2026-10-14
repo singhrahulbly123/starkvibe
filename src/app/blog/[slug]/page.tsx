@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { blogPosts, getBlogPost } from "@/lib/blog";
+import { buildMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -13,8 +14,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getBlogPost((await params).slug);
-  if (!post) return { title: "Guide not found — StarkVibe" };
-  return { title: `${post.title} — StarkVibe Journal`, description: post.description, alternates: { canonical: `/blog/${post.slug}` }, openGraph: { title: post.title, description: post.description, url: `/blog/${post.slug}`, type: "article", publishedTime: post.published } };
+  if (!post) return buildMetadata({ title: "Guide not found — StarkVibe", description: "The requested StarkVibe guide could not be found.", path: "/blog" });
+  const metadata = buildMetadata({ title: `${post.title} — StarkVibe Journal`, description: post.description, path: `/blog/${post.slug}` });
+  return { ...metadata, openGraph: { ...metadata.openGraph, type: "article", publishedTime: post.published } };
 }
 
 export default async function BlogPostPage({ params }: Props) {

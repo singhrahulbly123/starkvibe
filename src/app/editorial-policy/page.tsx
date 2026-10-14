@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "Editorial Policy | StarkVibe Journal",
   description: "How StarkVibe creates, reviews and updates educational content about cotton wear and custom printing.",
-  alternates: { canonical: "/editorial-policy" },
-};
+  path: "/editorial-policy",
+});
 
 export default function EditorialPolicyPage() {
   return (

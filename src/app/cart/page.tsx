@@ -1,12 +1,15 @@
-import type { Metadata } from "next";
 import { Storefront } from "@/components/storefront";
 import { SiteFooter } from "@/components/site-footer";
 import { CartPageContent } from "@/components/cart-page-content";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = {
+  ...buildMetadata({
   title: "Your Bag — StarkVibe",
   description:
     "Review your StarkVibe pieces, update quantities and request order confirmation or custom printing.",
+  path: "/cart",
+  }),
   robots: { index: false, follow: false },
 };
 export default function CartPage() {

@@ -1,21 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "About StarkVibe | Premium Cotton Wear",
   description:
     "Learn about StarkVibe, a premium cotton wear brand creating comfortable T-shirts, polos, kidswear, fleece and custom printed apparel.",
-  alternates: { canonical: "/about" },
-  openGraph: {
-    title: "About StarkVibe | Premium Cotton Wear",
-    description:
-      "Premium cotton wear with honest fabric details, considered fits and custom printing for everyday teams and moments.",
-    url: "/about",
-    type: "website",
-  },
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   const jsonLd = {

@@ -5,6 +5,14 @@ import { Reveal } from "@/components/reveal";
 import { QuoteForm } from "@/components/quote-form";
 import { swatches } from "@/lib/catalogue";
 import { AbHeroCopy } from "@/components/ab-hero-copy";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "StarkVibe — Heavy Cotton. Honest Finish.",
+  description:
+    "Premium 100% cotton tees, polos, sweatshirts and hoodies from 180 to 350 GSM. Shop everyday fits and custom printing for birthdays, events and teams.",
+  path: "/",
+});
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const heading =

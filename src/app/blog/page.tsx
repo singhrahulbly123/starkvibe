@@ -1,14 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { blogPosts } from "@/lib/blog";
+import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = buildMetadata({
   title: "StarkVibe Journal | Cotton Wear & Custom Printing Guides",
   description: "Helpful guides from StarkVibe on GSM, cotton fabric, custom T-shirt printing, bulk apparel orders and garment care.",
-  alternates: { canonical: "/blog" },
-};
+  path: "/blog",
+});
 
 export default function BlogPage() {
   return (

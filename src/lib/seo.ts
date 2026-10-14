@@ -1,5 +1,50 @@
 import type { Product } from "./catalogue";
 
+import type { Metadata } from "next";
+
+const siteUrl = "https://starkvibe.com";
+const defaultImage = "/branding/starkvibe-wordmark-premium.png";
+
+type BuildMetadataOptions = {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+};
+
+function cleanPath(path: string) {
+  const pathname = path.split("?")[0].replace(/^\/+/, "/").replace(/\/+$/, "");
+  return pathname || "/";
+}
+
+export function buildMetadata({
+  title,
+  description,
+  path,
+  image = defaultImage,
+}: BuildMetadataOptions): Metadata {
+  const pathname = cleanPath(path);
+  const url = pathname === "/" ? siteUrl : `${siteUrl}${pathname}`;
+  const imageUrl = image.startsWith("http") ? image : `${siteUrl}${cleanPath(image)}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      images: [{ url: imageUrl, alt: title }],
+    },
+    twitter: {
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
+}
+
 export function productMetaTitle(product: Product) {
   return `${product.name} | Premium Cotton T-Shirt & Clothing | StarkVibe`;
 }
