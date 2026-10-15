@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Storefront } from "@/components/storefront";
 import { Reveal } from "@/components/reveal";
-import { QuoteForm } from "@/components/quote-form";
 import { buildMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { faqPageJsonLd } from "@/lib/structured-data";
@@ -309,10 +308,37 @@ export default function Home() {
           </section>
         </Storefront>
         <CustomBrandingImageSlider />
-        <section id="fabric" className="bg-ink text-paper">
-          <div
-            className={`${container} grid gap-12 py-10 lg:grid-cols-[1fr_1.1fr] lg:gap-24`}
-          >
+        <section className="border-y border-ink/20 bg-[#eeece5] py-10" aria-labelledby="who-starkvibe-is-for">
+          <div className={`${container} grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-24`}>
+            <Reveal>
+              <p className={`${eyebrow} text-olive`}>A clearer way to choose</p>
+              <h2 id="who-starkvibe-is-for" className="font-display text-[clamp(36px,4.2vw,60px)] leading-[.88] font-black uppercase">Built for the people who wear it.</h2>
+            </Reveal>
+            <div className="space-y-9 text-[16px] leading-[1.7] text-[#3f3e3a]">
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">For groups, teams and thoughtful gifts</h3>
+                <p>StarkVibe is for college groups, offices, families, event crews and people looking for a personal gift. Start with an everyday T-shirt, a polished polo, a kids tee or a warmer fleece layer, then choose the colour and fit that make sense for the people wearing it. The range is designed to work for a single favourite piece as well as coordinated clothing for a shared occasion.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">Why cotton, and which GSM?</h3>
+                <p>Every piece is made from 100% cotton, with options from 180 to 350 GSM. Choose 180 GSM for a light, breathable everyday tee or kids tee. Move to 220â€“240 GSM when you want more body, a structured feel or an oversized and French Terry look. At 350 GSM, cotton fleece gives sweatshirts and hoodies a warmer, more substantial layer. Our <Link href="/shop/t-shirts" className="font-bold underline underline-offset-4 hover:text-olive">T-shirts</Link> and <Link href="/shop/hoodies" className="font-bold underline underline-offset-4 hover:text-olive">hoodies</Link> pages make those choices easier to compare.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">From enquiry to finished order</h3>
+                <p>For custom printed t-shirts and bulk t-shirt orders, the process starts with an enquiry. Share the occasion, garment preference, colours, sizes, quantity and artworkâ€”or describe the idea if the design is not ready. The next steps are artwork review, a quote, and production after the final details are approved. Visit <Link href="/custom-printing" className="font-bold underline underline-offset-4 hover:text-olive">custom printing</Link> to begin, or check the <Link href="/size-guide" className="font-bold underline underline-offset-4 hover:text-olive">size guide</Link> before sending your size list.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">A practical place to start</h3>
+                <p>Choose the occasion first, then the garment weight and fit. A regular fit is a straightforward daily base, while an oversized tee gives a relaxed streetwear shape. Polos bring a sharper everyday look, kids tees keep group dressing simple, and fleece adds warmth for cooler days. If the order includes different ages or preferences, make a clear size and colour list before sharing the enquiry. That gives the artwork and product choices a useful starting point without making the brief complicated.</p>
+              </div>
+              <div className="border-t border-ink/20 pt-6">
+                <p>Want a little more context? Read our guides on <Link href="/blog/how-to-choose-the-right-gsm-t-shirt" className="font-bold underline underline-offset-4 hover:text-olive">choosing the right GSM</Link> and the <Link href="/blog/custom-t-shirt-printing-order-checklist" className="font-bold underline underline-offset-4 hover:text-olive">custom printing order checklist</Link>.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="custom" className="bg-ink text-paper">
+          <div className={`${container} grid gap-12 py-10 lg:grid-cols-[1fr_1.1fr] lg:gap-24`}>
             <Reveal className="relative flex min-h-[450px] flex-col justify-between overflow-hidden bg-[#e2dfd6] p-8 text-ink lg:min-h-[680px]">
               <Image
                 src="/branding/cotton-process-bg.png"
@@ -344,88 +370,18 @@ export default function Home() {
               </h2>
               <div className="border-t border-paper/20">
                 {steps.map(([title, note], i) => (
-                  <div
-                    key={title}
-                    className="flex gap-7 border-b border-paper/20 py-[30px]"
-                  >
+                  <div key={title} className="flex gap-7 border-b border-paper/20 py-[30px]">
                     <span className="w-14 shrink-0 font-display text-[44px] leading-none font-black text-olive">
                       0{i + 1}
                     </span>
                     <div>
                       <h3 className="mb-2 text-[22px] font-bold">{title}</h3>
-                      <p className="text-base leading-[1.6] text-paper/70">
-                        {note}
-                      </p>
+                      <p className="text-base leading-[1.6] text-paper/70">{note}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </Reveal>
-          </div>
-        </section>
-        <section className="border-y border-ink/20 bg-[#eeece5] py-10" aria-labelledby="who-starkvibe-is-for">
-          <div className={`${container} grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-24`}>
-            <Reveal>
-              <p className={`${eyebrow} text-olive`}>A clearer way to choose</p>
-              <h2 id="who-starkvibe-is-for" className="font-display text-[clamp(36px,4.2vw,60px)] leading-[.88] font-black uppercase">Built for the people who wear it.</h2>
-            </Reveal>
-            <div className="space-y-9 text-[16px] leading-[1.7] text-[#3f3e3a]">
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">For groups, teams and thoughtful gifts</h3>
-                <p>StarkVibe is for college groups, offices, families, event crews and people looking for a personal gift. Start with an everyday T-shirt, a polished polo, a kids tee or a warmer fleece layer, then choose the colour and fit that make sense for the people wearing it. The range is designed to work for a single favourite piece as well as coordinated clothing for a shared occasion.</p>
-              </div>
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">Why cotton, and which GSM?</h3>
-                <p>Every piece is made from 100% cotton, with options from 180 to 350 GSM. Choose 180 GSM for a light, breathable everyday tee or kids tee. Move to 220â€“240 GSM when you want more body, a structured feel or an oversized and French Terry look. At 350 GSM, cotton fleece gives sweatshirts and hoodies a warmer, more substantial layer. Our <Link href="/shop/t-shirts" className="font-bold underline underline-offset-4 hover:text-olive">T-shirts</Link> and <Link href="/shop/hoodies" className="font-bold underline underline-offset-4 hover:text-olive">hoodies</Link> pages make those choices easier to compare.</p>
-              </div>
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">From enquiry to finished order</h3>
-                <p>For custom printed t-shirts and bulk t-shirt orders, the process starts with an enquiry. Share the occasion, garment preference, colours, sizes, quantity and artworkâ€”or describe the idea if the design is not ready. The next steps are artwork review, a quote, and production after the final details are approved. Visit <Link href="/custom-printing" className="font-bold underline underline-offset-4 hover:text-olive">custom printing</Link> to begin, or check the <Link href="/size-guide" className="font-bold underline underline-offset-4 hover:text-olive">size guide</Link> before sending your size list.</p>
-              </div>
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">A practical place to start</h3>
-                <p>Choose the occasion first, then the garment weight and fit. A regular fit is a straightforward daily base, while an oversized tee gives a relaxed streetwear shape. Polos bring a sharper everyday look, kids tees keep group dressing simple, and fleece adds warmth for cooler days. If the order includes different ages or preferences, make a clear size and colour list before sharing the enquiry. That gives the artwork and product choices a useful starting point without making the brief complicated.</p>
-              </div>
-              <div className="border-t border-ink/20 pt-6">
-                <p>Want a little more context? Read our guides on <Link href="/blog/how-to-choose-the-right-gsm-t-shirt" className="font-bold underline underline-offset-4 hover:text-olive">choosing the right GSM</Link> and the <Link href="/blog/custom-t-shirt-printing-order-checklist" className="font-bold underline underline-offset-4 hover:text-olive">custom printing order checklist</Link>.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section id="custom" className="mt-0 bg-[#2a4f00] text-paper">
-          <div
-            className={`${container} grid items-center gap-12 py-10 lg:grid-cols-[1.1fr_1fr] lg:gap-24`}
-          >
-            <Reveal>
-              <p className={`${eyebrow} text-gold`}>Custom printing</p>
-              <h2 className="mb-7 font-display text-[clamp(36px,4.2vw,60px)] leading-[.88] font-black uppercase">
-                Made for every
-                <br />
-                celebration.
-              </h2>
-              <p className="mb-9 max-w-[500px] text-lg leading-[1.6] text-[#d8e2c8]">
-                From birthdays and parties to special events and thoughtful
-                gifts, get your favourite designs printed on tees, hoodies and
-                more. Tell us what you are celebrating and we will take it from
-                there.
-              </p>
-              <div className="flex flex-wrap gap-2.5">
-                {[
-                  "Birthday gifts",
-                  "Party groups",
-                  "Event orders",
-                  "Custom gifts",
-                ].map((tag) => (
-                  <span
-                    key={tag}
-                    className="border border-[#6f8f47] px-[18px] py-2.5 text-sm font-semibold"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </Reveal>
-            <QuoteForm />
           </div>
         </section>
         <section
