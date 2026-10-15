@@ -1,11 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { addBagItem, useBag, type BagItem } from "@/lib/bag";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
   House,
   Menu,
   Palette,
@@ -33,6 +35,7 @@ export function Storefront({
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [colours, setColours] = useState<Record<string, number>>({});
+  const rangeTrackRef = useRef<HTMLDivElement>(null);
   const { count } = useBag();
   useEffect(() => {
     function receiveOrder(event: Event) {
@@ -78,6 +81,7 @@ export function Storefront({
     pathname !== "/" &&
     !ownBreadcrumbPages.includes(pathname) &&
     !pathname.startsWith("/blog/") &&
+    !pathname.startsWith("/products/") &&
     !pathname.startsWith("/locations/");
   const breadcrumbOnDark = pathname.startsWith("/custom-printing");
   const titleCase = (value: string) =>
@@ -308,10 +312,8 @@ export function Storefront({
                 <p className="mb-[18px] text-[13px] font-semibold tracking-[.18em] text-olive uppercase">
                   The full range
                 </p>
-                <h2 className="font-display text-[clamp(48px,7vw,112px)] leading-[.88] font-black uppercase">
-                  Seven pieces.
-                  <br />
-                  No filler.
+                <h2 className="whitespace-nowrap font-display text-[clamp(24px,4vw,60px)] leading-none font-black uppercase">
+                  Seven pieces. No filler.
                 </h2>
               </div>
               <div
@@ -329,6 +331,22 @@ export function Storefront({
                     {label}
                   </button>
                 ))}
+                <button
+                  type="button"
+                  aria-label="Previous products"
+                  onClick={() => rangeTrackRef.current?.scrollBy({ left: -rangeTrackRef.current.clientWidth * 0.8, behavior: "smooth" })}
+                  className="flex size-[46px] items-center justify-center border border-ink transition-colors hover:bg-ink hover:text-paper"
+                >
+                  <ChevronLeft size={19} aria-hidden="true" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next products"
+                  onClick={() => rangeTrackRef.current?.scrollBy({ left: rangeTrackRef.current.clientWidth * 0.8, behavior: "smooth" })}
+                  className="flex size-[46px] items-center justify-center border border-ink transition-colors hover:bg-ink hover:text-paper"
+                >
+                  <ChevronRight size={19} aria-hidden="true" />
+                </button>
               </div>
             </div>
           </Reveal>
@@ -336,11 +354,11 @@ export function Storefront({
             Showing {shown.length} {shown.length === 1 ? "piece" : "pieces"} ·
             Tap a colour to see it on the piece
           </p>
-          <div className="grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 xl:grid-cols-4">
+          <div ref={rangeTrackRef} className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
             {shown.map((p) => {
               const selected = colours[p.id] || 0;
               return (
-                <article key={p.id} className="group flex flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)]">
+                <article key={p.id} className="group flex min-w-[84vw] snap-start flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)] sm:min-w-[calc((100%-1.25rem)/2)] xl:min-w-[calc((100%-3.75rem)/4)]">
                   <div className="relative">
                     <button
                       aria-label={`View ${p.name}`}

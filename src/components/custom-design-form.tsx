@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ThankYouModal } from "./thank-you-modal";
+import { CUSTOM_PRINT_AREA, CUSTOM_PRINT_DISCOUNT_PERCENT, customPrintDiscountedPrice, customPrintOptions } from "@/lib/custom-printing-pricing";
 
 export function CustomDesignForm({
   pageLabel,
@@ -18,11 +19,15 @@ export function CustomDesignForm({
   const [teamName, setTeamName] = useState("");
   const [phone, setPhone] = useState("");
   const [quantity, setQuantity] = useState(isBulk ? "10" : "1");
+  const [printOption, setPrintOption] = useState<keyof typeof customPrintOptions>("front");
   const [sizeBreakdown, setSizeBreakdown] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [message, setMessage] = useState("");
   const [thankYou, setThankYou] = useState(false);
+  const selectedPrintOption = customPrintOptions[printOption];
+  const discountedPrintPrice = customPrintDiscountedPrice(selectedPrintOption.regularPrice);
+  const discountedPrintTotal = discountedPrintPrice * (Number(quantity) || 0);
 
   useEffect(() => {
     if (!file) {
@@ -43,6 +48,9 @@ export function CustomDesignForm({
       ...(isBulk ? [`Company/team: ${teamName}`] : []),
       `WhatsApp: ${phone}`,
       `Quantity: ${quantity}`,
+      `Print option: ${selectedPrintOption.label} (${CUSTOM_PRINT_AREA})`,
+      `Custom design and print charge after ${CUSTOM_PRINT_DISCOUNT_PERCENT}% discount: ₹${discountedPrintPrice} per garment (garment price separate; final quote to be confirmed).`,
+      `Estimated custom design and print total for ${quantity} garment(s): ₹${discountedPrintTotal} (garment price separate).`,
       `Size breakdown: ${sizeBreakdown}`,
       `Artwork/photo: ${file?.name || "Not attached yet"}`,
     ].join("\n");
@@ -122,6 +130,23 @@ export function CustomDesignForm({
             <option value="single">Single order</option>
             <option value="bulk">Bulk order</option>
           </select>
+        </label>
+        <label className="text-sm font-semibold">
+          Print placement · {CUSTOM_PRINT_AREA}
+          <select
+            value={printOption}
+            onChange={(event) => setPrintOption(event.target.value as keyof typeof customPrintOptions)}
+            className="mt-2 h-13 w-full border border-ink bg-transparent px-3.5 font-normal outline-none focus:ring-2 focus:ring-olive"
+          >
+            {Object.entries(customPrintOptions).map(([key, option]) => (
+              <option key={key} value={key}>{option.label}</option>
+            ))}
+          </select>
+          <span className="mt-2 block bg-gold/50 p-3 text-sm">
+            <del className="mr-2 text-ink/55">₹{selectedPrintOption.regularPrice}</del>
+            <strong>₹{discountedPrintPrice}</strong> per garment after {CUSTOM_PRINT_DISCOUNT_PERCENT}% off
+            <span className="mt-1 block text-xs">Estimated print total for {quantity || 0}: ₹{discountedPrintTotal} · garment price separate</span>
+          </span>
         </label>
         {isBulk && (
           <label className="text-sm font-semibold">

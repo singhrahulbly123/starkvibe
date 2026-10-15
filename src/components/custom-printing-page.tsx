@@ -6,6 +6,7 @@ import { Reveal } from "./reveal";
 import { SiteFooter } from "./site-footer";
 import { Storefront } from "./storefront";
 import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/structured-data";
+import { CUSTOM_PRINT_AREA, CUSTOM_PRINT_DISCOUNT_PERCENT, customPrintDiscountedPrice, customPrintOptions } from "@/lib/custom-printing-pricing";
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 
@@ -211,7 +212,7 @@ export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
   const faq = [
     ["Can I order a single custom printed garment?", "Yes. Single personalised pieces and larger group or bulk orders can be discussed. Share the garment, colour, size and artwork so the team can confirm the quote."],
     ["Which garments can be custom printed?", "StarkVibe offers cotton t-shirts, polos, kids tees, sweatshirts and hoodies. The best option depends on your artwork, occasion, colour and quantity."],
-    ["What details are needed for a custom printing quote?", "Send your artwork or idea, garment preference, colour, size breakdown, quantity and required delivery date. The team will confirm production and delivery details before approval."],
+            ["What details are needed for a custom printing quote?", "Send your artwork or idea, garment preference, colour, size breakdown, quantity and required delivery date. The listed print rates cover a 10 × 10 print area; garment price is separate. The team will confirm the final quote before production."],
   ];
   const faqSchema = faqPageJsonLd(
     faq.map(([question, answer]) => ({ question, answer })),
@@ -313,9 +314,27 @@ export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
             </Reveal>
           </section>
           <section className="border-t border-ink/20 bg-gold py-14 lg:py-20" aria-labelledby="pricing-minimums-heading">
-            <div className={`${container} grid gap-8 lg:grid-cols-[.7fr_1.3fr]`}>
-              <h2 id="pricing-minimums-heading" className="font-display text-[clamp(48px,6vw,82px)] leading-[.88] font-black uppercase">Pricing and minimums.</h2>
-              <p className="max-w-[720px] text-lg leading-8 text-ink">TODO: Add the confirmed MOQ, custom-order turnaround and advance-payment requirement.</p>
+            <div className={container}>
+              <div className="mb-8 grid gap-5 lg:grid-cols-[.7fr_1.3fr] lg:items-end">
+                <h2 id="pricing-minimums-heading" className="font-display text-[clamp(48px,6vw,82px)] leading-[.88] font-black uppercase">Custom design &amp; print rates.</h2>
+                <p className="max-w-[720px] text-base leading-7 text-ink">{CUSTOM_PRINT_AREA} print area · {CUSTOM_PRINT_DISCOUNT_PERCENT}% off applied. Garment price is separate; final artwork and order quote are confirmed before printing.</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Object.entries(customPrintOptions).map(([key, option]) => {
+                  const discountedPrice = customPrintDiscountedPrice(option.regularPrice);
+                  return (
+                    <article key={key} className="border border-ink/20 bg-paper p-5 sm:p-7">
+                      <p className="text-xs font-bold tracking-[.15em] text-olive uppercase">{option.label} · {CUSTOM_PRINT_AREA}</p>
+                      <div className="mt-3 flex flex-wrap items-baseline gap-3">
+                        <del className="text-lg text-ink/50">₹{option.regularPrice}</del>
+                        <span className="font-display text-5xl leading-none font-black">₹{discountedPrice}</span>
+                        <span className="text-sm font-bold">per garment</span>
+                      </div>
+                      <p className="mt-3 text-sm text-ink/70">Includes {CUSTOM_PRINT_DISCOUNT_PERCENT}% custom printing discount. Garment price additional.</p>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
           </section>
           <section className="border-t border-ink/20 bg-[#eeece5] py-16 lg:py-24">

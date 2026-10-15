@@ -36,7 +36,7 @@ export function AbHeroCopy() {
 
   return (
     <div>
-      <h1 className="font-display text-[clamp(50px,7.8vw,124px)] leading-[.95] font-black uppercase">
+      <h1 className="font-display text-[clamp(36px,4.2vw,60px)] leading-[.95] font-black uppercase">
         {isVariant ? (
           <>Premium cotton.<br /><span className="text-gold">Made</span> to be worn.</>
         ) : (

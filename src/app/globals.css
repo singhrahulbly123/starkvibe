@@ -38,6 +38,29 @@
     color: var(--color-ink);
   }
 }
+@layer components {
+  button:not([aria-label]):not([title]):not([style]):not([class*="rounded-full"]):not([class*="size-"]):not([class*="min-w-"]),
+  a[class~="bg-ink"]:not([class*="absolute"]),
+  a[class~="bg-gold"]:not([class*="absolute"]):not(.offer-banner-panel),
+  a[class~="bg-olive"]:not([class*="absolute"]),
+  a[class~="border"][class*="px-"]:not([class*="border-b"]) {
+    border: 0 !important;
+    color: #f1f0eb !important;
+    background-color: #0d0d0c !important;
+    background-image: none !important;
+    box-shadow: none;
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  button:not([aria-label]):not([title]):not([style]):not([class*="rounded-full"]):not([class*="size-"]):not([class*="min-w-"]):hover,
+  a[class~="bg-ink"]:not([class*="absolute"]):hover,
+  a[class~="bg-gold"]:not([class*="absolute"]):not(.offer-banner-panel):hover,
+  a[class~="bg-olive"]:not([class*="absolute"]):hover,
+  a[class~="border"][class*="px-"]:not([class*="border-b"]):hover {
+    color: #f1f0eb !important;
+    background-color: #336000 !important;
+  }
+}
 @media (max-width: 1023px) {
   body {
     padding-bottom: calc(68px + env(safe-area-inset-bottom));

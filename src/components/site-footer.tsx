@@ -8,9 +8,8 @@ export function SiteFooter() {
       <div className={`${container} pt-20 pb-10 lg:pt-24`}>
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-8 border-b border-[#2e2e2a] pb-[72px]">
-            <h2 className="font-display text-[clamp(52px,8vw,128px)] leading-[.86] font-black uppercase">
-              Let us build
-              <br />
+            <h2 className="whitespace-nowrap font-display text-[clamp(22px,6vw,96px)] leading-none font-black uppercase">
+              Let us build{" "}
               <span className="text-gold">your line.</span>
             </h2>
             <a

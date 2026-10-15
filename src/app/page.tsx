@@ -1,25 +1,28 @@
-import { SiteFooter } from "@/components/site-footer";
+﻿import { SiteFooter } from "@/components/site-footer";
 import Image from "next/image";
 import Link from "next/link";
 import { Storefront } from "@/components/storefront";
 import { Reveal } from "@/components/reveal";
 import { QuoteForm } from "@/components/quote-form";
-import { swatches } from "@/lib/catalogue";
-import { AbHeroCopy } from "@/components/ab-hero-copy";
 import { buildMetadata } from "@/lib/seo";
 import { JsonLd } from "@/components/json-ld";
 import { faqPageJsonLd } from "@/lib/structured-data";
+import { HomeBannerSlider } from "@/components/home-banner-slider";
+import { CustomPrintingOfferSlider } from "@/components/custom-printing-offer-slider";
+import { HomeOfferBanner } from "@/components/prepaid-offer-banner";
+import { CustomBrandingImageSlider } from "@/components/custom-branding-image-slider";
+import { HomeProductSlider } from "@/components/home-product-slider";
 
 export const metadata = buildMetadata({
   title: "Premium Cotton T-Shirts & Custom Printing India | StarkVibe",
   description:
-    "100% cotton tees, polos, sweatshirts and hoodies from 180 to 350 GSM. Custom printing for birthdays, offices and teams. Prices from ₹745.",
+    "100% cotton tees, polos, sweatshirts and hoodies from 180 to 350 GSM. Custom printing for birthdays, offices and teams. Prices from â‚¹745.",
   path: "/",
 });
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const heading =
-  "font-display text-[clamp(48px,7vw,112px)] leading-[.88] font-black uppercase";
+  "whitespace-nowrap font-display text-[clamp(22px,4.2vw,60px)] leading-none font-black uppercase";
 const eyebrow =
   "mb-[18px] text-[13px] font-semibold tracking-[.18em] uppercase";
 const specs = [
@@ -32,7 +35,7 @@ const weights = [
   {
     gsm: 180,
     label: "Light and easy",
-    image: "/categories/starkvibe-premium-t-shirt-combo.png",
+    image: "/coastmore/Pastel%20T-Shirt%20Patio%20Portrait.png",
     name: (
       <>
         Regular Fit Tee
@@ -40,14 +43,14 @@ const weights = [
         Kids Tee
       </>
     ),
-    price: "From ₹800",
+    price: "From â‚¹800",
     className: "bg-[#e2dfd6] lg:h-[440px]",
     number: "lg:text-[150px]",
   },
   {
     gsm: 220,
     label: "Everyday standard",
-    image: "/categories/starkvibe-premium-polo-combo-pack.png",
+    image: "/coastmore/Spring%20Bicycle%20Portrait%20with%20Wildflowers.png",
     name: (
       <>
         Oversized Tee
@@ -55,7 +58,7 @@ const weights = [
         Polo, Matty fabric
       </>
     ),
-    price: "From ₹860",
+    price: "From â‚¹860",
     className: "bg-[#cbc6b8] lg:h-[530px]",
     number: "lg:text-[170px]",
   },
@@ -64,7 +67,7 @@ const weights = [
     label: "Structured and soft",
     image: "/categories/starkvibe-premium-t-shirt-combo.png",
     name: <>Oversized French Terry Tee</>,
-    price: "₹1149",
+    price: "â‚¹1149",
     className: "bg-[#3b3a36] text-paper lg:h-[620px]",
     number: "lg:text-[170px]",
   },
@@ -79,7 +82,7 @@ const weights = [
         Fleece Hoodie
       </>
     ),
-    price: "From ₹1470",
+    price: "From â‚¹1470",
     className: "bg-ink text-paper lg:h-[720px]",
     number: "text-gold lg:text-[170px]",
   },
@@ -88,7 +91,7 @@ const categories = [
   {
     label: "T-shirts",
     eyebrow: "Everyday essentials",
-    image: "/categories/starkvibe-premium-t-shirt-combo.png",
+    image: "/coastmore/Pastel%20T-Shirt%20Patio%20Portrait.png",
     description: "Clean fits, premium cotton and easy everyday comfort.",
     href: "/shop/t-shirts",
     cardClass: "col-span-2 min-h-[320px] sm:col-span-2 lg:col-span-1 lg:min-h-[295px]",
@@ -96,7 +99,7 @@ const categories = [
   {
     label: "Polos",
     eyebrow: "Polished comfort",
-    image: "/categories/starkvibe-premium-polo-combo-pack.png",
+    image: "/coastmore/Spring%20Bicycle%20Portrait%20with%20Wildflowers.png",
     description: "Breathable Matty fabric with a sharper everyday finish.",
     href: "/shop/polos",
     cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
@@ -104,7 +107,7 @@ const categories = [
   {
     label: "Kids",
     eyebrow: "Made to move",
-    image: "/categories/starkvibe-kids-combo-pack.png",
+    image: "/coastmore/Joyful%20Friends%E2%80%99%20Bicycle%20Ride.png",
     description: "Soft, flexible pieces for active days and special moments.",
     href: "/shop/kids",
     cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
@@ -112,7 +115,7 @@ const categories = [
   {
     label: "Sweatshirts",
     eyebrow: "Warm layers",
-    image: "/categories/starkvibe-sweatshirts-combo-pack.png",
+    image: "/coastmore/Maroon%20Hoodie%20Urban%20Chic.png",
     description: "350 GSM fleece with warmth, softness and structure.",
     href: "/shop/sweatshirts",
     cardClass: "min-h-[280px] sm:min-h-[320px] lg:col-span-1 lg:min-h-[295px]",
@@ -206,94 +209,66 @@ export default function Home() {
       </a>
       <div className="flex flex-wrap justify-between gap-2 bg-ink px-5 py-[11px] text-[13px] text-paper lg:px-12">
         <span>
-          Custom printing and bulk enquiries —{" "}
+          Custom printing and bulk enquiries â€”{" "}
           <a href="#custom" className="font-semibold text-gold">
             Get in touch
           </a>
         </span>
-        <span className="text-[#b9b7ae]">Sale prices from ₹745</span>
+        <span className="text-[#b9b7ae]">Sale prices from â‚¹745</span>
       </div>
       <main>
         <Storefront>
-          <section id="top" className="grid lg:grid-cols-[1.15fr_1fr]">
-            <div className="flex flex-col justify-between gap-10 bg-ink px-5 py-10 text-paper sm:px-10 lg:px-[5vw] lg:py-[4vw]">
-              <p className={`${eyebrow} mb-0 text-gold`}>
-                Premium cotton wear · 180 to 350 GSM
-              </p>
-              <AbHeroCopy />
-            </div>
-            <div className="relative min-h-[460px] overflow-hidden bg-[#e2dfd6] lg:min-h-[620px]">
-              <span
-                aria-hidden="true"
-                className="absolute -top-8 left-[2%] font-display text-[clamp(240px,34vw,540px)] leading-[.82] font-black tracking-[-.02em] text-[#d2cec2]"
-              >
-                180
-              </span>
-              <div className="absolute top-[7%] -right-[2%] w-[58%] rotate-[7deg] overflow-hidden shadow-xl transition-transform duration-700 hover:rotate-0">
-                <Image
-                  src="/products/regular-fit-180-gsm/mint-t-shirt-editorial-advertisement.png"
-                  width={600}
-                  height={900}
-                  alt="Mint regular fit 180 GSM cotton tee"
-                  priority
-                  sizes="(min-width: 1024px) 34vw, 58vw"
-                  className="h-auto w-full"
-                />
-              </div>
-              <div className="absolute top-[23%] left-[4%] w-[62%] -rotate-[8deg] overflow-hidden shadow-2xl transition-transform duration-700 hover:rotate-0">
-                <Image
-                  src="/products/regular-fit-180-gsm/starkvibe-mens-black-t-shirt-promo.png"
-                  width={600}
-                  height={900}
-                  alt="Black regular fit 180 GSM cotton tee"
-                  sizes="(min-width: 1024px) 36vw, 62vw"
-                  className="h-auto w-full"
-                />
-              </div>
-              <div className="absolute bottom-[3%] left-[28%] w-[48%] -rotate-2 overflow-hidden shadow-xl transition-transform duration-700 hover:rotate-0">
-                <Image
-                  src="/products/regular-fit-180-gsm/starkvibe-maroon-t-shirt-showcase.png"
-                  width={600}
-                  height={900}
-                  alt="Maroon regular fit 180 GSM cotton tee"
-                  sizes="(min-width: 1024px) 28vw, 48vw"
-                  className="h-auto w-full"
-                />
-              </div>
-              <a
-                href="#range"
-                className="absolute top-6 left-6 bg-ink px-4 py-2.5 text-[13px] font-semibold text-paper"
-              >
-                Regular fit 180 GSM · ₹800
-              </a>
-              <span className="absolute right-5 bottom-[18px] bg-paper/80 px-2 py-1 text-[10px] tracking-[.14em] uppercase">
-                Heavy cotton. Everyday character.
-              </span>
-            </div>
-          </section>
-          <section className="bg-gold">
+          <HomeBannerSlider />
+          <section className="border-y border-ink/10 bg-[#e8e2d7]">
             <div
-              className={`${container} grid grid-cols-2 gap-x-8 gap-y-7 py-9 lg:grid-cols-4`}
+              className={`${container} grid grid-cols-2 gap-x-6 gap-y-0 py-4 sm:gap-x-8 lg:grid-cols-4 lg:py-7`}
             >
               {specs.map(([title, note]) => (
-                <div key={title}>
-                  <h2 className="font-display text-3xl leading-none font-black uppercase">
+                <div key={title} className="py-4 lg:border-l lg:border-ink/15 lg:py-2 lg:pl-7 first:lg:border-l-0 first:lg:pl-0">
+                  <span className="mb-3 block h-[2px] w-8 bg-gold" aria-hidden="true" />
+                  <h2 className="font-display text-[clamp(19px,2vw,26px)] leading-none font-black uppercase">
                     {title}
                   </h2>
-                  <p className="mt-1.5 text-sm leading-snug">{note}</p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-ink/65">{note}</p>
                 </div>
               ))}
             </div>
           </section>
-          <section id="categories" className={`${container} pt-20 lg:pt-32`}>
+          <HomeOfferBanner />
+          <section aria-labelledby="bestsellers-title" className="overflow-hidden bg-paper py-8 sm:py-11">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
+              <div className="mb-6 text-center sm:mb-8">
+                <p className="text-[10px] font-bold tracking-[.22em] text-olive uppercase sm:text-xs">The StarkVibe edit</p>
+                <h2 id="bestsellers-title" className="mt-1 font-display text-[clamp(34px,4.2vw,60px)] leading-none font-black uppercase">Bestsellers, all in one place</h2>
+                <p className="mt-2 text-sm text-ink/65">Find your fit. Make it yours.</p>
+              </div>
+              <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-6">
+                {[
+                  { label: "Oversized", image: "/bestseller/Urban%20Starkvibe%20Streetwear%20Portrait.png", href: "/shop/t-shirts", alt: "StarkVibe oversized streetwear collection" },
+                  { label: "Clean classics", image: "/bestseller/Sunlit%20Starkvibe%20Lifestyle%20Portrait.png", href: "/shop/t-shirts", alt: "StarkVibe clean classic T-shirt" },
+                  { label: "Statement prints", image: "/bestseller/Modern%20Green%20Streetwear%20Portrait.png", href: "/shop/t-shirts", alt: "StarkVibe statement streetwear" },
+                  { label: "French Terry", image: "/bestseller/Sunlit%20Starkvibe%20Streetwear%20Portrait.png", href: "/shop/t-shirts", alt: "StarkVibe French Terry streetwear" },
+                  { label: "Premium polos", image: "/bestseller/Sunlit%20Starkvibe%20Polo%20Portrait.png", href: "/shop/polos", alt: "StarkVibe premium polo" },
+                  { label: "Explore all", image: "/bestseller/Modern%20Sunglasses%20Style%20Portrait.png", href: "/shop", alt: "Explore the StarkVibe apparel collection" },
+                ].map((item) => (
+                  <a key={item.label} href={item.href} className="group relative h-[290px] min-w-[70vw] snap-start overflow-hidden rounded-[24px] border-[3px] border-gold bg-[#e7e2d8] shadow-[0_4px_0_rgba(13,13,12,.08)] transition-transform duration-300 hover:-translate-y-1 sm:h-[320px] sm:min-w-0 sm:rounded-[28px]">
+                    <Image src={item.image} alt={item.alt} fill sizes="(min-width: 1024px) 16vw, (min-width: 640px) 30vw, 70vw" className="object-cover object-center" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-transparent to-transparent" aria-hidden="true" />
+                    <span className="absolute inset-x-0 bottom-0 flex min-h-12 items-center justify-center bg-ink/95 px-2 text-center text-[11px] font-bold tracking-[.1em] text-paper uppercase sm:text-xs">{item.label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+          <HomeProductSlider />
+          <CustomPrintingOfferSlider />
+          <section id="categories" className={`${container} pt-6 lg:pt-10`}>
             <Reveal>
               <div className="mb-12 flex flex-wrap items-end justify-between gap-6 lg:mb-16">
                 <div>
                   <p className={`${eyebrow} text-olive`}>Explore the collection</p>
                   <h2 className={heading}>
-                    Find your
-                    <br />
-                    everyday piece.
+                    Find your everyday piece.
                   </h2>
                 </div>
                 <p className="max-w-[400px] text-[17px] leading-[1.6] text-[#3f3e3a]">
@@ -303,79 +278,40 @@ export default function Home() {
                 </p>
               </div>
             </Reveal>
-            <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-5">
+            <div className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-x-auto sm:px-0 sm:pb-4 lg:flex lg:snap-x lg:snap-mandatory lg:overflow-x-auto lg:pb-5">
               {categories.map((category) => (
                 <a
                   key={category.label}
                   href={category.href}
-                  className={`group relative flex min-h-[390px] min-w-[84vw] snap-start flex-col justify-end overflow-hidden bg-[#e4e2da] p-5 text-paper shadow-[0_10px_30px_rgba(13,13,12,.12)] transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_22px_45px_rgba(13,13,12,.22)] sm:min-h-0 sm:min-w-0 sm:snap-none sm:p-6 lg:p-7 ${category.cardClass}`}
+                  className="group relative flex h-[390px] min-w-[78vw] snap-start flex-col justify-end overflow-hidden rounded-[10px] bg-[#e4e2da] p-5 text-paper shadow-[0_10px_30px_rgba(13,13,12,.12)] transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(13,13,12,.22)] sm:h-[430px] sm:min-w-0 sm:p-6 lg:h-[500px] lg:flex-[0_0_calc((100%-3rem)/4)] lg:p-7"
                 >
                   <Image
                     src={category.image}
                     alt={`StarkVibe ${category.label} 100% cotton clothing collection`}
                     fill
-                    sizes="(min-width: 1024px) 25vw, 50vw"
-                    className="object-contain object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 78vw"
+                    className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-transparent transition-opacity duration-500 group-hover:via-ink/35" aria-hidden="true" />
-                  <div className="relative z-10">
-                    <p className="mb-2 text-[10px] font-semibold tracking-[.18em] text-gold uppercase lg:text-[11px]">
-                      {category.eyebrow}
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/0 to-ink/25 transition-opacity duration-500 group-hover:from-ink/85" aria-hidden="true" />
+                  <div className="absolute top-5 right-5 left-5 z-10 text-right sm:top-7 sm:right-7 sm:left-7">
+                    <p className="font-display text-[clamp(25px,2vw,38px)] leading-[.92] font-black uppercase">
+                      {category.label}
                     </p>
-                    <div className="flex items-end justify-between gap-3">
-                      <div>
-                        <h3 className="font-display text-[clamp(24px,1vw,28px)] leading-[.88] font-black uppercase">
-                          {category.label}
-                        </h3>
-                        <p className="mt-3 max-w-[260px] text-xs leading-relaxed text-paper/80 sm:text-sm">
-                          {category.description}
-                        </p>
-                      </div>
-                     
-                    </div>
                   </div>
-                  <div className="hidden">
-                    <div className="mt-2.5 flex justify-end text-xs lg:text-sm">
-                      <span className="font-bold">Shop →</span>
-                    </div>
+                  <div className="relative z-10 text-center">
+                    <span className="inline-flex border-b border-paper/80 pb-1 text-sm font-semibold tracking-wide uppercase">
+                      Shop now
+                    </span>
                   </div>
                 </a>
               ))}
             </div>
           </section>
         </Storefront>
-        <section className="border-y border-ink/20 bg-[#eeece5] py-20 lg:py-28" aria-labelledby="who-starkvibe-is-for">
-          <div className={`${container} grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-24`}>
-            <Reveal>
-              <p className={`${eyebrow} text-olive`}>A clearer way to choose</p>
-              <h2 id="who-starkvibe-is-for" className="font-display text-[clamp(50px,6vw,88px)] leading-[.88] font-black uppercase">Built for the people who wear it.</h2>
-            </Reveal>
-            <div className="space-y-9 text-[16px] leading-[1.7] text-[#3f3e3a]">
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">For groups, teams and thoughtful gifts</h3>
-                <p>StarkVibe is for college groups, offices, families, event crews and people looking for a personal gift. Start with an everyday T-shirt, a polished polo, a kids tee or a warmer fleece layer, then choose the colour and fit that make sense for the people wearing it. The range is designed to work for a single favourite piece as well as coordinated clothing for a shared occasion.</p>
-              </div>
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">Why cotton, and which GSM?</h3>
-                <p>Every piece is made from 100% cotton, with options from 180 to 350 GSM. Choose 180 GSM for a light, breathable everyday tee or kids tee. Move to 220–240 GSM when you want more body, a structured feel or an oversized and French Terry look. At 350 GSM, cotton fleece gives sweatshirts and hoodies a warmer, more substantial layer. Our <Link href="/shop/t-shirts" className="font-bold underline underline-offset-4 hover:text-olive">T-shirts</Link> and <Link href="/shop/hoodies" className="font-bold underline underline-offset-4 hover:text-olive">hoodies</Link> pages make those choices easier to compare.</p>
-              </div>
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">From enquiry to finished order</h3>
-                <p>For custom printed t-shirts and bulk t-shirt orders, the process starts with an enquiry. Share the occasion, garment preference, colours, sizes, quantity and artwork—or describe the idea if the design is not ready. The next steps are artwork review, a quote, and production after the final details are approved. Visit <Link href="/custom-printing" className="font-bold underline underline-offset-4 hover:text-olive">custom printing</Link> to begin, or check the <Link href="/size-guide" className="font-bold underline underline-offset-4 hover:text-olive">size guide</Link> before sending your size list.</p>
-              </div>
-              <div>
-                <h3 className="mb-2 text-2xl font-bold">A practical place to start</h3>
-                <p>Choose the occasion first, then the garment weight and fit. A regular fit is a straightforward daily base, while an oversized tee gives a relaxed streetwear shape. Polos bring a sharper everyday look, kids tees keep group dressing simple, and fleece adds warmth for cooler days. If the order includes different ages or preferences, make a clear size and colour list before sharing the enquiry. That gives the artwork and product choices a useful starting point without making the brief complicated.</p>
-              </div>
-              <div className="border-t border-ink/20 pt-6">
-                <p>Want a little more context? Read our guides on <Link href="/blog/how-to-choose-the-right-gsm-t-shirt" className="font-bold underline underline-offset-4 hover:text-olive">choosing the right GSM</Link> and the <Link href="/blog/custom-t-shirt-printing-order-checklist" className="font-bold underline underline-offset-4 hover:text-olive">custom printing order checklist</Link>.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section id="fabric" className="mt-20 bg-ink text-paper lg:mt-36">
+        <CustomBrandingImageSlider />
+        <section id="fabric" className="bg-ink text-paper">
           <div
-            className={`${container} grid gap-12 py-20 lg:grid-cols-[1fr_1.1fr] lg:gap-24 lg:py-32`}
+            className={`${container} grid gap-12 py-10 lg:grid-cols-[1fr_1.1fr] lg:gap-24`}
           >
             <Reveal className="relative flex min-h-[450px] flex-col justify-between overflow-hidden bg-[#e2dfd6] p-8 text-ink lg:min-h-[680px]">
               <Image
@@ -390,34 +326,34 @@ export default function Home() {
                 100%
               </p>
               <div className="relative z-10">
-                <h2 className="font-display text-[44px] leading-[.95] font-black uppercase">
+                <h2 className="font-display text-[clamp(38px,4.2vw,60px)] leading-[.95] font-black uppercase">
                   Cotton,
                   <br />
                   start to finish.
                 </h2>
                 <p className="mt-6 text-[11px] tracking-[.12em] text-[#6e6b62] uppercase">
-                  Pure fibre · Nothing to hide
+                  Pure fibre Â· Nothing to hide
                 </p>
               </div>
             </Reveal>
             <Reveal>
-              <p className={`${eyebrow} text-gold`}>How it is made</p>
-              <h2 className="mb-14 font-display text-[clamp(44px,6vw,92px)] leading-[.9] font-black uppercase">
+              <p className={`${eyebrow} text-olive`}>How it is made</p>
+              <h2 className="mb-14 font-display text-[clamp(36px,4.2vw,60px)] leading-[.9] font-black uppercase">
                 Four steps to a<br className="hidden xl:block" /> finish that
                 lasts.
               </h2>
-              <div className="border-t border-[#3a3a36]">
+              <div className="border-t border-paper/20">
                 {steps.map(([title, note], i) => (
                   <div
                     key={title}
-                    className="flex gap-7 border-b border-[#3a3a36] py-[30px]"
+                    className="flex gap-7 border-b border-paper/20 py-[30px]"
                   >
-                    <span className="w-14 shrink-0 font-display text-[44px] leading-none font-black text-gold">
+                    <span className="w-14 shrink-0 font-display text-[44px] leading-none font-black text-olive">
                       0{i + 1}
                     </span>
                     <div>
                       <h3 className="mb-2 text-[22px] font-bold">{title}</h3>
-                      <p className="text-base leading-[1.6] text-[#b9b7ae]">
+                      <p className="text-base leading-[1.6] text-paper/70">
                         {note}
                       </p>
                     </div>
@@ -427,58 +363,42 @@ export default function Home() {
             </Reveal>
           </div>
         </section>
-        <section id="colours" className={`${container} pt-20 lg:pt-36`}>
-          <Reveal>
-            <div className="mb-14 flex flex-wrap items-end justify-between gap-6">
+        <section className="border-y border-ink/20 bg-[#eeece5] py-10" aria-labelledby="who-starkvibe-is-for">
+          <div className={`${container} grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-24`}>
+            <Reveal>
+              <p className={`${eyebrow} text-olive`}>A clearer way to choose</p>
+              <h2 id="who-starkvibe-is-for" className="font-display text-[clamp(36px,4.2vw,60px)] leading-[.88] font-black uppercase">Built for the people who wear it.</h2>
+            </Reveal>
+            <div className="space-y-9 text-[16px] leading-[1.7] text-[#3f3e3a]">
               <div>
-                <p className={`${eyebrow} text-olive`}>Colour library</p>
-                <h2 className={heading}>
-                  Nineteen shades.
-                  <br />
-                  Exact hex.
-                </h2>
+                <h3 className="mb-2 text-2xl font-bold">For groups, teams and thoughtful gifts</h3>
+                <p>StarkVibe is for college groups, offices, families, event crews and people looking for a personal gift. Start with an everyday T-shirt, a polished polo, a kids tee or a warmer fleece layer, then choose the colour and fit that make sense for the people wearing it. The range is designed to work for a single favourite piece as well as coordinated clothing for a shared occasion.</p>
               </div>
-              <p className="max-w-[380px] text-[17px] leading-[1.6] text-[#3f3e3a]">
-                Every colour in the range, shown with its code. Not every shade
-                is available on every piece, so check the product.
-              </p>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">Why cotton, and which GSM?</h3>
+                <p>Every piece is made from 100% cotton, with options from 180 to 350 GSM. Choose 180 GSM for a light, breathable everyday tee or kids tee. Move to 220â€“240 GSM when you want more body, a structured feel or an oversized and French Terry look. At 350 GSM, cotton fleece gives sweatshirts and hoodies a warmer, more substantial layer. Our <Link href="/shop/t-shirts" className="font-bold underline underline-offset-4 hover:text-olive">T-shirts</Link> and <Link href="/shop/hoodies" className="font-bold underline underline-offset-4 hover:text-olive">hoodies</Link> pages make those choices easier to compare.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">From enquiry to finished order</h3>
+                <p>For custom printed t-shirts and bulk t-shirt orders, the process starts with an enquiry. Share the occasion, garment preference, colours, sizes, quantity and artworkâ€”or describe the idea if the design is not ready. The next steps are artwork review, a quote, and production after the final details are approved. Visit <Link href="/custom-printing" className="font-bold underline underline-offset-4 hover:text-olive">custom printing</Link> to begin, or check the <Link href="/size-guide" className="font-bold underline underline-offset-4 hover:text-olive">size guide</Link> before sending your size list.</p>
+              </div>
+              <div>
+                <h3 className="mb-2 text-2xl font-bold">A practical place to start</h3>
+                <p>Choose the occasion first, then the garment weight and fit. A regular fit is a straightforward daily base, while an oversized tee gives a relaxed streetwear shape. Polos bring a sharper everyday look, kids tees keep group dressing simple, and fleece adds warmth for cooler days. If the order includes different ages or preferences, make a clear size and colour list before sharing the enquiry. That gives the artwork and product choices a useful starting point without making the brief complicated.</p>
+              </div>
+              <div className="border-t border-ink/20 pt-6">
+                <p>Want a little more context? Read our guides on <Link href="/blog/how-to-choose-the-right-gsm-t-shirt" className="font-bold underline underline-offset-4 hover:text-olive">choosing the right GSM</Link> and the <Link href="/blog/custom-t-shirt-printing-order-checklist" className="font-bold underline underline-offset-4 hover:text-olive">custom printing order checklist</Link>.</p>
+              </div>
             </div>
-          </Reveal>
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4 lg:grid-cols-8">
-            {swatches.map((c) => {
-              const h = c.hex.slice(1);
-              const lum =
-                (0.299 * parseInt(h.slice(0, 2), 16) +
-                  0.587 * parseInt(h.slice(2, 4), 16) +
-                  0.114 * parseInt(h.slice(4, 6), 16)) /
-                255;
-              return (
-                <span
-                  key={c.hex}
-                  style={{
-                    backgroundColor: c.hex,
-                    color: lum > 0.55 ? "#0d0d0c" : "#f1f0eb",
-                  }}
-                  className="flex h-[168px] flex-col justify-end border border-black/10 p-3.5 transition-transform duration-300 hover:-translate-y-1"
-                >
-                  <span className="text-[15px] leading-tight font-bold">
-                    {c.name}
-                  </span>
-                  <span className="mt-1 text-[11px] tracking-[.08em]">
-                    {c.hex.toUpperCase()}
-                  </span>
-                </span>
-              );
-            })}
           </div>
         </section>
-        <section id="custom" className="mt-20 bg-[#2a4f00] text-paper lg:mt-36">
+        <section id="custom" className="mt-0 bg-[#2a4f00] text-paper">
           <div
-            className={`${container} grid items-center gap-12 py-20 lg:grid-cols-[1.1fr_1fr] lg:gap-24 lg:py-[120px]`}
+            className={`${container} grid items-center gap-12 py-10 lg:grid-cols-[1.1fr_1fr] lg:gap-24`}
           >
             <Reveal>
               <p className={`${eyebrow} text-gold`}>Custom printing</p>
-              <h2 className="mb-7 font-display text-[clamp(52px,7.4vw,120px)] leading-[.88] font-black uppercase">
+              <h2 className="mb-7 font-display text-[clamp(36px,4.2vw,60px)] leading-[.88] font-black uppercase">
                 Made for every
                 <br />
                 celebration.
@@ -510,11 +430,11 @@ export default function Home() {
         </section>
         <section
           id="faq"
-          className={`${container} grid gap-12 pt-20 lg:grid-cols-[1fr_2fr] lg:gap-24 lg:pt-36`}
+          className={`${container} grid gap-12 py-10 lg:grid-cols-[1fr_2fr] lg:gap-24`}
         >
           <Reveal>
             <p className={`${eyebrow} text-olive`}>Good to know</p>
-            <h2 className="mb-6 font-display text-[clamp(48px,6vw,67px)] leading-[.88] font-black uppercase">
+            <h2 className="mb-6 font-display text-[clamp(36px,4.2vw,60px)] leading-[.88] font-black uppercase">
               Questions,
               <br />
               answered.
@@ -537,7 +457,7 @@ export default function Home() {
                     +
                   </span>
                   <span className="hidden text-3xl font-normal group-open:block">
-                    −
+                    âˆ’
                   </span>
                 </summary>
                 <p className="max-w-[620px] pb-7 leading-[1.65] text-[#3f3e3a]">
