@@ -61,19 +61,21 @@ export function ShopFiltersPanel({
           {shopColours.map((colour) => (
             <button
               key={colour.name}
+              type="button"
+              aria-label={`Filter by ${colour.name}`}
               aria-pressed={filters.colour === colour.name}
               onClick={() =>
                 onChange({
                   colour: filters.colour === colour.name ? "" : colour.name,
                 })
               }
-              className={`flex items-center gap-2 text-left text-[13px] ${filters.colour === colour.name ? "font-bold" : ""}`}
+              className={`flex min-w-0 w-full items-center gap-2.5 rounded-sm border border-transparent px-1.5 py-1 text-left text-[13px] transition-colors hover:border-ink/15 hover:bg-ink/5 ${filters.colour === colour.name ? "border-ink/20 bg-ink/5 font-bold" : ""}`}
             >
               <span
                 style={{ backgroundColor: colour.hex }}
-                className={`size-6 shrink-0 rounded-full border border-ink/20 ${filters.colour === colour.name ? "ring-2 ring-ink ring-offset-2 ring-offset-paper" : ""}`}
+                className={`size-5 shrink-0 rounded-full border border-ink/20 ${filters.colour === colour.name ? "ring-2 ring-ink ring-offset-2 ring-offset-paper" : ""}`}
               />
-              {colour.name}
+              <span className="truncate">{colour.name}</span>
             </button>
           ))}
         </div>

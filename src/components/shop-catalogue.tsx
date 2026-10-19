@@ -38,6 +38,16 @@ const guide = [
     text: "Cotton fleece sweatshirts and hoodies built for cold days and branding.",
   },
 ];
+const featuredCatalogueOrder = ["polo", "kids", "sweatshirt", "hoodie", "oversized", "regular", "terry"];
+const featuredPreviewColours: Record<string, string> = {
+  polo: "white",
+  kids: "orange",
+  sweatshirt: "off-white",
+  hoodie: "coffee-brown",
+  oversized: "brown",
+  regular: "sea-green",
+  terry: "beige",
+};
 
 function BrandingBanner() {
   return (
@@ -130,7 +140,7 @@ export function ShopCatalogue({
   }, [saved, loaded]);
 
   function changeFilters(change: Partial<ShopFilters>) {
-    const next = { ...filters, ...change, ...(fixedCategory ? { category: fixedCategory } : {}) };
+    const next = { ...filters, ...change };
     setFilters(next);
     const params = new URLSearchParams();
     if (next.weight) params.set("weight", String(next.weight));
@@ -142,7 +152,7 @@ export function ShopCatalogue({
     window.history.replaceState(
       null,
       "",
-      `/shop${params.size ? `?${params}` : ""}`,
+      `${window.location.pathname}${params.size ? `?${params}` : ""}`,
     );
   }
   function toggleSaved(id: string) {
@@ -150,12 +160,17 @@ export function ShopCatalogue({
       current.includes(id) ? current.filter((p) => p !== id) : [...current, id],
     );
   }
-  const shown = sortProducts(
-    products.filter(
-      (p) => (!productIds || productIds.includes(p.id)) && matchesFilters(p, filters, saved),
-    ),
-    filters.sort,
-  );
+  const filteredProducts = products
+    .filter(
+      (p) =>
+        (!productIds || filters.category !== fixedCategory || productIds.includes(p.id)) &&
+        matchesFilters(p, filters, saved),
+    )
+    .sort(
+      (a, b) =>
+        featuredCatalogueOrder.indexOf(a.id) - featuredCatalogueOrder.indexOf(b.id),
+    );
+  const shown = sortProducts(filteredProducts, filters.sort);
   const colourFilter = shopColours.find((c) => c.name === filters.colour);
   const activeFilters = !!(
     filters.weight ||
@@ -168,7 +183,14 @@ export function ShopCatalogue({
     const matchingColour = colourFilter
       ? product.colours.findIndex((c) => colourFilter.files.includes(c.file))
       : 0;
-    const selected = colours[product.id] ?? Math.max(0, matchingColour);
+    const preferredColour = featuredPreviewColours[product.id];
+    const variedDefault = Math.max(
+      0,
+      product.colours.findIndex((colour) => colour.file === preferredColour),
+    );
+    const selected = colourFilter
+      ? Math.max(0, matchingColour)
+      : (colours[product.id] ?? variedDefault);
     return (
       <ShopProductCard
         key={product.id}
@@ -179,6 +201,7 @@ export function ShopCatalogue({
         }
         saved={saved.includes(product.id)}
         onSave={() => toggleSaved(product.id)}
+        showColourVariants={false}
       />
     );
   };
@@ -213,6 +236,7 @@ export function ShopCatalogue({
       >
         {weightOptions.map((weight) => (
           <button
+            type="button"
             key={weight}
             aria-pressed={filters.weight === weight}
             onClick={() => changeFilters({ weight })}
@@ -231,6 +255,7 @@ export function ShopCatalogue({
       <div className="mb-9 flex flex-wrap items-center justify-between gap-4 border-y border-ink/60 py-[18px]">
         <div className="flex flex-wrap items-center gap-5">
           <button
+            type="button"
             aria-expanded={filtersOpen}
             aria-controls="shop-filters"
             onClick={() => setFiltersOpen(!filtersOpen)}
@@ -244,6 +269,7 @@ export function ShopCatalogue({
           </span>
           {saved.length > 0 && (
             <button
+              type="button"
               aria-pressed={filters.savedOnly}
               onClick={() => changeFilters({ savedOnly: !filters.savedOnly })}
               className={`flex items-center gap-1.5 text-xs ${filters.savedOnly ? "font-bold text-olive" : "text-ink/60"}`}
@@ -264,6 +290,7 @@ export function ShopCatalogue({
           <span className="mr-2 text-xs text-[#77756c]">Sort</span>
           {sortOptions.map((sort) => (
             <button
+              type="button"
               key={sort.value}
               aria-pressed={filters.sort === sort.value}
               onClick={() => changeFilters({ sort: sort.value })}
@@ -301,6 +328,7 @@ export function ShopCatalogue({
             </span>
           )}
           <button
+            type="button"
             onClick={() => {
               changeFilters(defaultShopFilters);
               setColours({});
@@ -353,6 +381,7 @@ export function ShopCatalogue({
                 favourite.
               </p>
               <button
+                type="button"
                 onClick={() => changeFilters(defaultShopFilters)}
                 className="mt-7 h-12 bg-ink px-7 text-sm font-bold text-paper"
               >
@@ -392,6 +421,7 @@ export function ShopCatalogue({
                 {item.text}
               </p>
               <button
+                type="button"
                 onClick={() => {
                   changeFilters({ ...defaultShopFilters, weight: item.gsm });
                   document

@@ -21,6 +21,17 @@ import { filters, getProductBySlug, mrpPrice, productImage, products, productSlu
 import { Reveal } from "./reveal";
 import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
 
+const fullRangePreviewColours: Record<string, string> = {
+  oversized: "brown",
+  regular: "sea-green",
+  terry: "beige",
+  polo: "white",
+  kids: "orange",
+  sweatshirt: "off-white",
+  hoodie: "coffee-brown",
+};
+const fullRangeOrder = ["polo", "kids", "sweatshirt", "hoodie", "oversized", "regular", "terry"];
+
 export function Storefront({
   children,
   hideRange = false,
@@ -34,7 +45,6 @@ export function Storefront({
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [colours, setColours] = useState<Record<string, number>>({});
   const rangeTrackRef = useRef<HTMLDivElement>(null);
   const { count } = useBag();
   useEffect(() => {
@@ -65,10 +75,11 @@ export function Storefront({
     (p) =>
       (filter === "all" || p.category === filter) &&
       p.name.toLowerCase().includes(query.toLowerCase()),
+  ).sort(
+    (a, b) => fullRangeOrder.indexOf(a.id) - fullRangeOrder.indexOf(b.id),
   );
   const links = [
     ["Shop", "/shop"],
-    ["Account", "/my-account"],
     ["Birthday printing", "/custom-printing/birthday"],
     ["Office & bulk", "/custom-printing/office-bulk"],
     ["Anniversary wear", "/custom-printing/anniversary"],
@@ -352,11 +363,14 @@ export function Storefront({
           </Reveal>
           <p aria-live="polite" className="mb-6 text-sm text-[#55544f]">
             Showing {shown.length} {shown.length === 1 ? "piece" : "pieces"} ·
-            Tap a colour to see it on the piece
           </p>
           <div ref={rangeTrackRef} className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
             {shown.map((p) => {
-              const selected = colours[p.id] || 0;
+              const preferredColour = fullRangePreviewColours[p.id];
+              const selected = Math.max(
+                0,
+                p.colours.findIndex((colour) => colour.file === preferredColour),
+              );
               return (
                 <article key={p.id} className="group flex min-w-[84vw] snap-start flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)] sm:min-w-[calc((100%-1.25rem)/2)] xl:min-w-[calc((100%-3.75rem)/4)]">
                   <div className="relative">
@@ -379,29 +393,7 @@ export function Storefront({
                       <span className="absolute top-4 left-4 bg-ink px-3 py-2 text-xs font-bold tracking-[.1em] text-paper uppercase">
                         {p.gsm} GSM
                       </span>
-                      <span className="absolute bottom-3 left-4 bg-paper/90 px-2 py-1 text-[11px] tracking-[.12em] uppercase">
-                        {p.colours[selected].name}
-                      </span>
                     </button>
-                    <div className="absolute inset-x-3 bottom-3 flex flex-wrap items-center rounded-md border border-ink/10 bg-paper/90 px-2 py-1 backdrop-blur-sm">
-                      {p.colours.map((c, i) => (
-                        <button
-                          key={c.hex}
-                          aria-label={`${p.name}: ${c.name}`}
-                          aria-pressed={selected === i}
-                          onClick={() => setColours({ ...colours, [p.id]: i })}
-                          className="flex size-9 items-center justify-center"
-                        >
-                          <span
-                            style={{ backgroundColor: c.hex }}
-                            className={`size-5 rounded-full border border-ink/20 ${selected === i ? "ring-2 ring-ink ring-offset-1 ring-offset-paper" : ""}`}
-                          />
-                        </button>
-                      ))}
-                      <span className="ml-1 text-xs font-semibold text-[#55544f]">
-                        {p.colours.length} colours
-                      </span>
-                    </div>
                   </div>
                   <div className="mt-5 flex flex-col items-start gap-2 text-[19px] leading-tight font-bold">
                     <h3 className="min-w-0 max-w-full truncate">{p.name}</h3>
@@ -449,7 +441,7 @@ export function Storefront({
       )}
       <nav
         aria-label="Mobile quick navigation"
-        className="fixed inset-x-0 bottom-0 z-[70] flex h-[68px] items-stretch border-t border-ink/15 bg-paper/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_25px_rgba(13,13,12,.08)] backdrop-blur-md lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-[70] flex h-[68px] w-full max-w-full items-stretch overflow-hidden border-t border-ink/15 bg-paper/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_25px_rgba(13,13,12,.08)] backdrop-blur-md lg:hidden"
       >
         {[
           ["Home", "/", House],

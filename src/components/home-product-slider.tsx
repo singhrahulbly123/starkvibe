@@ -7,10 +7,25 @@ import { useRef, useState } from "react";
 import { mrpPrice, productImage, products, productSlug, salePrice } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
 
+const collectionOrder = ["polo", "kids", "sweatshirt", "hoodie", "oversized", "regular", "terry"];
+const collectionPreviewColours: Record<string, string> = {
+  polo: "black",
+  kids: "pink",
+  sweatshirt: "lavender",
+  hoodie: "beige",
+  oversized: "brown",
+  regular: "sea-green",
+  terry: "beige",
+};
+
 export function HomeProductSlider() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
+  const [selectedColours, setSelectedColours] = useState<Record<string, number>>({});
   const [addedProduct, setAddedProduct] = useState<string | null>(null);
+  const displayedProducts = [...products].sort(
+    (a, b) => collectionOrder.indexOf(a.id) - collectionOrder.indexOf(b.id),
+  );
   const scroll = (direction: -1 | 1) => {
     const track = trackRef.current;
     if (track) track.scrollBy({ left: direction * track.clientWidth * 0.82, behavior: "smooth" });
@@ -34,14 +49,18 @@ export function HomeProductSlider() {
           </div>
         </div>
         <div ref={trackRef} className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:gap-5 sm:px-0">
-          {products.map((product) => {
-            const colour = product.colours[0];
+          {displayedProducts.map((product) => {
+            const preferredColour = collectionPreviewColours[product.id];
+            const preferredIndex = product.colours.findIndex((colour) => colour.file === preferredColour);
+            const colourIndex = selectedColours[product.id] ?? Math.max(0, preferredIndex);
+            const colour = product.colours[colourIndex];
+            const productHref = `/products/${productSlug(product)}?colour=${colour.file}`;
             return (
               <article
                 key={product.id}
                 className="group flex min-w-[78vw] snap-start flex-col sm:min-w-[calc((100%-1.25rem)/2)] xl:min-w-[calc((100%-3.75rem)/4)]"
               >
-                <Link href={`/products/${productSlug(product)}`} aria-label={`View ${product.name}`} className="relative block aspect-[.78] overflow-hidden bg-[#f4f1e9]">
+                <Link href={productHref} aria-label={`View ${product.name} in ${colour.name}`} className="relative block aspect-[.78] overflow-hidden bg-[#f4f1e9]">
                   <Image
                     src={productImage(product, colour)}
                     alt={`${product.name} in ${colour.name}`}
@@ -53,8 +72,23 @@ export function HomeProductSlider() {
                   <span className="absolute right-3 bottom-3 bg-gold px-3 py-1.5 text-[10px] font-bold tracking-[.1em] text-ink uppercase">{colour.name}</span>
                 </Link>
                 <div className="border-x border-b border-ink/15 bg-[#f4f1e9] p-4 sm:p-5">
-                  <Link href={`/products/${productSlug(product)}`} title={product.name} className="block truncate whitespace-nowrap font-display text-lg leading-tight font-bold uppercase hover:text-olive sm:text-xl">{product.name}</Link>
+                  <Link href={productHref} title={product.name} className="block truncate whitespace-nowrap font-display text-lg leading-tight font-bold uppercase hover:text-olive sm:text-xl">{product.name}</Link>
                   <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-relaxed text-ink/65">{product.note}</p>
+                  <div role="group" aria-label={`${product.name} colours`} className="mt-4 flex flex-wrap items-center gap-1.5 border-t border-ink/15 pt-3">
+                    {product.colours.map((item, index) => (
+                      <button
+                        key={item.file}
+                        type="button"
+                        aria-label={`${product.name}: ${item.name}`}
+                        aria-pressed={index === colourIndex}
+                        onClick={() => setSelectedColours((current) => ({ ...current, [product.id]: index }))}
+                        className="flex size-8 items-center justify-center"
+                      >
+                        <span style={{ backgroundColor: item.hex }} className={`size-5 rounded-full border border-ink/20 ${index === colourIndex ? "ring-2 ring-ink ring-offset-2 ring-offset-[#f4f1e9]" : ""}`} />
+                      </button>
+                    ))}
+                    <span className="ml-1 text-[11px] text-ink/55">{colour.name}</span>
+                  </div>
                   <div className="mt-4 flex items-center justify-between border-t border-ink/15 pt-3">
                     <span className="flex items-baseline gap-2"><del className="text-xs text-ink/45">₹{mrpPrice(product)}</del><span className="font-bold">₹{salePrice(product)}</span></span>
                   </div>
@@ -73,7 +107,7 @@ export function HomeProductSlider() {
                       onClick={() => {
                         const size = selectedSizes[product.id] || sizesFor(product)[2];
                         window.dispatchEvent(new CustomEvent("starkvibe-add-to-bag", {
-                          detail: { key: `${product.id}-0-${size}`, product, colour: 0, size, quantity: 1 },
+                          detail: { key: `${product.id}-${colourIndex}-${size}`, product, colour: colourIndex, size, quantity: 1 },
                         }));
                         setAddedProduct(product.id);
                         window.setTimeout(() => setAddedProduct((current) => current === product.id ? null : current), 1600);

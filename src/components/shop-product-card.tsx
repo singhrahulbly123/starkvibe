@@ -11,12 +11,14 @@ export function ShopProductCard({
   onColourChange,
   saved,
   onSave,
+  showColourVariants = true,
 }: {
   product: Product;
   colourIndex: number;
   onColourChange: (index: number) => void;
   saved: boolean;
   onSave: () => void;
+  showColourVariants?: boolean;
 }) {
   const colour = product.colours[colourIndex];
   const sizes = sizesFor(product);
@@ -53,9 +55,11 @@ export function ShopProductCard({
           />
         </button>
         <div className="pointer-events-none absolute inset-x-3 bottom-3 flex flex-wrap items-end justify-between gap-2">
-          <span className="bg-paper/95 px-2.5 py-1.5 text-[11px] font-bold tracking-[.1em] text-[#55544f] uppercase">
-            Colour: {colour.name}
-          </span>
+          {showColourVariants && (
+            <span className="bg-paper/95 px-2.5 py-1.5 text-[11px] font-bold tracking-[.1em] text-[#55544f] uppercase">
+              Colour: {colour.name}
+            </span>
+          )}
           <span className="bg-ink/90 px-2.5 py-1.5 text-[10px] font-bold tracking-[.08em] text-paper uppercase">
             Sizes: {sizes.join(" · ")}
           </span>
@@ -73,29 +77,31 @@ export function ShopProductCard({
       <p className="mt-2 min-h-[42px] text-sm leading-[1.5] text-[#55544f]">
         {product.note}
       </p>
-      <div
-        role="group"
-        aria-label={`${product.name} colours`}
-        className="-ml-1.5 mt-2 flex flex-wrap items-center"
-      >
-        {product.colours.map((c, index) => (
-          <button
-            key={c.file}
-            aria-label={`${product.name}: ${c.name}`}
-            aria-pressed={index === colourIndex}
-            onClick={() => onColourChange(index)}
-            className="flex size-10 items-center justify-center"
-          >
-            <span
-              style={{ backgroundColor: c.hex }}
-              className={`size-6 rounded-full border border-ink/20 ${index === colourIndex ? "ring-2 ring-ink ring-offset-2 ring-offset-paper" : ""}`}
-            />
-          </button>
-        ))}
-        <span className="ml-1 text-xs text-[#77756c]">
-          {product.colours.length} colours
-        </span>
-      </div>
+      {showColourVariants && (
+        <div
+          role="group"
+          aria-label={`${product.name} colours`}
+          className="-ml-1.5 mt-2 flex flex-wrap items-center"
+        >
+          {product.colours.map((c, index) => (
+            <button
+              key={c.file}
+              aria-label={`${product.name}: ${c.name}`}
+              aria-pressed={index === colourIndex}
+              onClick={() => onColourChange(index)}
+              className="flex size-10 items-center justify-center"
+            >
+              <span
+                style={{ backgroundColor: c.hex }}
+                className={`size-6 rounded-full border border-ink/20 ${index === colourIndex ? "ring-2 ring-ink ring-offset-2 ring-offset-paper" : ""}`}
+              />
+            </button>
+          ))}
+          <span className="ml-1 text-xs text-[#77756c]">
+            {product.colours.length} colours
+          </span>
+        </div>
+      )}
       <Link
         href={href}
         className="mt-3 flex h-[52px] items-center justify-center border border-ink text-sm font-bold transition-colors hover:bg-ink hover:text-paper"
