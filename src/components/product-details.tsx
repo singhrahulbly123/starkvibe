@@ -1,9 +1,9 @@
 "use client";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Minus, Plus } from "lucide-react";
-import { mrpPrice, products, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { plainRichText, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { productFit, sizeGuideFor, sizesFor } from "@/lib/product-details";
 import { productMaterial, productSeoDescription, productSku } from "@/lib/product-seo";
 import { trackEvent } from "@/lib/analytics";
@@ -19,24 +19,6 @@ const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const sectionHeading =
   "font-display text-[clamp(46px,6vw,92px)] leading-[.88] font-black uppercase";
 const eyebrow = "mb-[18px] text-[13px] font-bold tracking-[.18em] uppercase";
-const comparisonOrder = [
-  "regular",
-  "kids",
-  "oversized",
-  "polo",
-  "terry",
-  "sweatshirt",
-  "hoodie",
-];
-const comparisonNames: Record<string, string> = {
-  regular: "Regular Fit Tee",
-  kids: "Kids Tee",
-  oversized: "Oversized Tee",
-  polo: "Polo, Matty",
-  terry: "Oversized French Terry Tee",
-  sweatshirt: "Fleece Sweatshirt",
-  hoodie: "Fleece Hoodie",
-};
 const benefits = [
   "100% premium cotton",
   "Double bio-washed",
@@ -47,9 +29,11 @@ const benefits = [
 export function ProductDetails({
   product,
   initialColour,
+  relatedProducts = [],
 }: {
   product: Product;
   initialColour: number;
+  relatedProducts?: Product[];
 }) {
   const [colourIndex, setColourIndex] = useState(initialColour);
   const [view, setView] = useState("Front");
@@ -59,7 +43,7 @@ export function ProductDetails({
   const [activeFaq, setActiveFaq] = useState("Benefits");
   const [relatedColours, setRelatedColours] = useState<Record<string, number>>({});
   const colour = product.colours[colourIndex];
-  const fit = productFit(product);
+  const fit = product.fit || productFit(product);
   const sizeGuide = sizeGuideFor(product);
   const fabric =
     product.category === "fleece"
@@ -67,21 +51,22 @@ export function ProductDetails({
       : product.id === "terry"
         ? "100% cotton French Terry"
         : "100% premium cotton";
-  const description = `Crafted from ${fabric.toLowerCase()} for everyday comfort and durability. Double bio-washed and silicon washed for a soft, smooth finish and colour that lasts, with double stitched seams for strength and a clean, ${fit.toLowerCase()} fit.`;
+  const description = `${product.note} Available in ${product.colours.map((item) => item.name).join(", ")}.`;
   const finish = `${fabric} at ${product.gsm} GSM. Double bio-washed and silicon washed for a soft, smooth surface and long-lasting colour. Double stitched seams for strength and a clean, premium fit.`;
+  const productDescription = product.long_description || description;
+  const detailFabric = product.material || fabric;
+  const detailFinish = product.finish || finish;
+  const detailConstruction = product.construction || "Double stitched seams";
+  const detailWashing =
+    product.washing || "Wash gently with similar colours; turn printed garments inside out";
+  const detailBestFor =
+    product.best_for ||
+    (product.id === "kids"
+      ? "Active days, teams, custom printing"
+      : "Everyday, streetwear, custom printing");
   const weightPosition = ((product.gsm - 180) / 170) * 100;
-  const related = [
-    "terry",
-    "regular",
-    "polo",
-    "hoodie",
-    "oversized",
-    "sweatshirt",
-    "kids",
-  ]
-    .filter((id) => id !== product.id)
-    .slice(0, 4)
-    .map((id) => products.find((p) => p.id === id)!);
+  const related = relatedProducts.filter((item) => item.id !== product.id).slice(0, 4);
+  const comparison = [product, ...relatedProducts.filter((item) => item.id !== product.id)].slice(0, 7);
   const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "917060421033";
 
   useEffect(() => {
@@ -125,20 +110,15 @@ export function ProductDetails({
     setAdded(true);
   }
   const specs = [
-    ["Material", fabric],
+    ["Material", detailFabric],
     ["SKU", productSku(product)],
     ["GSM", `${product.gsm} GSM`],
     ["Fit", fit],
-    ["Finish", "Double bio-washed, silicon washed"],
-    ["Construction", "Double stitched seams"],
+    ["Finish", detailFinish],
+    ["Construction", detailConstruction],
     ["Colour options", product.colours.map((item) => item.name).join(", ")],
-    ["Washing", "Wash gently with similar colours; turn printed garments inside out"],
-    [
-      "Best for",
-      product.id === "kids"
-        ? "Active days, teams, custom printing"
-        : "Everyday, streetwear, custom printing",
-    ],
+    ["Washing", detailWashing],
+    ["Best for", detailBestFor],
   ];
   const productLabel =
     product.id === "kids"
@@ -159,7 +139,7 @@ export function ProductDetails({
         ? "cool mornings, travel, casual layering and event merchandise"
         : "everyday outfits, streetwear looks, group events and custom gifts";
   const colourNames = product.colours.map((item) => item.name).join(", ");
-  const accordion = [
+  const accordion: [string, string][] = [
     [
       "Benefits",
       `${product.name} is designed as a dependable ${productLabel} for people who want comfort, structure and an easy styling experience in one piece. At ${product.gsm} GSM, it gives you a clear sense of fabric weight without making the garment difficult to wear. The ${fit.toLowerCase()} shape works well on its own and also layers naturally with denim, trousers, jackets or seasonal outerwear. It is a practical choice for ${useCases}.\n\nThe garment is made for repeat wear rather than a one-time look. Double bio-washing and silicon washing help create a softer hand feel, while double stitched seams support the areas that experience regular movement. That balance makes it useful for personal wardrobes, family orders, team clothing, college groups, birthday celebrations and event gifting. If you are planning custom printing, the clean surface gives your artwork a clear base and lets the design remain the focus.\n\nThe available colour range includes ${colourNames}. This gives you room to create coordinated outfits, mixed-colour group orders or a simple everyday rotation. Choose a classic shade for maximum versatility, or select a brighter colour when the garment needs to feel more expressive. Every product detail, including size, shade and quantity, can be confirmed before a larger custom printing order is produced.`,
@@ -174,9 +154,13 @@ export function ProductDetails({
     ],
     [
       "Shipping and printing",
-      `Shipping charges, delivery timelines and return terms are confirmed before your order is placed. For a standard order, the team will confirm the selected product, colour, size and quantity. For custom printing, they will also review your artwork, print position, print method, order quantity and production timeline before approval. This keeps the process clear and helps avoid surprises at the final stage.\n\nThese garments are suitable for custom birthday t-shirts, party group clothing, school or college events, family celebrations, team activities and personalised gifts. You can order a single piece for a special present or discuss a larger quantity when several people need a coordinated look. Mixed colours may be possible depending on the order, so share your preferred colour plan and size breakdown when you contact the team.\n\nFor the best result, send a high-quality logo, illustration or text design and mention the intended garment colour. The team can confirm whether the artwork needs adjustment and whether the chosen design is suitable for the selected fabric. Production begins after the important details are agreed. If you are unsure what to order, tell us the occasion, number of people, preferred garments and delivery requirement. We will help shape the order around your event rather than treating it like a generic bulk purchase.`,
+      `Standard delivery usually takes 5–7 working days across India. Express delivery usually takes 3–4 working days where available. Shipping charges and the final delivery estimate for your PIN code are confirmed before dispatch. For a standard order, the team will confirm the selected product, colour, size and quantity. For custom printing, they will also review your artwork, print position, print method, order quantity and production timeline before approval. This keeps the process clear and helps avoid surprises at the final stage.\n\nThese garments are suitable for custom birthday t-shirts, party group clothing, school or college events, family celebrations, team activities and personalised gifts. You can order a single piece for a special present or discuss a larger quantity when several people need a coordinated look. Mixed colours may be possible depending on the order, so share your preferred colour plan and size breakdown when you contact the team.\n\nFor the best result, send a high-quality logo, illustration or text design and mention the intended garment colour. The team can confirm whether the artwork needs adjustment and whether the chosen design is suitable for the selected fabric. Production begins after the important details are agreed. If you are unsure what to order, tell us the occasion, number of people, preferred garments and delivery requirement. We will help shape the order around your event rather than treating it like a generic bulk purchase.`,
     ],
   ];
+  if (product.long_description) accordion[0][1] = product.long_description;
+  if (product.finish) accordion[1][1] = product.finish;
+  if (product.care_instructions) accordion[2][1] = product.care_instructions;
+  if (product.shipping_info) accordion[3][1] = product.shipping_info;
   const faqPoints: Record<string, string[]> = {
     Benefits: [
       `${product.gsm} GSM ${fabric.toLowerCase()} with a structured feel`,
@@ -185,19 +169,19 @@ export function ProductDetails({
       `Available in ${colourNames} for single pieces or coordinated groups`,
     ],
     "Fabric and finish": [
-      fabric,
+      detailFabric,
       `${product.gsm} GSM weight`,
-      "Double bio-washed and silicon washed surface",
+      detailFinish,
       "Clean base for custom birthday, party and event printing",
     ],
     Care: [
-      "Wash gently with similar colours",
+      detailWashing,
       "Turn printed garments inside out before washing",
       "Avoid strong bleach and direct high heat",
       "Do not iron directly over printed artwork",
     ],
     "Shipping and printing": [
-      "Confirm product, colour, size and quantity before ordering",
+      product.shipping_info || "Confirm product, colour, size and quantity before ordering",
       "Share artwork and print placement for custom orders",
       "Mention your event date and delivery requirement",
       "Suitable for birthdays, parties, events and personalised gifts",
@@ -211,7 +195,7 @@ export function ProductDetails({
     sku: productSku(product),
     brand: { "@type": "Brand", name: "StarkVibe" },
     category: `${product.category} clothing`,
-    material: productMaterial(product),
+    material: detailFabric || productMaterial(product),
     audience: {
       "@type": "PeopleAudience",
       suggestedGender: "unisex",
@@ -225,8 +209,8 @@ export function ProductDetails({
     additionalProperty: [
       { "@type": "PropertyValue", name: "Fabric weight", value: `${product.gsm} GSM` },
       { "@type": "PropertyValue", name: "Fit", value: fit },
-      { "@type": "PropertyValue", name: "Finish", value: "Double bio-washed and silicon washed" },
-      { "@type": "PropertyValue", name: "Construction", value: "Double stitched seams" },
+      { "@type": "PropertyValue", name: "Finish", value: detailFinish },
+      { "@type": "PropertyValue", name: "Construction", value: detailConstruction },
     ],
     offers: {
       "@type": "Offer",
@@ -343,14 +327,15 @@ export function ProductDetails({
           </h1>
           <div className="mb-6 flex items-baseline gap-3.5">
             <span className="flex items-baseline gap-3.5">
-              <del className="text-base text-[#77756c]">MRP ₹{mrpPrice(product)}</del>
               <span className="text-[34px] font-bold">₹{salePrice(product)}</span>
             </span>
             <span className="text-sm text-[#55544f]">100% cotton</span>
           </div>
-          <p className="mb-7 text-[17px] leading-[1.6] text-[#3f3e3a]">
-            {description}
-          </p>
+          <div className="mb-7 text-[17px] leading-[1.6] text-[#3f3e3a]">
+            {plainRichText(productDescription).split(/\n+/).map((paragraph) => (
+              <p key={paragraph} className="mb-3 last:mb-0">{paragraph}</p>
+            ))}
+          </div>
           <div className="mb-8 border border-ink px-5 pt-5 pb-4">
             <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
               <span className="text-sm font-bold">Fabric weight</span>
@@ -471,14 +456,14 @@ export function ProductDetails({
             </button>
           </div>
           <Link
-            href="/#custom"
+            href="/custom-printing"
             onClick={prepareQuote}
             className="mb-7 flex h-14 w-full items-center justify-center border border-ink px-3 text-center text-[15px] font-bold transition-colors hover:bg-ink hover:text-paper"
           >
             Need it custom printed? Get a quote
           </Link>
           <div className="mb-8 grid grid-cols-1 gap-x-5 gap-y-3 text-sm font-semibold sm:grid-cols-2">
-            {benefits.map((text) => (
+            {(product.benefits?.length ? product.benefits : benefits).map((text) => (
               <div key={text} className="flex items-center gap-2.5">
                 <Check
                   size={20}
@@ -487,49 +472,6 @@ export function ProductDetails({
                 />
                 {text}
               </div>
-            ))}
-          </div>
-          <div className="hidden w-full border-t border-ink" aria-label="Product FAQs">
-            <div className="flex w-full overflow-x-auto border-b border-ink">
-              {accordion.map(([title]) => (
-                <button
-                  key={title}
-                  type="button"
-                  onClick={() => setActiveFaq(title)}
-                  aria-selected={activeFaq === title}
-                  role="tab"
-                  className={`min-w-max border-b-2 px-4 py-4 text-left text-sm font-bold transition-colors first:pl-0 ${activeFaq === title ? "border-ink text-ink" : "border-transparent text-ink/50 hover:text-ink"}`}
-                >
-                  {title}
-                </button>
-              ))}
-            </div>
-            <div role="tabpanel" className="w-full py-6">
-              <p className="w-full text-[15px] leading-[1.65] text-[#3f3e3a]">
-                {accordion.find(([title]) => title === activeFaq)?.[1]}
-              </p>
-            </div>
-          </div>
-          <div className="hidden border-t border-ink">
-            {accordion.map(([title, body], i) => (
-              <details
-                key={title}
-                open={i === 0}
-                className="group border-b border-ink"
-              >
-                <summary className="flex list-none items-center justify-between gap-4 py-[22px] text-lg font-bold [&::-webkit-details-marker]:hidden">
-                  {title}
-                  <span className="text-[28px] font-normal group-open:hidden">
-                    +
-                  </span>
-                  <span className="hidden text-[28px] font-normal group-open:block">
-                    −
-                  </span>
-                </summary>
-                <p className="pb-6 text-[15px] leading-[1.65] text-[#3f3e3a]">
-                  {body}
-                </p>
-              </details>
             ))}
           </div>
         </div>
@@ -566,7 +508,9 @@ export function ProductDetails({
                 {accordion
                   .find(([title]) => title === activeFaq)?.[1]
                   .split("\n\n")
-                  .map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  .map((paragraph) => (
+                    <p key={paragraph}>{plainRichText(paragraph)}</p>
+                  ))}
               </div>
             </div>
           </div>
@@ -662,24 +606,23 @@ export function ProductDetails({
           </p>
         </Reveal>
         <div className="flex flex-col gap-2.5">
-          {comparisonOrder.map((id) => {
-            const p = products.find((p) => p.id === id)!;
+          {comparison.map((p) => {
             return (
               <div
-                key={id}
+                key={p.id}
                 className="grid items-center gap-2 sm:grid-cols-[200px_1fr] sm:gap-4"
               >
                 <Link
-                  href={`/products/${productSlug(products.find((item) => item.id === id)!)}`}
-                  className={`text-sm ${id === product.id ? "font-extrabold" : "font-medium"}`}
+                  href={`/products/${productSlug(p)}`}
+                  className={`text-sm ${p.id === product.id ? "font-extrabold" : "font-medium"}`}
                 >
-                  {comparisonNames[id]}
-                  {id === product.id ? " (this)" : ""}
+                  {p.name}
+                  {p.id === product.id ? " (this)" : ""}
                 </Link>
                 <div className="min-w-0">
                   <div
                     style={{ width: `${(p.gsm / 350) * 100}%` }}
-                    className={`flex h-11 min-w-[76px] items-center justify-end px-3.5 text-sm font-extrabold ${id === product.id ? "bg-gold text-ink" : "bg-ink text-paper"}`}
+                    className={`flex h-11 min-w-[76px] items-center justify-end px-3.5 text-sm font-extrabold ${p.id === product.id ? "bg-gold text-ink" : "bg-ink text-paper"}`}
                   >
                     {p.gsm} GSM
                   </div>
@@ -803,14 +746,9 @@ export function ProductDetails({
                     {measurement.size}
                   </th>
                   {[measurement.chest, measurement.length, measurement.shoulder, measurement.sleeve].map((value, i) => (
-                    <Fragment key={i}>
                     <td key={`measurement-${i}`} className="px-3 py-[18px] text-[#55544f]">
                       {value}&quot;
                     </td>
-                    <td key={i} className="hidden px-3 py-[18px] text-[#77756c]">
-                      <span aria-label="Measurement pending">—</span>
-                    </td>
-                    </Fragment>
                   ))}
                 </tr>
               ))}
@@ -843,7 +781,7 @@ export function ProductDetails({
           </Reveal>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/#custom"
+              href="/custom-printing"
               onClick={prepareQuote}
               className="flex h-[60px] items-center bg-gold px-9 font-bold text-ink transition-colors hover:bg-paper"
             >
@@ -853,7 +791,7 @@ export function ProductDetails({
               href={
                 whatsapp
                   ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(`Hi StarkVibe, I'd like to customise ${product.name}.`)}`
-                  : "/#custom"
+                  : "/custom-printing"
               }
               onClick={prepareQuote}
               target={whatsapp ? "_blank" : undefined}
@@ -887,15 +825,7 @@ export function ProductDetails({
         </Reveal>
         <div className="grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {related.map((p) => {
-            const defaultColourIndex =
-              p.id === "regular"
-                ? 1
-                : p.id === "hoodie"
-                  ? 3
-                  : p.id === "terry"
-                    ? 1
-                    : 0;
-            const selectedColour = relatedColours[p.id] ?? defaultColourIndex;
+            const selectedColour = relatedColours[p.id] ?? 0;
             return (
               <ShopProductCard
                 key={p.id}

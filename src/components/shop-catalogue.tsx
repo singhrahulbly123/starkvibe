@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Heart, SlidersHorizontal, X } from "lucide-react";
-import { products } from "@/lib/catalogue";
+import { productFromApi, type Product } from "@/lib/catalogue";
 import {
   defaultShopFilters,
   matchesFilters,
-  shopColours,
+  shopColoursFromProducts,
   sortProducts,
   sortOptions,
   weightOptions,
@@ -68,7 +68,7 @@ function BrandingBanner() {
           enquiry for a quote.
         </p>
         <Link
-          href="/#custom"
+          href="/custom-printing"
           className="inline-flex h-14 items-center bg-ink px-8 text-sm font-bold text-paper transition-colors hover:bg-olive"
         >
           Request a quote
@@ -98,6 +98,16 @@ export function ShopCatalogue({
   const [colours, setColours] = useState<Record<string, number>>({});
   const [saved, setSaved] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [catalogueProducts, setCatalogueProducts] = useState<Product[]>([]);
+  const shopColours = shopColoursFromProducts(catalogueProducts);
+  useEffect(() => {
+    fetch("/api/products")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body) => {
+        if (body?.products?.length) setCatalogueProducts(body.products.map(productFromApi));
+      })
+      .catch(() => undefined);
+  }, []);
   useEffect(() => {
     setFiltersOpen(window.matchMedia("(min-width: 1024px)").matches);
     const params = new URLSearchParams(window.location.search);
@@ -129,12 +139,12 @@ export function ShopCatalogue({
         localStorage.getItem("starkvibe-saved") || "[]",
       );
       if (Array.isArray(stored))
-        setSaved(stored.filter((id) => products.some((p) => p.id === id)));
+        setSaved(stored.filter((id) => catalogueProducts.some((p) => p.id === id)));
     } catch {
       /* Start with an empty saved list if browser storage is unavailable. */
     }
     setLoaded(true);
-  }, []);
+  }, [catalogueProducts]);
   useEffect(() => {
     if (loaded) localStorage.setItem("starkvibe-saved", JSON.stringify(saved));
   }, [saved, loaded]);
@@ -160,11 +170,11 @@ export function ShopCatalogue({
       current.includes(id) ? current.filter((p) => p !== id) : [...current, id],
     );
   }
-  const filteredProducts = products
+  const filteredProducts = catalogueProducts
     .filter(
       (p) =>
         (!productIds || filters.category !== fixedCategory || productIds.includes(p.id)) &&
-        matchesFilters(p, filters, saved),
+        matchesFilters(p, filters, saved, shopColours),
     )
     .sort(
       (a, b) =>
@@ -179,7 +189,7 @@ export function ShopCatalogue({
     filters.price !== "any" ||
     filters.savedOnly
   );
-  const renderCard = (product: (typeof products)[number]) => {
+  const renderCard = (product: Product) => {
     const matchingColour = colourFilter
       ? product.colours.findIndex((c) => colourFilter.files.includes(c.file))
       : 0;
@@ -246,7 +256,7 @@ export function ShopCatalogue({
               {weight || "All"}
             </span>
             <span className="text-xs font-semibold">
-              {products.filter((p) => !weight || p.gsm === weight).length}{" "}
+              {catalogueProducts.filter((p) => !weight || p.gsm === weight).length}{" "}
               pieces{weight ? " · GSM" : ""}
             </span>
           </button>
@@ -349,7 +359,12 @@ export function ShopCatalogue({
             aria-label="Product filters"
             className="border-b border-ink/20 pb-8 lg:border-0 lg:pb-0"
           >
-            <ShopFiltersPanel filters={filters} onChange={changeFilters} />
+          <ShopFiltersPanel
+            filters={filters}
+            onChange={changeFilters}
+            products={catalogueProducts}
+            colours={shopColours}
+          />
           </aside>
         )}
         <section id="shop-products" aria-label="Products" className="min-w-0">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight, Check } from "lucide-react";
 import { CustomDesignForm } from "./custom-design-form";
 import { JsonLd } from "./json-ld";
@@ -35,18 +36,18 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     label: "Custom printing",
     title: (
       <>
-        Make it
-        
-        yours.
+        Custom T-Shirt
+        <br />
+        Printing India.
       </>
     ),
     description:
-      "Custom printed t-shirts, hoodies and polos for the moments people remember. Share your idea, choose your pieces and let us help bring the design to life.",
+      "Custom t-shirt printing in India for birthdays, office teams, events and brands. Order bulk t-shirt printing, hoodie printing or personalised cotton polos with artwork support from StarkVibe.",
     image: "/products/starkvibe-custom-apparel/180-gsm-regular-tee-black.webp",
     imageAlt: "Black custom-printing t-shirt",
     introTitle: "Print the moment, not just the garment.",
     intro:
-      "StarkVibe custom printing is made for real occasions: birthday groups, office teams, family celebrations, anniversaries, college events and thoughtful gifts. Choose a comfortable cotton base, send your artwork or idea, and we will help you plan the right colour, size mix and quantity.",
+      "StarkVibe provides custom t-shirt printing in India for real occasions: birthday groups, office teams, family celebrations, anniversaries, college events and thoughtful gifts. Choose a comfortable cotton base, send your artwork or idea, and we will help you plan bulk t-shirt printing, hoodie printing, colour options, size mix and quantity.",
     benefits: [
       "Birthday and party t-shirts with names, dates or inside jokes",
       "Office and bulk orders for teams, employees and company events",
@@ -205,6 +206,24 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ],
   },
 };
+
+const portfolioExamples = [
+  {
+    title: "Team uniforms",
+    text: "Clean chest branding on everyday cotton tees for office teams and company events.",
+    image: "/heroslider/Custom%20Printing%20for%20Every%20Occasion.png",
+  },
+  {
+    title: "Event merchandise",
+    text: "Coordinated colours and sizes for group orders, celebrations and campaign teams.",
+    image: "/products/starkvibe-custom-apparel/350-gsm-hoodie-black.webp",
+  },
+  {
+    title: "Personalised gifting",
+    text: "Comfortable cotton pieces prepared for names, artwork, dates and shared memories.",
+    image: "/products/starkvibe-custom-apparel/220-gsm-polo-white.webp",
+  },
+];
 
 export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
   const content = pages[page];

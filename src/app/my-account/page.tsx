@@ -1,5 +1,5 @@
 import { Storefront } from "@/components/storefront";
-import { MyAccountPage } from "@/components/my-account-page";
+import { MyAccountApiPage } from "@/components/my-account-api-page";
 import { SiteFooter } from "@/components/site-footer";
 import { buildMetadata } from "@/lib/seo";
 
@@ -11,7 +11,9 @@ export const metadata = {
   }),
   robots: { index: false, follow: false },
 };
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default function MyAccount() {
-  return <><Storefront hideRange><MyAccountPage /></Storefront><SiteFooter /></>;
+  return <><Storefront hideRange><MyAccountApiPage /></Storefront><SiteFooter /></>;
 }

@@ -7,9 +7,9 @@ import { useCallback, useEffect, useState } from "react";
 
 const slides = [
   { image: "/heroslider/Starkvibe%20Winter%20Fleece%20Sale.png", alt: "StarkVibe winter fleece sale", href: "/shop/hoodies" },
+  { image: "/heroslider/Custom%20Printing%20for%20Every%20Occasion.png", alt: "Custom printing for birthdays, anniversaries, teams and gifting", href: "/custom-printing" },
   { image: "/heroslider/Oversized%20Hoodie%20Colour%20Collection.png", alt: "StarkVibe oversized hoodie colour collection", href: "/shop/hoodies" },
   { image: "/heroslider/Starkvibe%20Everyday%20Premium%20Comfort.png", alt: "StarkVibe everyday premium cotton comfort", href: "/shop/t-shirts" },
-  { image: "/heroslider/Custom%20Printing%20for%20Every%20Occasion.png", alt: "Custom printing for birthdays, anniversaries, teams and gifting", href: "/custom-printing" },
   { image: "/heroslider/Starkvibe%20Premium%20Fleece%20Sweatshirts.png", alt: "StarkVibe premium fleece sweatshirt collection", href: "/shop/sweatshirts" },
 ];
 
@@ -31,7 +31,7 @@ export function HomeBannerSlider() {
   return (
     <section
       aria-label="StarkVibe featured campaigns"
-      className="relative mt-[30px] w-full overflow-hidden bg-[#e8e2d7] lg:mt-[36px]"
+      className="relative mt-[0px] w-full overflow-hidden bg-[#e8e2d7] lg:mt-[36px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -41,7 +41,16 @@ export function HomeBannerSlider() {
         <div className="flex transition-transform duration-700 ease-out motion-reduce:transition-none" style={{ transform: `translateX(-${active * 100}%)` }}>
           {slides.map((slide, index) => (
             <Link key={slide.image} href={slide.href} aria-label={slide.alt} className="relative block min-w-full bg-[#e8e2d7]">
-              <Image src={slide.image} alt={slide.alt} width={2056} height={765} priority={index === 0} sizes="100vw" className="block h-auto w-full" />
+              <Image
+                src={slide.image}
+                alt={slide.alt}
+                width={2056}
+                height={765}
+                priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+                sizes="(max-width: 2056px) 100vw, 2056px"
+                className="block h-auto w-full"
+              />
             </Link>
           ))}
         </div>

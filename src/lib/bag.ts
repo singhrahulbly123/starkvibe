@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { products, salePrice, type Product } from "./catalogue";
+import { salePrice, type Product } from "./catalogue";
 
 export type BagItem = {
   key: string;
@@ -18,7 +18,7 @@ function readItems(key: string): BagItem[] {
     const stored = JSON.parse(localStorage.getItem(key) || "[]");
     if (!Array.isArray(stored)) return [];
     return stored.flatMap((item) => {
-      const product = products.find((p) => p.id === item.product?.id);
+      const product = item.product as Product | undefined;
       if (
         !product ||
         !Number.isInteger(item.colour) ||

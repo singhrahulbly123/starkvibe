@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { mrpPrice, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
 
 export function ShopProductCard({
@@ -70,7 +70,6 @@ export function ShopProductCard({
           <Link href={href}>{product.name}</Link>
         </h2>
         <span className="flex items-baseline gap-2">
-          <del className="text-xs font-normal text-[#77756c]">MRP ₹{mrpPrice(product)}</del>
           <span>₹{salePrice(product)}</span>
         </span>
       </div>

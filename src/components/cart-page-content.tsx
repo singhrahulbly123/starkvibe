@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { mrpPrice, products, productImage, productSlug, salePrice } from "@/lib/catalogue";
+import { productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { addBagItem, formatPrice, useBag } from "@/lib/bag";
+import { validateCoupon } from "@/lib/backend-api";
 import { CartItem } from "./cart-item";
 import { CartSummary } from "./cart-summary";
 import { Reveal } from "./reveal";
@@ -26,6 +27,20 @@ export function CartPageContent() {
   const [noteReady, setNoteReady] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [suggestionColours, setSuggestionColours] = useState<Record<string, number>>({});
+  const [couponCode, setCouponCode] = useState("");
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponPercentage, setCouponPercentage] = useState<number | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [catalogueProducts, setCatalogueProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    fetch("/api/products")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body) => {
+        if (body?.products) setCatalogueProducts(body.products.map(productFromApi));
+      })
+      .catch(() => undefined);
+  }, []);
   useEffect(() => {
     setNote(localStorage.getItem("starkvibe-order-note") || "");
     setNoteReady(true);
@@ -33,18 +48,51 @@ export function CartPageContent() {
   useEffect(() => {
     if (noteReady) localStorage.setItem("starkvibe-order-note", note);
   }, [note, noteReady]);
-  const suggestions = [
-    "terry",
-    "polo",
-    "kids",
-    "regular",
-    "sweatshirt",
-    "oversized",
-    "hoodie",
-  ]
-    .filter((id) => !items.some((i) => i.product.id === id))
-    .slice(0, 3)
-    .map((id) => products.find((p) => p.id === id)!);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("starkvibe-coupon") || "null");
+      if (saved?.code) {
+        setCouponCode(saved.code);
+        setCouponDiscount(Number(saved.discount) || 0);
+        setCouponPercentage(Number(saved.discountPercentage) || null);
+      }
+    } catch {
+      localStorage.removeItem("starkvibe-coupon");
+    }
+  }, []);
+  useEffect(() => {
+    if (couponPercentage !== null) {
+      setCouponDiscount(Math.round((subtotal * couponPercentage) / 100 * 100) / 100);
+    }
+  }, [couponPercentage, subtotal]);
+  async function applyCoupon() {
+    setCouponLoading(true);
+    setCouponError("");
+    try {
+      const result = await validateCoupon(couponCode, subtotal);
+      setCouponCode(result.code);
+      setCouponDiscount(result.discount);
+      setCouponPercentage(result.discount_percentage);
+      localStorage.setItem("starkvibe-coupon", JSON.stringify({ code: result.code, discount: result.discount, discountPercentage: result.discount_percentage }));
+    } catch (error) {
+      setCouponDiscount(0);
+      setCouponPercentage(null);
+      localStorage.removeItem("starkvibe-coupon");
+      setCouponError(error instanceof Error ? error.message : "Unable to apply coupon.");
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+  function removeCoupon() {
+    setCouponCode("");
+    setCouponDiscount(0);
+    setCouponPercentage(null);
+    setCouponError("");
+    localStorage.removeItem("starkvibe-coupon");
+  }
+  const suggestions = catalogueProducts
+    .filter((product) => !items.some((item) => item.product.id === product.id))
+    .slice(0, 3);
   return (
     <>
       <section className={`${container} pt-7`}>
@@ -136,6 +184,13 @@ export function CartPageContent() {
             count={count}
             subtotal={subtotal}
             note={note}
+            couponCode={couponCode}
+            couponDiscount={couponDiscount}
+            couponError={couponError}
+            couponLoading={couponLoading}
+            onCouponCodeChange={setCouponCode}
+            onApplyCoupon={applyCoupon}
+            onRemoveCoupon={removeCoupon}
           />
         </section>
       ) : (
@@ -289,7 +344,6 @@ export function CartPageContent() {
                 <div className="mt-5 flex flex-col items-start gap-2 text-[17px] leading-tight font-bold">
                   <h3 className="min-w-0 max-w-full truncate">{product.name}</h3>
                   <span className="flex items-baseline gap-2">
-                    <del className="text-xs font-normal text-[#77756c]">MRP ₹{mrpPrice(product)}</del>
                     <span>₹{salePrice(product)}</span>
                   </span>
                 </div>

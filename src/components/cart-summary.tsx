@@ -8,12 +8,27 @@ export function CartSummary({
   count,
   subtotal,
   note,
+  couponCode,
+  couponDiscount = 0,
+  couponError,
+  couponLoading = false,
+  onCouponCodeChange,
+  onApplyCoupon,
+  onRemoveCoupon,
 }: {
   items: BagItem[];
   count: number;
   subtotal: number;
   note: string;
+  couponCode: string;
+  couponDiscount?: number;
+  couponError?: string;
+  couponLoading?: boolean;
+  onCouponCodeChange: (code: string) => void;
+  onApplyCoupon: () => void;
+  onRemoveCoupon: () => void;
 }) {
+  const total = Math.max(0, subtotal - couponDiscount);
   return (
     <aside
       aria-label="Order summary"
@@ -29,6 +44,49 @@ export function CartSummary({
           </dt>
           <dd className="font-bold">{formatPrice(subtotal)}</dd>
         </div>
+        <div className="border-b border-[#2e2e2a] py-4">
+          <label htmlFor="cart-coupon" className="block text-sm font-bold text-paper">
+            Coupon code
+          </label>
+          <div className="mt-3 flex gap-2">
+            <input
+              id="cart-coupon"
+              value={couponCode}
+              onChange={(event) => onCouponCodeChange(event.target.value.toUpperCase())}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  onApplyCoupon();
+                }
+              }}
+              placeholder="WINTER20"
+              className="min-w-0 flex-1 border border-[#69675f] bg-transparent px-3 py-2.5 text-sm text-paper placeholder:text-[#9a988f]"
+            />
+            <button
+              type="button"
+              onClick={onApplyCoupon}
+              disabled={couponLoading || !couponCode.trim()}
+              className="bg-paper px-4 py-2.5 text-sm font-bold text-ink disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {couponLoading ? "Checking…" : "Apply"}
+            </button>
+          </div>
+          {couponDiscount > 0 && (
+            <p className="mt-2 text-sm font-semibold text-gold">
+              {couponCode} applied — {formatPrice(couponDiscount)} off. {" "}
+              <button type="button" onClick={onRemoveCoupon} className="underline">
+                Remove
+              </button>
+            </p>
+          )}
+          {couponError && <p className="mt-2 text-sm font-semibold text-[#ff9d8d]" role="alert">{couponError}</p>}
+        </div>
+        {couponDiscount > 0 && (
+          <div className="flex justify-between gap-4 border-b border-[#2e2e2a] py-3.5">
+            <dt className="text-[#c9c7be]">Coupon discount</dt>
+            <dd className="font-bold text-gold">−{formatPrice(couponDiscount)}</dd>
+          </div>
+        )}
         <div className="flex justify-between gap-4 border-b border-[#2e2e2a] py-3.5">
           <dt className="text-[#c9c7be]">Shipping</dt>
           <dd className="text-right font-semibold text-[#c9c7be]">
@@ -41,7 +99,7 @@ export function CartSummary({
             aria-live="polite"
             className="font-display text-[56px] leading-none font-black text-gold"
           >
-            {formatPrice(subtotal)}
+            {formatPrice(total)}
           </dd>
         </div>
       </dl>
@@ -50,7 +108,8 @@ export function CartSummary({
       </p>
       <Link
         href="/checkout"
-        className="flex min-h-[62px] items-center justify-center gap-3 bg-gold px-4 text-center text-[17px] font-extrabold text-ink transition-colors hover:bg-paper"
+        aria-label="Proceed to checkout"
+        className="flex min-h-[64px] items-center justify-center gap-3 rounded-sm bg-[#e8bc63] px-4 text-center text-[17px] font-extrabold text-ink shadow-[0_5px_0_rgba(232,188,99,0.35)] ring-2 ring-[#e8bc63] ring-offset-2 ring-offset-ink transition-all hover:-translate-y-0.5 hover:bg-[#dca94c] hover:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-paper"
       >
         Proceed to checkout
         <ArrowRight size={18} />
@@ -77,7 +136,7 @@ export function CartSummary({
           check out.
         </p>
         <Link
-          href="/#custom"
+          href="/custom-printing"
           onClick={() => prepareBagEnquiry(items, note)}
           className="inline-block border-b border-gold py-2.5 text-sm font-bold text-gold"
         >

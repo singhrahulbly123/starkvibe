@@ -27,9 +27,6 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
-  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
-    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
-    : undefined,
 };
 export const viewport: Viewport = {
   width: "device-width",
@@ -41,6 +38,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <meta charSet="utf-8" />
+      </head>
       <body
         className={`${shoulders.variable} ${hanken.variable} font-sans antialiased`}
       >

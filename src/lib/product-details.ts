@@ -1,52 +1,16 @@
 import { type Colour, type Product, productImage } from "./catalogue";
 
 export function productFit(product: Product) {
-  if (product.id === "oversized" || product.id === "terry") return "Oversized";
-  if (product.id === "regular" || product.id === "kids") return "Regular";
-  return "Comfort";
+  return product.fit || "Regular fit";
 }
-export function detailImage(product: Product, colour: Colour) {
-  const folders: Record<string, string> = {
-    oversized: "220-gsm-oversized-tee",
-    regular: "180-gsm-regular-tee",
-    polo: "220-gsm-polo",
-    kids: "180-gsm-kids-regular-tee",
-    sweatshirt: "350-gsm-sweatshirt",
-    hoodie: "350-gsm-hoodie",
-  };
-  if (product.id === "terry")
-    return `/products/starkvibe/french-terry-240-gsm/${colour.file}-detail-v3-reference-logo.webp`;
-  if (product.id === "sweatshirt")
-    return `/products/starkvibe/catalogue-detail/350-gsm-sweatshirt/${colour.file}-polo-style-v3-reference-logo.webp`;
-  const suffix = product.category === "fleece" ? "polo-style-v3" : "detail";
-  if (product.id === "regular" && colour.file === "black")
-    return "/products/starkvibe/catalogue-detail/180-gsm-regular-tee/black-starkvibe-print.webp";
-  if (product.id === "oversized")
-    return `/products/starkvibe/catalogue-detail/220-gsm-oversized-tee/${colour.file}-detail-reference-logo.webp`;
-  return `/products/starkvibe/catalogue-detail/${folders[product.id]}/${colour.file}-${suffix}.webp`;
-}
-
-const titleImage: Record<string, string> = {
-  oversized:
-    "/products/oversized-220-gsm-tee/starkvibe-oversized-t-shirt-advertisement.png",
-  terry:
-    "/products/oversized-240-gsm-french-terry/starkvibe-oversized-tee-editorial-ad.png",
-  regular:
-    "/products/regular-fit-180-gsm/starkvibe-mens-t-shirt-editorial-poster.png",
-  polo: "/products/polo-220-gsm-matty-tee/starkvibe-premium-white-polo-poster.png",
-  kids: "/products/180-gsm-kids-cotton-t-shirt/starkvibe-kids-t-shirt-poster.png",
-  sweatshirt:
-    "/products/350-gsm-fleece-sweatshirt/starkvibe-maroon-sweatshirt-showcase.png",
-  hoodie:
-    "/products/350-gsm-fleece-hoodie/starkvibe-premium-cotton-hoodie-advertisement.png",
-};
 
 export function galleryImage(product: Product, colour: Colour, view: string) {
-  if (view === "Front") return productImage(product, colour);
-  if (view === "Detail" && titleImage[product.id]) {
-    return titleImage[product.id];
+  if (view.startsWith("Gallery ")) {
+    const index = Number(view.replace("Gallery ", "")) - 1;
+    if (product.gallery?.[index]) return product.gallery[index];
   }
-  return detailImage(product, colour);
+  if (view === "Front") return productImage(product, colour);
+  return productImage(product, colour);
 }
 export const adultSizes = ["S", "M", "L", "XL", "XXL"];
 export const kidsSizes = [

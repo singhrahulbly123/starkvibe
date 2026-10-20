@@ -129,7 +129,8 @@ export function SiteFooter() {
               <br />
               Request a quote →
             </a>
-            <a className="mt-3 block text-sm" href="mailto:singhrahulbly123@gmail.com">singhrahulbly123@gmail.com</a>
+            <a className="mt-3 block text-sm" href="mailto:info@starkvibe.com">info@starkvibe.com</a>
+            <p className="mt-3 text-sm leading-relaxed text-[#c9c7be]">Based in Delhi NCR, India · Serving customers nationwide</p>
             <a className="mt-2 block text-sm" href="https://wa.me/917060421033">WhatsApp: +91 70604 21033</a>
           </div>
         </div>

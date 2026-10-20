@@ -17,20 +17,10 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { filters, getProductBySlug, mrpPrice, productImage, products, productSlug, salePrice } from "@/lib/catalogue";
+import { filters, productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { Reveal } from "./reveal";
 import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
 
-const fullRangePreviewColours: Record<string, string> = {
-  oversized: "brown",
-  regular: "sea-green",
-  terry: "beige",
-  polo: "white",
-  kids: "orange",
-  sweatshirt: "off-white",
-  hoodie: "coffee-brown",
-};
-const fullRangeOrder = ["polo", "kids", "sweatshirt", "hoodie", "oversized", "regular", "terry"];
 
 export function Storefront({
   children,
@@ -45,8 +35,17 @@ export function Storefront({
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [catalogueProducts, setCatalogueProducts] = useState<Product[]>([]);
   const rangeTrackRef = useRef<HTMLDivElement>(null);
   const { count } = useBag();
+  useEffect(() => {
+    fetch("/api/products")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body) => {
+        if (body?.products?.length) setCatalogueProducts(body.products.map(productFromApi));
+      })
+      .catch(() => undefined);
+  }, []);
   useEffect(() => {
     function receiveOrder(event: Event) {
       addBagItem((event as CustomEvent<BagItem>).detail);
@@ -71,12 +70,10 @@ export function Storefront({
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
-  const shown = products.filter(
+  const shown = catalogueProducts.filter(
     (p) =>
       (filter === "all" || p.category === filter) &&
       p.name.toLowerCase().includes(query.toLowerCase()),
-  ).sort(
-    (a, b) => fullRangeOrder.indexOf(a.id) - fullRangeOrder.indexOf(b.id),
   );
   const links = [
     ["Shop", "/shop"],
@@ -104,7 +101,9 @@ export function Storefront({
   const pathParts = pathname.split("/").filter(Boolean);
   const breadcrumbItems: BreadcrumbItem[] = [{ name: "Home", path: "/" }];
   if (pathname.startsWith("/products/")) {
-    const product = getProductBySlug(pathParts[1]);
+    const product = catalogueProducts.find(
+      (item) => item.id === pathParts[1] || productSlug(item) === pathParts[1],
+    );
     breadcrumbItems.push({ name: "Shop", path: "/shop" });
     breadcrumbItems.push({
       name: product?.name || "Product",
@@ -128,7 +127,7 @@ export function Storefront({
   }
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-[100] isolate mx-auto flex h-[60px] w-full flex-nowrap items-center gap-2 border-b border-ink/15 bg-paper/95 px-5 py-2 shadow-[0_6px_18px_rgba(13,13,12,.08)] backdrop-blur-md lg:h-[76px] lg:gap-3 lg:px-12">
+      <header className="fixed top-0 left-0 z-[100] isolate box-border flex h-[60px] w-full max-w-full flex-nowrap overflow-x-clip items-center gap-1 border-b border-ink/15 bg-paper/95 px-3 py-2 shadow-[0_6px_18px_rgba(13,13,12,.08)] backdrop-blur-md sm:gap-2 sm:px-5 lg:h-[76px] lg:gap-3 lg:px-12">
         <nav
           aria-label="Main navigation"
           className="hidden gap-6 whitespace-nowrap text-[13px] font-semibold tracking-[.02em] uppercase lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2"
@@ -155,17 +154,17 @@ export function Storefront({
         <a
           href="/#top"
           aria-label="StarkVibe home"
-          className="order-first flex items-center"
+          className="order-first flex min-w-0 max-w-[38vw] items-center"
         >
           <Image
             src="/branding/starkvibe-wordmark-premium.png"
             alt="StarkVibe"
             width={280}
             height={88}
-            className="h-auto w-[150px] lg:w-[190px]"
+            className="h-auto w-[38vw] min-w-[96px] max-w-[150px] lg:w-[190px]"
           />
         </a>
-        <div className="order-2 ml-auto flex items-center justify-end gap-1 lg:flex-1">
+        <div className="order-2 ml-auto flex min-w-0 items-center justify-end gap-0 sm:gap-1 lg:flex-1">
           <button
             aria-label="Search products"
             onClick={() => setSearchOpen(!searchOpen)}
@@ -366,11 +365,7 @@ export function Storefront({
           </p>
           <div ref={rangeTrackRef} className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
             {shown.map((p) => {
-              const preferredColour = fullRangePreviewColours[p.id];
-              const selected = Math.max(
-                0,
-                p.colours.findIndex((colour) => colour.file === preferredColour),
-              );
+              const selected = 0;
               return (
                 <article key={p.id} className="group flex min-w-[84vw] snap-start flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)] sm:min-w-[calc((100%-1.25rem)/2)] xl:min-w-[calc((100%-3.75rem)/4)]">
                   <div className="relative">
@@ -398,7 +393,6 @@ export function Storefront({
                   <div className="mt-5 flex flex-col items-start gap-2 text-[19px] leading-tight font-bold">
                     <h3 className="min-w-0 max-w-full truncate">{p.name}</h3>
                     <span className="flex items-baseline gap-2">
-                      <del className="text-xs font-normal text-[#77756c]">MRP ₹{mrpPrice(p)}</del>
                       <span>₹{salePrice(p)}</span>
                     </span>
                   </div>
@@ -441,7 +435,7 @@ export function Storefront({
       )}
       <nav
         aria-label="Mobile quick navigation"
-        className="fixed inset-x-0 bottom-0 z-[70] flex h-[68px] w-full max-w-full items-stretch overflow-hidden border-t border-ink/15 bg-paper/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_25px_rgba(13,13,12,.08)] backdrop-blur-md lg:hidden"
+        className="fixed right-0 bottom-0 left-0 z-[70] box-border grid h-[68px] w-auto max-w-[100vw] grid-cols-4 items-stretch overflow-hidden border-t border-ink/15 bg-paper/95 px-1 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_25px_rgba(13,13,12,.08)] backdrop-blur-md lg:hidden"
       >
         {[
           ["Home", "/", House],
@@ -452,10 +446,10 @@ export function Storefront({
           <Link
             key={href as string}
             href={href as string}
-            className={`flex min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[10px] font-semibold tracking-[.04em] transition-colors ${pathname === href ? "text-olive" : "text-ink/65 hover:text-ink"}`}
+            className={`flex min-w-0 flex-col items-center justify-center gap-1 overflow-hidden text-[10px] font-semibold tracking-[.04em] transition-colors ${pathname === href ? "text-olive" : "text-ink/65 hover:text-ink"}`}
           >
             <Icon size={19} strokeWidth={pathname === href ? 2.5 : 1.8} />
-            <span>{label as string}{label === "Bag" ? ` (${count})` : ""}</span>
+            <span className="max-w-full truncate px-1">{label as string}{label === "Bag" ? ` (${count})` : ""}</span>
           </Link>
         ))}
       </nav>

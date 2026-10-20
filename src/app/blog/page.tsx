@@ -10,6 +10,7 @@ export const metadata = buildMetadata({
   title: "StarkVibe Journal | Cotton Wear & Custom Printing Guides",
   description: "Read StarkVibe guides on GSM, cotton fabric, custom T-shirt printing, bulk apparel orders and garment care before choosing your next garment. Start here.",
   path: "/blog",
+  image: "/bestseller/Sunlit%20Starkvibe%20Lifestyle%20Portrait.png",
 });
 
 export default function BlogPage() {

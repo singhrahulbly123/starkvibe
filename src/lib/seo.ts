@@ -1,4 +1,4 @@
-import type { Product } from "./catalogue";
+import { salePrice, type Product } from "./catalogue";
 
 import type { Metadata } from "next";
 
@@ -46,12 +46,25 @@ export function buildMetadata({
 }
 
 export function productMetaTitle(product: Product) {
+  if (product.id === "oversized") {
+    return "Oversized T-Shirt 220 GSM Cotton | Buy Online India | StarkVibe";
+  }
   return `${product.name} | Cotton Wear | StarkVibe`;
 }
 
 export function productMetaDescription(product: Product) {
-  const description = `Shop ${product.name}: premium cotton for everyday wear, custom printing and group orders. Compare fit, colours and GSM before ordering.`;
-  return description.length < 150 ? `${description} Shop online.` : description;
+  const price = `₹${salePrice(product).toLocaleString("en-IN")}`;
+  const colours = product.colours.map((item) => item.name).join(", ");
+  const descriptions: Record<string, string> = {
+    oversized: `Buy a 220 GSM oversized cotton T-shirt in ${colours}. Double-washed, double-stitched and made for relaxed everyday comfort. From ${price}.`,
+    regular: `Choose a breathable 180 GSM regular-fit cotton tee in ${colours}. Soft everyday comfort, clean structure and easy custom printing from ${price}.`,
+    terry: `Shop a 240 GSM oversized French Terry tee in ${colours}. Soft, structured streetwear comfort with a premium hand-feel, from ${price}.`,
+    polo: `Upgrade everyday dressing with a 220 GSM Matty polo in ${colours}. Breathable comfort and a polished fit for work, events and branding from ${price}.`,
+    kids: `Find a soft 180 GSM kids cotton T-shirt in ${colours}. Flexible, comfortable and ready for active days or custom printing, from ${price}.`,
+    sweatshirt: `Stay warm in a 350 GSM cotton-fleece sweatshirt in ${colours}. Soft, durable and built for winter teams, layering and everyday wear from ${price}.`,
+    hoodie: `Shop a 350 GSM cotton-fleece hoodie in ${colours}. Warm everyday streetwear with a comfortable fit for winter, teams and custom branding from ${price}.`,
+  };
+  return descriptions[product.id] ?? `${product.name} in ${colours}, with ${product.note.toLowerCase()} Available from ${price} at StarkVibe.`;
 }
 
 export function categoryMetaTitle(category: string) {

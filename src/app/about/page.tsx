@@ -22,7 +22,7 @@ export default function AboutPage() {
       name: "StarkVibe",
       url: "https://starkvibe.com",
       logo: "https://starkvibe.com/branding/starkvibe-wordmark-premium.png",
-      email: "singhrahulbly123@gmail.com",
+      email: "info@starkvibe.com",
     },
   };
 

@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
-import { productImage, products, productSlug } from "@/lib/catalogue";
+import { productImage, productSlug } from "@/lib/catalogue";
+import { getCatalogueProducts } from "@/lib/catalogue-server";
 import { blogPosts } from "@/lib/blog";
 import { locations } from "@/lib/locations";
 
 const baseUrl = "https://starkvibe.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const products = await getCatalogueProducts();
   const pages = [
     ["/", 1, "weekly"],
     ["/about", 0.6, "monthly"],
@@ -18,6 +20,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/shop/kids", 0.8, "weekly"],
     ["/shop/sweatshirts", 0.8, "weekly"],
     ["/shop/hoodies", 0.8, "weekly"],
+    ["/shop/oversized-t-shirts", 0.8, "weekly"],
+    ["/shop/clean-classics", 0.8, "weekly"],
+    ["/shop/statement-prints", 0.8, "weekly"],
+    ["/shop/french-terry", 0.8, "weekly"],
     ["/size-guide", 0.7, "monthly"],
     ["/shop/weight", 0.8, "monthly"],
     ["/shop/fabric", 0.8, "monthly"],

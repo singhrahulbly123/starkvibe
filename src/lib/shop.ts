@@ -8,24 +8,21 @@ export const shopCategories = [
   { value: "kids", label: "Kids" },
   { value: "fleece", label: "Fleece" },
 ];
-export const shopColours = [
-  { name: "Black", hex: "#000000", files: ["black"] },
-  { name: "White", hex: "#ffffff", files: ["white", "off-white"] },
-  { name: "Midnight Navy", hex: "#020629", files: ["navy"] },
-  { name: "Navy Blue", hex: "#000b27", files: ["navy-blue"] },
-  { name: "Wine Maroon", hex: "#8f292b", files: ["maroon"] },
-  {
-    name: "Green",
-    hex: "#336000",
-    files: ["avocado-green", "olive-green", "sea-green"],
-  },
-  { name: "Sand Beige", hex: "#e6c173", files: ["beige"] },
-  { name: "Brown", hex: "#541501", files: ["brown", "coffee-brown"] },
-  { name: "Grey", hex: "#303030", files: ["smokey-grey"] },
-  { name: "Pink", hex: "#bf4b76", files: ["pink"] },
-  { name: "Lavender", hex: "#c382e6", files: ["lavender"] },
-  { name: "Orange", hex: "#ff6800", files: ["orange"] },
-];
+export type ShopColour = { name: string; hex: string; files: string[] };
+export function shopColoursFromProducts(products: Product[]): ShopColour[] {
+  const colours = new Map<string, ShopColour>();
+  products.forEach((product) =>
+    product.colours.forEach((colour) => {
+      const current = colours.get(colour.name);
+      colours.set(colour.name, {
+        name: colour.name,
+        hex: current?.hex || colour.hex,
+        files: [...(current?.files || []), colour.file],
+      });
+    }),
+  );
+  return [...colours.values()];
+}
 export const priceOptions = [
   { value: "any", label: "Any price" },
   { value: "under200", label: "Up to ₹200" },
@@ -60,12 +57,13 @@ export function matchesFilters(
   product: Product,
   filters: ShopFilters,
   saved: string[],
+  availableColours: ShopColour[] = shopColoursFromProducts([product]),
 ) {
   if (filters.weight && product.gsm !== filters.weight) return false;
   if (filters.category !== "all" && product.category !== filters.category)
     return false;
   if (filters.savedOnly && !saved.includes(product.id)) return false;
-  const colour = shopColours.find((c) => c.name === filters.colour);
+  const colour = availableColours.find((c) => c.name === filters.colour);
   if (colour && !product.colours.some((c) => colour.files.includes(c.file)))
     return false;
   if (filters.price === "under200" && product.price > 200) return false;

@@ -3,8 +3,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { LogOut, Package, UserRound } from "lucide-react";
+import { GoogleSignIn } from "@/components/google-sign-in";
 
-type AccountUser = { name: string; email: string; phone: string };
+type AccountUser = { name: string; email: string; phone: string; picture?: string; provider?: string };
 type AccountOrder = {
   id: string;
   createdAt: string;
@@ -16,10 +17,12 @@ type AccountOrder = {
 const USER_KEY = "starkvibe-account-user";
 const ORDERS_KEY = "starkvibe-account-orders";
 
+
 export function MyAccountPage() {
   const [user, setUser] = useState<AccountUser | null>(null);
   const [orders, setOrders] = useState<AccountOrder[]>([]);
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
+  const [googleError, setGoogleError] = useState("");
 
   useEffect(() => {
     try {
@@ -41,6 +44,18 @@ export function MyAccountPage() {
     localStorage.setItem(USER_KEY, JSON.stringify(next));
     localStorage.setItem("starkvibe-user-email", next.email);
     setUser(next);
+  }
+
+  async function signInWithGoogle(credential: string) {
+    setGoogleError("");
+    const response = await fetch("/api/auth/google", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ credential }) });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.message || "Google sign-in failed.");
+    const next = body.user as AccountUser;
+    localStorage.setItem(USER_KEY, JSON.stringify(next));
+    localStorage.setItem("starkvibe-user-email", next.email);
+    setUser(next);
+    setForm({ name: next.name, email: next.email, phone: next.phone || "" });
   }
 
   function cancelOrder(id: string) {
@@ -65,6 +80,9 @@ export function MyAccountPage() {
         <h1 className="font-display text-[clamp(58px,9vw,120px)] leading-[.86] font-black uppercase">Your account.</h1>
         <p className="mt-7 max-w-xl text-lg leading-relaxed text-[#55544f]">Sign in with your email and phone number to view your profile, order requests and cancellation status.</p>
         <form onSubmit={saveAccount} className="mt-10 border border-ink/20 bg-[#eeece5] p-6 sm:p-8">
+          <GoogleSignIn onCredential={signInWithGoogle} onError={setGoogleError} />
+          {googleError && <p role="alert" className="mt-3 text-sm font-semibold text-red-800">{googleError}</p>}
+          <div className="my-7 flex items-center gap-3 text-xs uppercase tracking-[.16em] text-[#77756c]"><span className="h-px flex-1 bg-ink/20" />Or continue with email<span className="h-px flex-1 bg-ink/20" /></div>
           <label className="block text-sm font-bold">Full name<input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-2 h-14 w-full border border-ink bg-transparent px-4" /></label>
           <label className="mt-5 block text-sm font-bold">Email<input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="mt-2 h-14 w-full border border-ink bg-transparent px-4" /></label>
           <label className="mt-5 block text-sm font-bold">Phone / WhatsApp<input required type="tel" pattern="[+0-9 ()-]{8,20}" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="mt-2 h-14 w-full border border-ink bg-transparent px-4" /></label>

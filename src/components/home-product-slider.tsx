@@ -3,29 +3,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Check, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
-import { useRef, useState } from "react";
-import { mrpPrice, productImage, products, productSlug, salePrice } from "@/lib/catalogue";
+import { useEffect, useRef, useState } from "react";
+import { productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
 
-const collectionOrder = ["polo", "kids", "sweatshirt", "hoodie", "oversized", "regular", "terry"];
-const collectionPreviewColours: Record<string, string> = {
-  polo: "black",
-  kids: "pink",
-  sweatshirt: "lavender",
-  hoodie: "beige",
-  oversized: "brown",
-  regular: "sea-green",
-  terry: "beige",
-};
 
 export function HomeProductSlider() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [selectedColours, setSelectedColours] = useState<Record<string, number>>({});
   const [addedProduct, setAddedProduct] = useState<string | null>(null);
-  const displayedProducts = [...products].sort(
-    (a, b) => collectionOrder.indexOf(a.id) - collectionOrder.indexOf(b.id),
-  );
+  const [catalogueProducts, setCatalogueProducts] = useState<Product[]>([]);
+  useEffect(() => {
+    fetch("/api/products")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body) => {
+        if (body?.products?.length) setCatalogueProducts(body.products.map(productFromApi));
+      })
+      .catch(() => undefined);
+  }, []);
+  const displayedProducts = catalogueProducts;
   const scroll = (direction: -1 | 1) => {
     const track = trackRef.current;
     if (track) track.scrollBy({ left: direction * track.clientWidth * 0.82, behavior: "smooth" });
@@ -50,9 +47,7 @@ export function HomeProductSlider() {
         </div>
         <div ref={trackRef} className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:gap-5 sm:px-0">
           {displayedProducts.map((product) => {
-            const preferredColour = collectionPreviewColours[product.id];
-            const preferredIndex = product.colours.findIndex((colour) => colour.file === preferredColour);
-            const colourIndex = selectedColours[product.id] ?? Math.max(0, preferredIndex);
+            const colourIndex = selectedColours[product.id] ?? 0;
             const colour = product.colours[colourIndex];
             const productHref = `/products/${productSlug(product)}?colour=${colour.file}`;
             return (
@@ -90,7 +85,7 @@ export function HomeProductSlider() {
                     <span className="ml-1 text-[11px] text-ink/55">{colour.name}</span>
                   </div>
                   <div className="mt-4 flex items-center justify-between border-t border-ink/15 pt-3">
-                    <span className="flex items-baseline gap-2"><del className="text-xs text-ink/45">₹{mrpPrice(product)}</del><span className="font-bold">₹{salePrice(product)}</span></span>
+                    <span className="flex items-baseline gap-2"><span className="font-bold">₹{salePrice(product)}</span></span>
                   </div>
                   <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
                     <label className="sr-only" htmlFor={`home-product-size-${product.id}`}>Choose size for {product.name}</label>

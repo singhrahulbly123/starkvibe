@@ -53,17 +53,17 @@ export function CartItem({
         <p className="mb-2.5 text-sm text-[#55544f]">
           {formatPrice(salePrice(item.product))} each
         </p>
-        <div className="flex flex-wrap gap-x-5">
+        <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-ink/15 pt-3">
           <button
             onClick={onSave}
-            className="h-11 text-sm font-bold underline underline-offset-2"
+            className="inline-flex h-10 items-center text-sm font-bold underline underline-offset-2 transition-colors hover:text-olive"
           >
             Save for later
           </button>
           <button
             aria-label={`Remove ${item.product.name}`}
             onClick={onRemove}
-            className="h-11 text-sm font-bold text-[#8a2a12] underline underline-offset-2"
+            className="inline-flex h-10 items-center text-sm font-bold text-[#8a2a12] underline underline-offset-2 transition-colors hover:text-red-900"
           >
             Remove
           </button>

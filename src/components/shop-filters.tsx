@@ -1,18 +1,22 @@
 "use client";
-import { products } from "@/lib/catalogue";
+import type { Product } from "@/lib/catalogue";
 import {
   priceOptions,
   shopCategories,
-  shopColours,
+  type ShopColour,
   type ShopFilters,
 } from "@/lib/shop";
 
 export function ShopFiltersPanel({
   filters,
   onChange,
+  products,
+  colours,
 }: {
   filters: ShopFilters;
   onChange: (change: Partial<ShopFilters>) => void;
+  products: Product[];
+  colours: ShopColour[];
 }) {
   return (
     <div className="space-y-8 text-sm">
@@ -58,7 +62,7 @@ export function ShopFiltersPanel({
           Colour
         </legend>
         <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-          {shopColours.map((colour) => (
+          {colours.map((colour) => (
             <button
               key={colour.name}
               type="button"

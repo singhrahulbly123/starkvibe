@@ -53,6 +53,19 @@ export function ProductGallery({
               </span>
             </button>
           ))}
+          {(product.gallery || []).map((image, index) => (
+            <button
+              key={"gallery-" + image}
+              type="button"
+              aria-label={"Show gallery image " + (index + 1)}
+              aria-pressed={view === "Gallery " + (index + 1)}
+              onClick={() => onViewChange("Gallery " + (index + 1))}
+              className={"relative h-[96px] min-w-[96px] overflow-hidden rounded-[4px] border bg-[#f4f3ef] transition-all sm:h-[108px] sm:min-w-0 " + (view === "Gallery " + (index + 1) ? "border-ink ring-1 ring-ink" : "border-black/20 hover:border-ink/60")}
+            >
+              <Image src={image} alt={product.name + " gallery image " + (index + 1)} fill sizes="108px" className="object-contain" />
+              <span className="absolute inset-x-0 bottom-0 bg-ink/75 px-1 py-1 text-[10px] font-bold text-paper">Gallery {index + 1}</span>
+            </button>
+          ))}
         </div>
 
         <div className="relative order-1 aspect-[4/5] w-full overflow-hidden rounded-[4px] border border-black/15 bg-[#f4f3ef] sm:order-2 sm:aspect-[3/4]">

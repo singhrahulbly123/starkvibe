@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
 import type { Product } from "@/lib/catalogue";
+import { submitReview } from "@/lib/backend-api";
 
 export function ProductReviews({ product }: { product: Product }) {
   const [writing, setWriting] = useState(false);
   const [message, setMessage] = useState("");
-  const email = process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+  const [submitting, setSubmitting] = useState(false);
   return (
     <section
       id="reviews"
@@ -33,27 +34,30 @@ export function ProductReviews({ product }: { product: Product }) {
         {writing ? (
           <form
             className="grid gap-4 border-b border-ink py-7"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
               const data = new FormData(e.currentTarget);
-              const text = `${product.name}\nName: ${data.get("name")}\nRating: ${data.get("rating")}/5\n${data.get("review")}`;
-              if (email) {
-                window.location.href = `mailto:${email}?subject=${encodeURIComponent(`Review: ${product.name}`)}&body=${encodeURIComponent(text)}`;
+              setSubmitting(true);
+              setMessage("");
+              try {
+                await submitReview({
+                  product_slug: product.id,
+                  product_name: product.name,
+                  name: String(data.get("name") || ""),
+                  email: String(data.get("email") || "") || undefined,
+                  rating: Number(data.get("rating")),
+                  review: String(data.get("review") || ""),
+                });
                 setMessage(
-                  "Your review is ready in your email app. Send it there to share it with the team.",
+                  "Thank you. Your review has been submitted and will be published after moderation.",
                 );
-              } else {
-                const url = URL.createObjectURL(
-                  new Blob([text], { type: "text/plain" }),
-                );
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = "starkvibe-review.txt";
-                link.click();
-                URL.revokeObjectURL(url);
+                e.currentTarget.reset();
+              } catch {
                 setMessage(
-                  "Your review has been downloaded. Direct submission will be available once the brand contact is connected.",
+                  "We could not submit the review right now. Please try again.",
                 );
+              } finally {
+                setSubmitting(false);
               }
             }}
           >
@@ -64,6 +68,15 @@ export function ProductReviews({ product }: { product: Product }) {
                 name="name"
                 required
                 autoComplete="name"
+                className="mt-2 h-12 w-full border border-ink bg-transparent px-3"
+              />
+            </label>
+            <label className="text-sm font-semibold">
+              Email (optional)
+              <input
+                name="email"
+                type="email"
+                autoComplete="email"
                 className="mt-2 h-12 w-full border border-ink bg-transparent px-3"
               />
             </label>
@@ -90,8 +103,8 @@ export function ProductReviews({ product }: { product: Product }) {
                 className="mt-2 w-full border border-ink bg-transparent p-3"
               />
             </label>
-            <button className="h-14 bg-ink px-8 font-bold text-paper">
-              Share your review
+            <button disabled={submitting} className="h-14 bg-ink px-8 font-bold text-paper disabled:cursor-wait disabled:opacity-60">
+              {submitting ? "Submitting…" : "Share your review"}
             </button>
             <p role="status" className="text-sm text-[#55544f]">
               {message}

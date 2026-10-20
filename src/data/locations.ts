@@ -19,7 +19,7 @@ export type LocationDetails = {
 
 export const locationDetails: LocationDetails[] = [
   {
-    slug: "delhi-ncr", city: "Delhi NCR", state: "Delhi", deliveryDays: "5-7 days",
+ slug: "delhi-ncr", city: "Delhi NCR", state: "Delhi", deliveryDays: "5-7 working days standard; 3-4 express",
     introParagraphs: [
       "Delhi NCR has some of the widest weather swings in India: summers that regularly cross 40°C, a humid monsoon, and cold, foggy winter mornings. The right cotton weight matters more here than almost anywhere else.",
       "StarkVibe delivers premium 100% cotton t-shirts, polos, sweatshirts and hoodies across Delhi NCR, and takes custom and bulk orders for offices, colleges, coaching batches and events.",
@@ -30,7 +30,7 @@ export const locationDetails: LocationDetails[] = [
     ], testimonial: null, bulkExample: null,
   },
   {
-    slug: "mumbai", city: "Mumbai", state: "Maharashtra", deliveryDays: "5-7 days",
+    slug: "mumbai", city: "Mumbai", state: "Maharashtra", deliveryDays: "5-7 working days",
     introParagraphs: [
       "Mumbai is warm and humid for most of the year, with heavy rain from June to September and barely any winter. Fabric that breathes and dries well matters more than thickness here.",
       "StarkVibe delivers premium 100% cotton clothing to Mumbai and takes custom and bulk orders for colleges, offices, housing societies and festival groups.",
@@ -41,7 +41,7 @@ export const locationDetails: LocationDetails[] = [
     ], testimonial: null, bulkExample: null,
   },
   {
-    slug: "bengaluru", city: "Bengaluru", state: "Karnataka", deliveryDays: "5-7 days",
+    slug: "bengaluru", city: "Bengaluru", state: "Karnataka", deliveryDays: "5-7 working days",
     introParagraphs: [
       "Bengaluru has a mild climate for most of the year, with cool mornings and evenings, occasional showers, and warm afternoons in summer. Clothes that work through the whole day are the priority.",
       "StarkVibe delivers premium 100% cotton t-shirts, polos and hoodies to Bengaluru, and takes custom and bulk orders for tech teams, startups, colleges and community groups.",
@@ -52,7 +52,7 @@ export const locationDetails: LocationDetails[] = [
     ], testimonial: null, bulkExample: null,
   },
   {
-    slug: "jaipur", city: "Jaipur", state: "Rajasthan", deliveryDays: "5-7 days",
+    slug: "jaipur", city: "Jaipur", state: "Rajasthan", deliveryDays: "5-7 working days",
     introParagraphs: [
       "Jaipur has hot, dry summers and pleasant winters with cool nights. Light cotton for the heat and a warm layer for winter evenings covers the year.",
       "StarkVibe delivers premium 100% cotton clothing to Jaipur, and takes custom and bulk orders for weddings, events, colleges and businesses.",
@@ -63,7 +63,7 @@ export const locationDetails: LocationDetails[] = [
     ], testimonial: null, bulkExample: null,
   },
   {
-    slug: "lucknow", city: "Lucknow", state: "Uttar Pradesh", deliveryDays: "5-7 days",
+    slug: "lucknow", city: "Lucknow", state: "Uttar Pradesh", deliveryDays: "5-7 working days",
     introParagraphs: [
       "Lucknow has hot summers, a humid monsoon, and cold, foggy winters. Cotton that stays comfortable in the heat and warm fleece for winter mornings cover most needs.",
       "StarkVibe delivers premium 100% cotton clothing to Lucknow, and takes custom and bulk orders for colleges, coaching institutes, events and campaigns.",
@@ -74,7 +74,7 @@ export const locationDetails: LocationDetails[] = [
     ], testimonial: null, bulkExample: null,
   },
   {
-    slug: "hyderabad", city: "Hyderabad", state: "Telangana", deliveryDays: "5-7 days",
+    slug: "hyderabad", city: "Hyderabad", state: "Telangana", deliveryDays: "5-7 working days",
     introParagraphs: [
       "Hyderabad has hot summers, mild winters, and monsoon showers from June to September. Lightweight cotton works for most of the year, with a light layer for winter nights.",
       "StarkVibe delivers premium 100% cotton clothing to Hyderabad, and takes custom and bulk orders for IT teams, colleges, festivals and events.",

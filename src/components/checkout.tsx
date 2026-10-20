@@ -13,10 +13,15 @@ import { ArrowLeft, ArrowRight, Check, LockKeyhole, Mail } from "lucide-react";
 import { useBag, formatPrice } from "@/lib/bag";
 import { productImage, salePrice } from "@/lib/catalogue";
 import { trackEvent, type EcommerceItem } from "@/lib/analytics";
+import { backendFetch, type BackendOrder } from "@/lib/backend-api";
+import { GoogleSignIn } from "@/components/google-sign-in";
 
 const paymentMethods = [
   "Cash on delivery",
 ] as const;
+const FREE_SHIPPING_THRESHOLD = 2000;
+const STANDARD_SHIPPING_CHARGE = 50;
+const EXPRESS_SHIPPING_CHARGE = 149;
 
 function Field({
   label,
@@ -71,6 +76,17 @@ export function Checkout() {
     useState<(typeof paymentMethods)[number]>("Cash on delivery");
   const [prepared, setPrepared] = useState(false);
   const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [savedOrderNumber, setSavedOrderNumber] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [googleError, setGoogleError] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [coupon, setCoupon] = useState<{ code: string; discount: number; discountPercentage: number | null }>({ code: "", discount: 0, discountPercentage: null });
+  const shippingCharge = shipping === "Express delivery" ? EXPRESS_SHIPPING_CHARGE : subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_CHARGE;
+  const couponDiscount = coupon.discountPercentage === null ? coupon.discount : Math.round((subtotal * coupon.discountPercentage) / 100 * 100) / 100;
+  const orderTotal = Math.max(0, subtotal - couponDiscount) + shippingCharge;
 
   const analyticsItems: EcommerceItem[] = items.map((item) => ({
     item_id: item.product.id,
@@ -81,7 +97,37 @@ export function Checkout() {
 
   useEffect(() => {
     setEmail(window.localStorage.getItem("starkvibe-user-email") || "");
+    try {
+      const savedUser = JSON.parse(window.localStorage.getItem("starkvibe-account-user") || "null");
+      setLoggedIn(savedUser?.provider === "google");
+    } catch {
+      setLoggedIn(false);
+    }
   }, []);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("starkvibe-coupon") || "null");
+      if (saved?.code && Number(saved.discount) > 0) setCoupon({ code: saved.code, discount: Number(saved.discount), discountPercentage: Number(saved.discountPercentage) || null });
+    } catch {
+      window.localStorage.removeItem("starkvibe-coupon");
+    }
+  }, []);
+
+  async function signInWithGoogle(credential: string) {
+    setGoogleError("");
+    const response = await fetch("/api/auth/google", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ credential }) });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(body.message || "Google sign-in failed.");
+    const googleUser = body.user as { name: string; email: string; phone?: string };
+    const names = googleUser.name.trim().split(/\s+/);
+    setFirstName(names.shift() || "");
+    setLastName(names.join(" "));
+    setEmail(googleUser.email);
+    localStorage.setItem("starkvibe-account-user", JSON.stringify({ name: googleUser.name, email: googleUser.email, phone: googleUser.phone || "", provider: "google" }));
+    localStorage.setItem("starkvibe-user-email", googleUser.email);
+    setLoggedIn(true);
+  }
 
   useEffect(() => {
     if (ready && items.length) {
@@ -93,13 +139,49 @@ export function Checkout() {
     }
   }, [ready, items, subtotal]);
 
-  function placeOrder(event: FormEvent<HTMLFormElement>) {
+  async function placeOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!items.length) return;
+    if (!items.length || submitting) return;
+    if (!loggedIn) {
+      setSubmitError("Please sign in with Google or open My Account before placing your order.");
+      document.getElementById("checkout-google-login")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    setSubmitting(true);
+    setSubmitError("");
     const data = new FormData(event.currentTarget);
     const orderId = `SV-${Date.now().toString().slice(-8)}`;
+    const customerName = `${data.get("first")} ${data.get("last")}`.trim();
+    let backendOrderNumber = orderId;
+    try {
+      const saved = await backendFetch<{ order: BackendOrder }>("/orders", {
+        method: "POST",
+        body: JSON.stringify({
+          customer: {
+            name: customerName,
+            email: data.get("email"),
+            phone: data.get("phone"),
+            address: ["address", "apartment", "city", "state", "pin"].map((name) => data.get(name)).filter(Boolean).join(", "),
+          },
+          items: items.map((item) => ({ id: item.product.id, name: item.product.name, colour: item.product.colours[item.colour].name, size: item.size, quantity: item.quantity, unit_price: salePrice(item.product) })),
+          subtotal,
+          shipping_charge: shippingCharge,
+          shipping_method: shipping,
+           coupon_code: coupon.code || null,
+          payment_method: payment,
+          business_details: business ? { name: data.get("business"), gstin: data.get("gstin") } : null,
+          note: localStorage.getItem("starkvibe-order-note") || null,
+        }),
+      });
+      backendOrderNumber = saved.order.order_number;
+      setSavedOrderNumber(backendOrderNumber);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to save your order right now.");
+      setSubmitting(false);
+      return;
+    }
     const orderRecord = {
-      id: orderId,
+      id: backendOrderNumber,
       createdAt: new Date().toLocaleDateString("en-IN"),
       summary: items
         .map(
@@ -107,7 +189,7 @@ export function Checkout() {
             `${item.quantity} × ${item.product.name} (${item.product.colours[item.colour].name}, ${item.size})`,
         )
         .join(", "),
-      total: formatPrice(subtotal),
+      total: formatPrice(orderTotal),
       status: "Order request" as const,
     };
     try {
@@ -130,53 +212,14 @@ export function Checkout() {
     } catch {
       // The WhatsApp order flow still works if browser storage is unavailable.
     }
-    const order = [
-      `StarkVibe order request ${orderId} — awaiting confirmation`,
-      ...items.map(
-        (item) =>
-          `${item.quantity} × ${item.product.name}, ${item.product.colours[item.colour].name}, size ${item.size}: ${formatPrice(item.quantity * salePrice(item.product))}`,
-      ),
-      `Subtotal: ${formatPrice(subtotal)} (shipping to be confirmed)`,
-      `Name: ${data.get("first")} ${data.get("last")}`,
-      `Email: ${data.get("email")}`,
-      `Phone: ${data.get("phone")}`,
-      `WhatsApp updates: ${data.has("whatsapp") ? "Yes" : "No"}`,
-      `Address: ${["address", "apartment", "city", "state", "pin"]
-        .map((name) => data.get(name))
-        .filter(Boolean)
-        .join(", ")}`,
-      ...(business
-        ? [`Business: ${data.get("business")}`, `GSTIN: ${data.get("gstin")}`]
-        : []),
-      `Delivery preference: ${shipping}`,
-      `Payment preference: ${payment}`,
-      `Order note: ${localStorage.getItem("starkvibe-order-note") || "None"}`,
-    ].join("\n");
     trackEvent("purchase_request", {
       currency: "INR",
       value: subtotal,
       transaction_id: orderId,
       items: analyticsItems,
     });
-    const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "917060421033";
-    if (phone) {
-      window.open(
-        `https://wa.me/${phone}?text=${encodeURIComponent(order)}`,
-        "_blank",
-        "noopener,noreferrer",
-      );
-    } else {
-      const url = URL.createObjectURL(
-        new Blob([order], { type: "text/plain;charset=utf-8" }),
-      );
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "starkvibe-order-request.txt";
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }
-    setPrepared(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setSubmitting(false);
+    window.location.assign(`/my-account?order=${encodeURIComponent(backendOrderNumber)}`);
   }
 
   return (
@@ -253,8 +296,9 @@ export function Checkout() {
                 : "Your order request has been downloaded. No payment has been taken and your order is not confirmed yet."}
             </p>
             <p className="mt-5 font-bold">
+              {savedOrderNumber && <span className="block text-gold">Order {savedOrderNumber}</span>}
               {count} {count === 1 ? "piece" : "pieces"} ·{" "}
-              {formatPrice(subtotal)} before shipping
+              {formatPrice(orderTotal)} total
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
@@ -306,6 +350,12 @@ export function Checkout() {
                 className="min-w-0"
               >
                 <Section number={1} title="Contact">
+                  <div id="checkout-google-login" className="mb-7 border border-ink/20 bg-[#eeece5] p-5 sm:p-6">
+                    <p className="mb-3 text-sm font-bold">Already have a Google account?</p>
+                    <GoogleSignIn onCredential={signInWithGoogle} onError={setGoogleError} />
+                    {googleError && <p role="alert" className="mt-3 text-sm font-semibold text-red-800">{googleError}</p>}
+                    {!loggedIn && <p className="mt-4 border-l-4 border-red-700 bg-red-50 px-3 py-2 text-sm font-bold leading-relaxed text-red-800">Please login with Google first, then place your order.</p>}
+                  </div>
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Field
                       label="Email"
@@ -347,6 +397,8 @@ export function Checkout() {
                       id="first"
                       name="first"
                       autoComplete="given-name"
+                      value={firstName}
+                      onChange={(event) => setFirstName(event.target.value)}
                       required
                     />
                     <Field
@@ -354,6 +406,8 @@ export function Checkout() {
                       id="last"
                       name="last"
                       autoComplete="family-name"
+                      value={lastName}
+                      onChange={(event) => setLastName(event.target.value)}
                       required
                     />
                   </div>
@@ -460,12 +514,11 @@ export function Checkout() {
                             {method}
                           </span>
                           <span className="mt-0.5 block text-sm text-[#55544f]">
-                            Timing confirmed for your PIN code
+                            {method === "Express delivery" ? "Usually 3–4 working days; PIN-code availability is confirmed before dispatch" : "Usually 5–7 working days across India"}
                           </span>
                         </span>
                         <span className="text-right text-sm font-bold">
-                          To be
-                          <br className="sm:hidden" /> confirmed
+                          {method === "Express delivery" ? formatPrice(EXPRESS_SHIPPING_CHARGE) : subtotal >= FREE_SHIPPING_THRESHOLD ? "FREE" : formatPrice(STANDARD_SHIPPING_CHARGE)}
                         </span>
                       </label>
                     ))}
@@ -503,6 +556,7 @@ export function Checkout() {
                   Availability, shipping charges and payment are confirmed
                   before your order is accepted.
                 </p>
+            {submitError && <p className="mt-4 border border-red-800 bg-red-50 p-4 text-sm font-semibold text-red-900" role="alert">{submitError}</p>}
               </form>
               <aside
                 aria-label="Your order"
@@ -560,19 +614,23 @@ export function Checkout() {
                     <dt className="text-[#c9c7be]">Subtotal</dt>
                     <dd className="font-bold">{formatPrice(subtotal)}</dd>
                   </div>
+                  {couponDiscount > 0 && (
+                    <div className="flex justify-between gap-4 border-b border-[#2e2e2a] py-4">
+                      <dt className="text-[#c9c7be]">Coupon ({coupon.code})</dt>
+                      <dd className="font-bold text-gold">−{formatPrice(couponDiscount)}</dd>
+                    </div>
+                  )}
                   <div className="flex justify-between gap-4 border-b border-[#2e2e2a] py-4">
                     <dt className="text-[#c9c7be]">Shipping</dt>
                     <dd className="text-right font-semibold text-[#c9c7be]">
-                      {shipping}
-                      <span className="block text-xs font-normal">
-                        Rate to be confirmed
-                      </span>
+                      {formatPrice(shippingCharge)}
+                      <span className="block text-xs font-normal">{shipping}</span>
                     </dd>
                   </div>
                   <div className="flex flex-wrap items-baseline justify-between gap-4 pt-[22px] pb-1.5">
-                    <dt className="font-semibold">Total before shipping</dt>
+                    <dt className="font-semibold">Total</dt>
                     <dd className="font-display text-[54px] leading-none font-black text-gold">
-                      {formatPrice(subtotal)}
+                      {formatPrice(orderTotal)}
                     </dd>
                   </div>
                 </dl>
@@ -583,10 +641,19 @@ export function Checkout() {
                 <button
                   type="submit"
                   form="checkout-form"
-                  className="flex h-16 w-full items-center justify-center gap-3 bg-gold px-4 text-[17px] font-extrabold text-ink transition-colors hover:bg-paper"
+                  disabled={submitting}
+                  onClick={() => {
+                    if (!loggedIn) {
+                      setSubmitError("Please login with Google first, then place your order.");
+                      document.getElementById("checkout-google-login")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    }
+                  }}
+                  style={{ backgroundColor: "#e8bc63" }}
+                  className="flex h-16 w-full items-center justify-center gap-3 rounded-sm bg-[#e8bc63] px-4 text-[17px] font-extrabold text-ink shadow-[0_5px_0_rgba(232,188,99,0.35)] ring-2 ring-[#e8bc63] ring-offset-2 ring-offset-ink transition-all hover:-translate-y-0.5 hover:bg-[#dca94c] hover:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-paper disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Place order <ArrowRight size={18} />
+                  {submitting ? "Saving order…" : "Place order"} {!submitting && <ArrowRight size={18} />}
                 </button>
+                {!loggedIn && <p className="mt-3 text-center text-sm font-semibold text-[#e8bc63]">Sign in with Google above to continue.</p>}
                 <ul className="mt-6 space-y-3 text-sm text-[#c9c7be]">
                   {[
                     "No payment collected on this page",
@@ -628,7 +695,7 @@ export function Checkout() {
             <Link href="/shop" className="py-2.5 text-[#c9c7be]">
               Shop
             </Link>
-            <Link href="/#custom" className="py-2.5 text-[#c9c7be]">
+            <Link href="/custom-printing" className="py-2.5 text-[#c9c7be]">
               Contact
             </Link>
           </nav>

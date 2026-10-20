@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: locationMetaTitle(location.city),
       description: locationMetaDescription(location.city),
       path: `/locations/${location.slug}`,
+      image: "/heroslider/Starkvibe%20Everyday%20Premium%20Comfort.png",
     }),
   };
 }
@@ -54,7 +55,7 @@ export default async function LocationPage({ params }: Props) {
           "@type": "Organization",
           name: "StarkVibe",
           url: "https://starkvibe.com",
-          email: "singhrahulbly123@gmail.com",
+          email: "info@starkvibe.com",
           telephone: "+91-7060421033",
         },
         areaServed: {
