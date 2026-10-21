@@ -5,18 +5,37 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-const slides = [
+const desktopSlides = [
   { image: "/heroslider/Starkvibe%20Winter%20Fleece%20Sale.png", alt: "StarkVibe winter fleece sale", href: "/shop/hoodies" },
   { image: "/heroslider/Custom%20Printing%20for%20Every%20Occasion.png", alt: "Custom printing for birthdays, anniversaries, teams and gifting", href: "/custom-printing" },
   { image: "/heroslider/Oversized%20Hoodie%20Colour%20Collection.png", alt: "StarkVibe oversized hoodie colour collection", href: "/shop/hoodies" },
   { image: "/heroslider/Starkvibe%20Everyday%20Premium%20Comfort.png", alt: "StarkVibe everyday premium cotton comfort", href: "/shop/t-shirts" },
   { image: "/heroslider/Starkvibe%20Premium%20Fleece%20Sweatshirts.png", alt: "StarkVibe premium fleece sweatshirt collection", href: "/shop/sweatshirts" },
 ];
+const mobileSlides = [
+  { image: "/mobilebanner/Starkvibe%20Premium%20Essentials%20Hoodie%20Offer.png", alt: "StarkVibe Premium Essentials Hoodie Offer", href: "/shop/hoodies" },
+  { image: "/mobilebanner/Starkvibe%20350%20GSM%20Hoodie%20Collection.png", alt: "StarkVibe 350 GSM Hoodie Collection", href: "/shop/hoodies" },
+  { image: "/mobilebanner/Custom%20Printing%20for%20Every%20Occasion.png", alt: "Custom printing for birthdays, anniversaries, teams and gifting", href: "/custom-printing" },
+  { image: "/mobilebanner/Starkvibe%20350%20GSM%20Fleece%20Collection.png", alt: "StarkVibe 350 GSM Fleece Collection", href: "/shop/sweatshirts" },
+];
 
 export function HomeBannerSlider() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const goTo = useCallback((index: number) => setActive((index + slides.length) % slides.length), []);
+  const [isMobile, setIsMobile] = useState(false);
+  const slides = isMobile ? mobileSlides : desktopSlides;
+  const goTo = useCallback((index: number) => setActive((index + slides.length) % slides.length), [slides.length]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 639px)");
+    const updateViewport = () => {
+      setIsMobile(media.matches);
+      setActive(0);
+    };
+    updateViewport();
+    media.addEventListener("change", updateViewport);
+    return () => media.removeEventListener("change", updateViewport);
+  }, []);
 
   useEffect(() => {
     if (paused) return;
@@ -26,7 +45,7 @@ export function HomeBannerSlider() {
       }
     }, 5500);
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [paused, slides.length]);
 
   return (
     <section
@@ -44,8 +63,8 @@ export function HomeBannerSlider() {
               <Image
                 src={slide.image}
                 alt={slide.alt}
-                width={2056}
-                height={765}
+                width={isMobile ? 941 : 2056}
+                height={isMobile ? 1672 : 765}
                 priority={index === 0}
                 loading={index === 0 ? "eager" : "lazy"}
                 sizes="(max-width: 2056px) 100vw, 2056px"
