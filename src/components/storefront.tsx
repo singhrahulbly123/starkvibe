@@ -17,7 +17,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { filters, productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { collectionDefaultColourIndex, collectionProductImage, filters, mrpPrice, prioritizeFleeceProducts, productFromApi, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { Reveal } from "./reveal";
 import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
 
@@ -70,11 +70,11 @@ export function Storefront({
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
-  const shown = catalogueProducts.filter(
+  const shown = prioritizeFleeceProducts(catalogueProducts.filter(
     (p) =>
       (filter === "all" || p.category === filter) &&
       p.name.toLowerCase().includes(query.toLowerCase()),
-  );
+  ));
   const links = [
     ["Shop", "/shop"],
     ["Birthday printing", "/custom-printing/birthday"],
@@ -322,7 +322,7 @@ export function Storefront({
                 <p className="mb-[18px] text-[13px] font-semibold tracking-[.18em] text-olive uppercase">
                   The full range
                 </p>
-                <h2 className="whitespace-nowrap font-display text-[clamp(24px,4vw,60px)] leading-none font-black uppercase">
+                <h2 className="font-display text-[clamp(24px,4vw,60px)] leading-none font-black uppercase">
                   Seven pieces. No filler.
                 </h2>
               </div>
@@ -364,8 +364,8 @@ export function Storefront({
             Showing {shown.length} {shown.length === 1 ? "piece" : "pieces"} ·
           </p>
           <div ref={rangeTrackRef} className="-mx-5 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
-            {shown.map((p) => {
-              const selected = 0;
+            {shown.map((p, productIndex) => {
+              const selected = collectionDefaultColourIndex(p, productIndex);
               return (
                 <article key={p.id} className="group flex min-w-[84vw] snap-start flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)] sm:min-w-[calc((100%-1.25rem)/2)] xl:min-w-[calc((100%-3.75rem)/4)]">
                   <div className="relative">
@@ -379,7 +379,7 @@ export function Storefront({
                       className="relative h-[400px] w-full overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] p-1 text-left"
                     >
                       <Image
-                        src={productImage(p, p.colours[selected])}
+                        src={collectionProductImage(p, p.colours[selected])}
                         alt={`StarkVibe ${p.name} 100% cotton in ${p.colours[selected].name}`}
                         fill
                         sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
@@ -393,6 +393,7 @@ export function Storefront({
                   <div className="mt-5 flex flex-col items-start gap-2 text-[19px] leading-tight font-bold">
                     <h3 className="min-w-0 max-w-full truncate">{p.name}</h3>
                     <span className="flex items-baseline gap-2">
+                      {mrpPrice(p) && <del className="text-sm font-normal text-ink/55">₹{mrpPrice(p)}</del>}
                       <span>₹{salePrice(p)}</span>
                     </span>
                   </div>

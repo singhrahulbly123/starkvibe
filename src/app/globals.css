@@ -11,7 +11,7 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 24px;
-    overflow-x: clip;
+    overflow-x: hidden;
     overscroll-behavior-x: none;
   }
   body {
@@ -19,7 +19,7 @@
     color: var(--color-ink);
     min-width: 0;
     max-width: 100%;
-    overflow-x: clip;
+    overflow-x: hidden;
     overscroll-behavior-x: none;
   }
   button,

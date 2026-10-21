@@ -52,6 +52,12 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     qualities: [75],
+    remotePatterns: [
+      { protocol: "http", hostname: "127.0.0.1", port: "8000" },
+      { protocol: "http", hostname: "localhost", port: "8000" },
+      { protocol: "https", hostname: "api.starkvibe.com" },
+    ],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1440, 1600, 1920, 2056],
   },
   async redirects() {
     return [
@@ -90,8 +96,9 @@ const nextConfig: NextConfig = {
               "form-action 'self'",
               "frame-ancestors 'self'",
               "object-src 'none'",
-              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com`,
-              "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com",
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com`,
+              "connect-src 'self' http://127.0.0.1:8000 http://localhost:8000 https://starkvibe.com https://www.starkvibe.com https://api.starkvibe.com https://www.google-analytics.com https://region1.google-analytics.com https://accounts.google.com https://oauth2.googleapis.com",
+              "frame-src 'self' https://accounts.google.com",
               "img-src 'self' blob: data: https:",
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self' data:",

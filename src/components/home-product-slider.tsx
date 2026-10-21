@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { collectionDefaultColourIndex, mrpPrice, prioritizeFleeceProducts, productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
 
 
@@ -22,7 +22,7 @@ export function HomeProductSlider() {
       })
       .catch(() => undefined);
   }, []);
-  const displayedProducts = catalogueProducts;
+  const displayedProducts = prioritizeFleeceProducts(catalogueProducts);
   const scroll = (direction: -1 | 1) => {
     const track = trackRef.current;
     if (track) track.scrollBy({ left: direction * track.clientWidth * 0.82, behavior: "smooth" });
@@ -46,8 +46,8 @@ export function HomeProductSlider() {
           </div>
         </div>
         <div ref={trackRef} className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:gap-5 sm:px-0">
-          {displayedProducts.map((product) => {
-            const colourIndex = selectedColours[product.id] ?? 0;
+          {displayedProducts.map((product, productIndex) => {
+            const colourIndex = selectedColours[product.id] ?? collectionDefaultColourIndex(product, productIndex);
             const colour = product.colours[colourIndex];
             const productHref = `/products/${productSlug(product)}?colour=${colour.file}`;
             return (
@@ -85,7 +85,10 @@ export function HomeProductSlider() {
                     <span className="ml-1 text-[11px] text-ink/55">{colour.name}</span>
                   </div>
                   <div className="mt-4 flex items-center justify-between border-t border-ink/15 pt-3">
-                    <span className="flex items-baseline gap-2"><span className="font-bold">₹{salePrice(product)}</span></span>
+                    <span className="flex items-baseline gap-2">
+                      {mrpPrice(product) && <del className="text-sm font-normal text-ink/55">₹{mrpPrice(product)}</del>}
+                      <span className="font-bold">₹{salePrice(product)}</span>
+                    </span>
                   </div>
                   <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] gap-2">
                     <label className="sr-only" htmlFor={`home-product-size-${product.id}`}>Choose size for {product.name}</label>

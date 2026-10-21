@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Check, Minus, Plus } from "lucide-react";
-import { plainRichText, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { mrpPrice, plainRichText, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { productFit, sizeGuideFor, sizesFor } from "@/lib/product-details";
 import { productMaterial, productSeoDescription, productSku } from "@/lib/product-seo";
 import { trackEvent } from "@/lib/analytics";
@@ -274,46 +274,26 @@ export function ProductDetails({
                   : "T-shirts"}{" "}
             · {fit} fit
           </p>
-          <h1 className="mb-5 font-display text-[clamp(52px,6vw,96px)] leading-[.88] font-black uppercase">
+          <h1 className="mb-5 font-display text-[clamp(30px,4vw,60px)] leading-[.88] font-black uppercase">
             {product.id === "oversized" ? (
               <>
-                Oversized
-                <br />
-                220 GSM
-                <br />
-                cotton tee
+                Oversized 220 GSM cotton tee
               </>
             ) : product.id === "terry" ? (
               <>
-                Oversized
-                <br />
-                240 GSM
-                <br />
-                French Terry
+                Oversized 240 GSM French Terry
               </>
             ) : product.id === "regular" ? (
               <>
-                Regular fit
-                <br />
-                180 GSM
-                <br />
-                cotton tee
+                Regular fit 180 GSM cotton tee
               </>
             ) : product.id === "polo" ? (
               <>
-                Polo
-                <br />
-                220 GSM
-                <br />
-                Matty tee
+                Polo 220 GSM Matty tee
               </>
             ) : product.id === "kids" ? (
               <>
-                Kids regular
-                <br />
-                180 GSM
-                <br />
-                cotton tee
+                Kids regular 180 GSM cotton tee
               </>
             ) : (
               <>
@@ -327,6 +307,7 @@ export function ProductDetails({
           </h1>
           <div className="mb-6 flex items-baseline gap-3.5">
             <span className="flex items-baseline gap-3.5">
+              {mrpPrice(product) && <del className="text-lg text-ink/55">₹{mrpPrice(product)}</del>}
               <span className="text-[34px] font-bold">₹{salePrice(product)}</span>
             </span>
             <span className="text-sm text-[#55544f]">100% cotton</span>

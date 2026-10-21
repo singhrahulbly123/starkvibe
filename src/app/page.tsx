@@ -21,7 +21,7 @@ export const metadata = buildMetadata({
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const heading =
-  "whitespace-nowrap font-display text-[clamp(22px,4.2vw,60px)] leading-none font-black uppercase";
+  "font-display text-[clamp(22px,4.2vw,60px)] leading-none font-black uppercase";
 const eyebrow =
   "mb-[18px] text-[13px] font-semibold tracking-[.18em] uppercase";
 const specs = [
