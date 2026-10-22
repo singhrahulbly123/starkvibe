@@ -28,7 +28,7 @@ class RazorpayController extends Controller
             'customer' => ['required', 'array'],
             'customer.name' => ['required', 'string', 'max:160'],
             'customer.email' => ['required', 'email', 'max:255'],
-            'customer.phone' => ['required', 'string', 'max:30'],
+            'customer.phone' => ['required', 'string', 'regex:/^[0-9]{10}$/'],
             'customer.address' => ['required', 'string', 'max:1000'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_slug' => ['required', 'string', 'max:180'],

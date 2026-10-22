@@ -120,6 +120,7 @@ export function Checkout() {
   const razorpayConfigLoading = razorpayStatus === "checking";
   const [prepared, setPrepared] = useState(false);
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [savedOrderNumber, setSavedOrderNumber] = useState("");
@@ -488,9 +489,15 @@ export function Checkout() {
                       id="phone"
                       name="phone"
                       type="tel"
+                      inputMode="numeric"
                       autoComplete="tel"
-                      placeholder="Your phone number"
-                      pattern="[+0-9 ()-]{8,20}"
+                      placeholder="10-digit phone number"
+                      pattern="[0-9]{10}"
+                      minLength={10}
+                      maxLength={10}
+                      title="Enter exactly 10 digits"
+                      value={phone}
+                      onChange={(event) => setPhone(event.currentTarget.value.replace(/\D/g, "").slice(0, 10))}
                       required
                     />
                   </div>
