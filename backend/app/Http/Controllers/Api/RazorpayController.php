@@ -57,7 +57,7 @@ class RazorpayController extends Controller
             return ['id' => $product->slug, 'name' => $product->name, 'colour' => $item['colour'], 'size' => $item['size'], 'quantity' => $item['quantity'], 'unit_price' => $price];
         });
         $subtotal = (float) $items->sum(fn (array $item): float => $item['quantity'] * $item['unit_price']);
-        $shippingCharge = $data['shipping_method'] === 'Express delivery' ? 149 : ($subtotal >= 2000 ? 0 : 50);
+        $shippingCharge = 0;
         $couponCode = null;
         $discount = 0;
         if (! empty($data['coupon_code'])) {

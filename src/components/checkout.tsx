@@ -19,9 +19,7 @@ const paymentMethods = [
   "Cash on delivery",
   "Razorpay",
 ] as const;
-const FREE_SHIPPING_THRESHOLD = 2000;
-const STANDARD_SHIPPING_CHARGE = 50;
-const EXPRESS_SHIPPING_CHARGE = 149;
+const COD_SHIPPING_CHARGE = 50;
 
 type RazorpayPaymentResponse = { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string };
 type RazorpayCheckout = {
@@ -113,9 +111,10 @@ function Section({
 export function Checkout() {
   const { items, ready, subtotal, count } = useBag();
   const [business, setBusiness] = useState(false);
-  const [shipping, setShipping] = useState("Standard delivery");
+  const [shipping, setShipping] = useState("");
   const [payment, setPayment] =
-    useState<(typeof paymentMethods)[number]>("Cash on delivery");
+    useState<(typeof paymentMethods)[number] | "">("");
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [prepared, setPrepared] = useState(false);
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -124,7 +123,7 @@ export function Checkout() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; discountPercentage: number | null }>({ code: "", discount: 0, discountPercentage: null });
-  const shippingCharge = shipping === "Express delivery" ? EXPRESS_SHIPPING_CHARGE : subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_CHARGE;
+  const shippingCharge = payment === "Cash on delivery" ? COD_SHIPPING_CHARGE : 0;
   const couponDiscount = coupon.discountPercentage === null ? coupon.discount : Math.round((subtotal * coupon.discountPercentage) / 100 * 100) / 100;
   const orderTotal = Math.max(0, subtotal - couponDiscount) + shippingCharge;
 
@@ -240,6 +239,15 @@ export function Checkout() {
   async function placeOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!items.length || submitting) return;
+    if (!shipping) {
+      setSubmitError("Please select a delivery option before continuing.");
+      return;
+    }
+    if (!payment) {
+      setShowPaymentOptions(true);
+      setSubmitError("Choose Cash on delivery or Razorpay to continue.");
+      return;
+    }
     setSubmitting(true);
     setSubmitError("");
     const data = new FormData(event.currentTarget);
@@ -596,6 +604,7 @@ export function Checkout() {
                           name="shipping"
                           value={method}
                           checked={shipping === method}
+                          required={method === "Standard delivery"}
                           onChange={() => setShipping(method)}
                           className="size-[22px] shrink-0 accent-ink"
                         />
@@ -608,7 +617,7 @@ export function Checkout() {
                           </span>
                         </span>
                         <span className="text-right text-sm font-bold">
-                          {method === "Express delivery" ? formatPrice(EXPRESS_SHIPPING_CHARGE) : subtotal >= FREE_SHIPPING_THRESHOLD ? "FREE" : formatPrice(STANDARD_SHIPPING_CHARGE)}
+                          {payment === "Cash on delivery" ? `+${formatPrice(COD_SHIPPING_CHARGE)} COD` : payment === "Razorpay" ? "FREE online" : "COD +₹50 · Online FREE"}
                         </span>
                       </label>
                     ))}
@@ -697,17 +706,18 @@ export function Checkout() {
                   </div>
                 </dl>
                 <p className="mb-7 text-[13px] leading-relaxed text-[#9a988f]">
-                  Your selected delivery method will be included in your order
-                  request.
+                  {shipping ? `Delivery: ${shipping}. COD has a ₹50 shipping charge; online payment has no shipping charge.` : "Select a delivery option to continue. COD adds ₹50 shipping; online payment has no shipping charge."}
                 </p>
-                <p className="mb-3 text-xs font-bold tracking-[.16em] text-gold uppercase">4 · Payment method</p>
-                <div role="group" aria-label="Payment method" className="mb-5 grid grid-cols-2 gap-2.5">
-                  {paymentMethods.map((method) => (
-                    <button key={method} type="button" aria-pressed={payment === method} onClick={() => setPayment(method)} className={`min-h-14 border border-paper px-3 py-3 text-sm font-bold transition-colors ${payment === method ? "bg-gold text-ink" : "bg-transparent text-paper hover:bg-paper/10"}`}>
-                      {method}
-                    </button>
-                  ))}
-                </div>
+                {showPaymentOptions && <>
+                  <p className="mb-3 text-xs font-bold tracking-[.16em] text-gold uppercase">4 · Select payment method</p>
+                  <div role="group" aria-label="Payment method" className="mb-5 grid grid-cols-2 gap-2.5">
+                    {paymentMethods.map((method) => (
+                      <button key={method} type="button" aria-pressed={payment === method} onClick={() => { setPayment(method); setSubmitError(""); }} className={`min-h-14 border border-paper px-3 py-3 text-sm font-bold transition-colors ${payment === method ? "bg-gold text-ink" : "bg-transparent text-paper hover:bg-paper/10"}`}>
+                        {method}
+                      </button>
+                    ))}
+                  </div>
+                </>}
                 <button
                   type="submit"
                   form="checkout-form"
@@ -715,9 +725,10 @@ export function Checkout() {
                   style={{ backgroundColor: "#e8bc63" }}
                   className="flex h-16 w-full items-center justify-center gap-3 rounded-sm bg-[#e8bc63] px-4 text-[17px] font-extrabold text-ink shadow-[0_5px_0_rgba(232,188,99,0.35)] ring-2 ring-[#e8bc63] ring-offset-2 ring-offset-ink transition-all hover:-translate-y-0.5 hover:bg-[#dca94c] hover:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-paper disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {submitting ? (payment === "Razorpay" ? "Processing payment…" : "Saving order…") : payment === "Razorpay" ? "Pay securely" : "Place order"} {!submitting && <ArrowRight size={18} />}
+                  {submitting ? (payment === "Razorpay" ? "Processing payment…" : "Saving order…") : payment === "Razorpay" ? "Pay securely" : payment === "Cash on delivery" ? "Place order" : "Choose payment method"} {!submitting && <ArrowRight size={18} />}
                 </button>
-                {payment === "Razorpay" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Complete the contact and delivery fields to open Razorpay checkout.</p>}
+                {!payment && <p className="mt-3 text-center text-xs text-[#c9c7be]">Select delivery first, then choose COD or online payment.</p>}
+                {payment === "Razorpay" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Online payment selected. Shipping is free.</p>}
                 {submitError && <p className="mt-3 border border-red-400 bg-red-50 p-3 text-sm font-semibold text-red-900" role="alert">{submitError}</p>}
                 <ul className="mt-6 space-y-3 text-sm text-[#c9c7be]">
                   {[
