@@ -115,8 +115,9 @@ export function Checkout() {
   const [payment, setPayment] =
     useState<(typeof paymentMethods)[number] | "">("");
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
-  const [razorpayEnabled, setRazorpayEnabled] = useState(false);
-  const [razorpayConfigLoading, setRazorpayConfigLoading] = useState(true);
+  const [razorpayStatus, setRazorpayStatus] = useState<"checking" | "enabled" | "not_configured" | "unreachable">("checking");
+  const razorpayEnabled = razorpayStatus === "enabled";
+  const razorpayConfigLoading = razorpayStatus === "checking";
   const [prepared, setPrepared] = useState(false);
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -143,9 +144,8 @@ export function Checkout() {
   useEffect(() => {
     let active = true;
     backendFetch<{ enabled: boolean }>("/payment/razorpay-config")
-      .then((config) => { if (active) setRazorpayEnabled(config.enabled); })
-      .catch(() => { if (active) setRazorpayEnabled(false); })
-      .finally(() => { if (active) setRazorpayConfigLoading(false); });
+      .then((config) => { if (active) setRazorpayStatus(config.enabled ? "enabled" : "not_configured"); })
+      .catch(() => { if (active) setRazorpayStatus("unreachable"); });
     return () => { active = false; };
   }, []);
 
@@ -728,12 +728,13 @@ export function Checkout() {
                   <p className="mb-3 text-xs font-bold tracking-[.16em] text-gold uppercase">4 · Select payment method</p>
                   <div role="group" aria-label="Payment method" className="mb-5 grid grid-cols-2 gap-2.5">
                     {paymentMethods.map((method) => (
-                      <button key={method} type="button" aria-pressed={payment === method} disabled={method === "Razorpay" && (razorpayConfigLoading || !razorpayEnabled)} onClick={() => { setPayment(method); setSubmitError(""); }} className={`min-h-14 border border-paper px-3 py-3 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${payment === method ? "bg-gold text-ink" : "bg-transparent text-paper hover:bg-paper/10"}`}>
+                      <button key={method} type="button" aria-pressed={payment === method} disabled={method === "Razorpay" && (razorpayConfigLoading || !razorpayEnabled)} onClick={() => { setPayment(method); setSubmitError(""); }} className={`min-h-14 border px-3 py-3 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${payment === method ? "border-paper bg-gold text-ink" : "border-[#2f7d32] bg-[#164a23] text-paper hover:bg-[#1c5d2b]"}`}>
                         {method}{method === "Razorpay" && razorpayConfigLoading ? <span className="mt-1 block text-xs">Checking…</span> : method === "Razorpay" && !razorpayEnabled ? <span className="mt-1 block text-xs">Unavailable</span> : null}
                       </button>
                     ))}
                   </div>
-                  {!razorpayConfigLoading && !razorpayEnabled && <p className="-mt-2 mb-5 text-xs text-[#c9c7be]">Online payment is not set up right now. Add valid Razorpay keys in the Laravel dashboard to enable it.</p>}
+                  {razorpayStatus === "not_configured" && <p className="-mt-2 mb-5 text-xs text-[#c9c7be]">Razorpay keys are not saved in the live Laravel dashboard database. Save the live Key ID and Secret under Admin → Payments.</p>}
+                  {razorpayStatus === "unreachable" && <p className="-mt-2 mb-5 text-xs text-[#c9c7be]">The storefront cannot reach Laravel. Set NEXT_PUBLIC_BACKEND_URL on Vercel to https://api.starkvibe.com/api, redeploy, and check Laravel CORS.</p>}
                 </>}
                 <button
                   type="submit"
