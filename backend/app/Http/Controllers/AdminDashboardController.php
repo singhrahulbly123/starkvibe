@@ -58,18 +58,32 @@ class AdminDashboardController extends Controller
 
     public function updatePaymentSettings(Request $request): RedirectResponse
     {
+        $settings = RazorpaySetting::current();
         $data = $request->validate([
             'key_id' => ['required', 'string', 'max:120'],
-            'key_secret' => ['nullable', 'string', 'max:255'],
+            'key_secret' => [$settings->key_secret ? 'nullable' : 'required', 'string', 'max:255'],
         ]);
-        $settings = RazorpaySetting::current();
-        $settings->key_id = trim($data['key_id']);
+        $keyId = trim($data['key_id']);
+        if ($settings->key_id && $settings->key_id !== $keyId && blank($data['key_secret'] ?? null)) {
+            return back()->withErrors(['key_secret' => 'Enter the matching Key Secret when changing the Key ID.'])->withInput();
+        }
+        $settings->key_id = $keyId;
         if (filled($data['key_secret'] ?? null)) {
             $settings->key_secret = trim($data['key_secret']);
         }
         $settings->save();
 
         return back()->with('status', 'Razorpay settings saved securely.');
+    }
+
+    public function deletePaymentSettings(): RedirectResponse
+    {
+        $settings = RazorpaySetting::current();
+        $settings->key_id = null;
+        $settings->key_secret = null;
+        $settings->save();
+
+        return back()->with('status', 'Razorpay credentials deleted. Online payments are disabled.');
     }
 
     public function storeCoupon(Request $request): RedirectResponse

@@ -178,15 +178,39 @@
     @endif
     @if ($section === 'payments')
     <section class="panel" id="payments" aria-label="Payment settings">
+        @php($razorpayConfigured = filled($razorpaySettings->key_id) && filled($razorpaySettings->key_secret))
         <h2>Razorpay settings</h2>
-        <p>{{ filled($razorpaySettings->key_id) && filled($razorpaySettings->key_secret) ? 'Razorpay credentials are configured.' : 'Add your Razorpay API credentials to enable online payments.' }}</p>
-        <form class="coupon-form" style="grid-template-columns:1fr 1fr auto;margin-top:20px" method="POST" action="{{ route('admin.payment-settings.update') }}">
-            @csrf
-            <label>Razorpay Key ID<input name="key_id" value="{{ old('key_id', $razorpaySettings->key_id) }}" placeholder="rzp_test_… or rzp_live_…" required></label>
-            <label>Razorpay Key Secret<input name="key_secret" type="password" autocomplete="new-password" placeholder="{{ filled($razorpaySettings->key_secret) ? 'Saved securely; blank keeps the current secret' : 'Enter your key secret' }}"></label>
-            <button class="dark" type="submit">Save credentials</button>
-        </form>
-        <p class="mt-4">The secret is encrypted in the database and is never returned to the storefront.</p>
+        <p>{{ $razorpayConfigured ? 'Razorpay credentials are configured. Online payments are enabled.' : 'Add your Razorpay API credentials to enable online payments.' }}</p>
+        @if ($razorpayConfigured)
+            <div class="coupon-form" style="grid-template-columns:1fr 1fr auto;margin-top:20px">
+                <label>Razorpay Key ID<input value="{{ $razorpaySettings->key_id }}" disabled></label>
+                <label>Razorpay Key Secret<input value="Saved securely" disabled></label>
+                <button class="dark" type="button" disabled>Credentials saved</button>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;margin-top:20px">
+                <details @if ($errors->has('key_id') || $errors->has('key_secret')) open @endif style="flex:1 1 400px;border:1px solid #bdbbb3;padding:16px;background:#f7f5ef">
+                    <summary style="cursor:pointer;font-weight:700">Edit Razorpay credentials</summary>
+                    <form method="POST" action="{{ route('admin.payment-settings.update') }}" style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;margin-top:16px">
+                        @csrf
+                        <label>Razorpay Key ID<input name="key_id" value="{{ old('key_id', $razorpaySettings->key_id) }}" placeholder="rzp_test_… or rzp_live_…" required></label>
+                        <label>New Key Secret<input name="key_secret" type="password" autocomplete="new-password" placeholder="Leave blank to keep the current secret"></label>
+                        <button class="dark" type="submit">Save changes</button>
+                    </form>
+                </details>
+                <form method="POST" action="{{ route('admin.payment-settings.delete') }}" onsubmit="return confirm('Delete Razorpay credentials and disable online payments?')">
+                    @csrf @method('DELETE')
+                    <button class="delete" type="submit">Delete credentials</button>
+                </form>
+            </div>
+        @else
+            <form class="coupon-form" style="grid-template-columns:1fr 1fr auto;margin-top:20px" method="POST" action="{{ route('admin.payment-settings.update') }}">
+                @csrf
+                <label>Razorpay Key ID<input name="key_id" value="{{ old('key_id') }}" placeholder="rzp_test_… or rzp_live_…" required></label>
+                <label>Razorpay Key Secret<input name="key_secret" type="password" autocomplete="new-password" placeholder="Enter your key secret" required></label>
+                <button class="dark" type="submit">Save credentials</button>
+            </form>
+        @endif
+        <p style="margin-top:20px">The secret is encrypted in the database and is never returned to the storefront.</p>
     </section>
     @endif
     @if ($section === 'orders')

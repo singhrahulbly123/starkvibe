@@ -15,6 +15,13 @@ use Illuminate\Support\Str;
 
 class RazorpayController extends Controller
 {
+    public function config(): JsonResponse
+    {
+        $settings = RazorpaySetting::current();
+
+        return response()->json(['enabled' => filled($settings->key_id) && filled($settings->key_secret)]);
+    }
+
     public function createOrder(Request $request): JsonResponse
     {
         $data = $request->validate([

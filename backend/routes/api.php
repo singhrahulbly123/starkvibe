@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('auth/register', [AuthController::class, 'register']);
 Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('orders', [OrderController::class, 'store']);
+Route::get('payment/razorpay-config', [RazorpayController::class, 'config']);
 Route::post('payment/razorpay-order', [RazorpayController::class, 'createOrder']);
 Route::post('payment/razorpay-verify', [RazorpayController::class, 'verifyPayment']);
 Route::get('products', [ProductController::class, 'index']);
