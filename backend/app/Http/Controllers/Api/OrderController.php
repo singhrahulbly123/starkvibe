@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Coupon;
-use App\Models\User;
+use App\Support\OrderConfirmationMailer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, OrderConfirmationMailer $mailer): JsonResponse
     {
-        $data = $request->validate(['customer' => ['required', 'array'], 'customer.name' => ['required', 'string', 'max:160'], 'customer.email' => ['required', 'email', 'max:255'], 'customer.phone' => ['required', 'string', 'max:30'], 'items' => ['required', 'array', 'min:1'], 'subtotal' => ['required', 'numeric', 'min:0'], 'shipping_charge' => ['required', 'numeric', 'min:0'], 'coupon_code' => ['nullable', 'string', 'max:40'], 'payment_method' => ['required', 'string', 'max:80'], 'business_details' => ['nullable', 'array'], 'note' => ['nullable', 'string', 'max:1000']]);
+        $data = $request->validate(['customer' => ['required', 'array'], 'customer.name' => ['required', 'string', 'max:160'], 'customer.email' => ['required', 'email', 'max:255'], 'customer.phone' => ['required', 'string', 'max:30'], 'items' => ['required', 'array', 'min:1'], 'subtotal' => ['required', 'numeric', 'min:0'], 'shipping_method' => ['required', 'string', 'max:80'], 'shipping_charge' => ['required', 'numeric', 'min:0'], 'coupon_code' => ['nullable', 'string', 'max:40'], 'payment_method' => ['required', 'string', 'max:80'], 'business_details' => ['nullable', 'array'], 'note' => ['nullable', 'string', 'max:1000']]);
         $coupon = null;
         $discount = 0;
         if (! empty($data['coupon_code'])) {
@@ -26,8 +26,9 @@ class OrderController extends Controller
             $data['coupon_code'] = $coupon->code;
         }
         $data['discount_amount'] = $discount;
-        $user = $request->user() ?: User::where('email', $data['customer']['email'])->first();
-        $order = Order::create([...$data, 'user_id' => $user?->id, 'order_number' => 'SV-'.now()->format('ymd').'-'.strtoupper(Str::random(5)), 'status' => 'received']);
+        $user = $request->user();
+        $order = Order::create([...$data, 'user_id' => $user?->id, 'order_number' => 'SV-'.now()->format('ymd').'-'.strtoupper(Str::random(5)), 'payment_status' => 'cod', 'status' => 'received']);
+        $mailer->send($order);
 
         return response()->json(['order' => $order], 201);
     }
@@ -58,7 +59,7 @@ class OrderController extends Controller
 
     public function update(Request $request, Order $order): JsonResponse
     {
-        $data = $request->validate(['status' => ['required', 'in:received,confirmed,processing,shipped,delivered,cancellation_requested,cancelled']]);
+        $data = $request->validate(['status' => ['required', 'in:awaiting_payment,received,confirmed,processing,shipped,delivered,cancellation_requested,cancelled']]);
         $order->update($data);
 
         return response()->json(['order' => $order->fresh('user')]);
@@ -66,7 +67,7 @@ class OrderController extends Controller
 
     public function summary(): JsonResponse
     {
-        $activeOrders = Order::whereNotIn('status', ['cancelled']);
-        return response()->json(['orders' => Order::count(), 'pending' => Order::whereIn('status', ['received', 'cancellation_requested'])->count(), 'revenue' => (float) ($activeOrders->sum('subtotal') + $activeOrders->sum('shipping_charge') - $activeOrders->sum('discount_amount'))]);
+        $activeOrders = Order::whereNotIn('status', ['cancelled', 'awaiting_payment']);
+        return response()->json(['orders' => Order::count(), 'pending' => Order::whereIn('status', ['awaiting_payment', 'received', 'cancellation_requested'])->count(), 'revenue' => (float) ($activeOrders->sum('subtotal') + $activeOrders->sum('shipping_charge') - $activeOrders->sum('discount_amount'))]);
     }
 }

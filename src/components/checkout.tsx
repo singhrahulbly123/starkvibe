@@ -11,10 +11,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, LockKeyhole, Mail } from "lucide-react";
 import { useBag, formatPrice } from "@/lib/bag";
-import { productImage, salePrice } from "@/lib/catalogue";
+import { productImage, productSlug, salePrice } from "@/lib/catalogue";
 import { trackEvent, type EcommerceItem } from "@/lib/analytics";
 import { backendFetch, type BackendOrder } from "@/lib/backend-api";
-import { GoogleSignIn } from "@/components/google-sign-in";
 
 const paymentMethods = [
   "Cash on delivery",
@@ -124,8 +123,6 @@ export function Checkout() {
   const [savedOrderNumber, setSavedOrderNumber] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [googleError, setGoogleError] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
   const [coupon, setCoupon] = useState<{ code: string; discount: number; discountPercentage: number | null }>({ code: "", discount: 0, discountPercentage: null });
   const shippingCharge = shipping === "Express delivery" ? EXPRESS_SHIPPING_CHARGE : subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_CHARGE;
   const couponDiscount = coupon.discountPercentage === null ? coupon.discount : Math.round((subtotal * coupon.discountPercentage) / 100 * 100) / 100;
@@ -140,12 +137,6 @@ export function Checkout() {
 
   useEffect(() => {
     setEmail(window.localStorage.getItem("starkvibe-user-email") || "");
-    try {
-      const savedUser = JSON.parse(window.localStorage.getItem("starkvibe-account-user") || "null");
-      setLoggedIn(savedUser?.provider === "google");
-    } catch {
-      setLoggedIn(false);
-    }
   }, []);
 
   useEffect(() => {
@@ -157,21 +148,6 @@ export function Checkout() {
     }
   }, []);
 
-  async function signInWithGoogle(credential: string) {
-    setGoogleError("");
-    const response = await fetch("/api/auth/google", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ credential }) });
-    const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.message || "Google sign-in failed.");
-    const googleUser = body.user as { name: string; email: string; phone?: string };
-    const names = googleUser.name.trim().split(/\s+/);
-    setFirstName(names.shift() || "");
-    setLastName(names.join(" "));
-    setEmail(googleUser.email);
-    localStorage.setItem("starkvibe-account-user", JSON.stringify({ name: googleUser.name, email: googleUser.email, phone: googleUser.phone || "", provider: "google" }));
-    localStorage.setItem("starkvibe-user-email", googleUser.email);
-    setLoggedIn(true);
-  }
-
   useEffect(() => {
     if (ready && items.length) {
       trackEvent("begin_checkout", {
@@ -182,32 +158,37 @@ export function Checkout() {
     }
   }, [ready, items, subtotal]);
 
-  async function finishOrder(data: FormData, paymentId?: string) {
+  async function finishOrder(data: FormData, paymentId?: string, confirmedOrderNumber?: string) {
     const orderId = `SV-${Date.now().toString().slice(-8)}`;
     const customerName = `${data.get("first")} ${data.get("last")}`.trim();
     let backendOrderNumber = orderId;
     try {
-      const saved = await backendFetch<{ order: BackendOrder }>("/orders", {
-        method: "POST",
-        body: JSON.stringify({
-          customer: {
-            name: customerName,
-            email: data.get("email"),
-            phone: data.get("phone"),
-            address: ["address", "apartment", "city", "state", "pin"].map((name) => data.get(name)).filter(Boolean).join(", "),
-          },
-          items: items.map((item) => ({ id: item.product.id, name: item.product.name, colour: item.product.colours[item.colour].name, size: item.size, quantity: item.quantity, unit_price: salePrice(item.product) })),
-          subtotal,
-          shipping_charge: shippingCharge,
-          shipping_method: shipping,
-           coupon_code: coupon.code || null,
-          payment_method: payment,
-          business_details: business ? { name: data.get("business"), gstin: data.get("gstin") } : null,
-          note: [localStorage.getItem("starkvibe-order-note"), paymentId ? `Razorpay payment: ${paymentId}` : null].filter(Boolean).join("\n") || null,
-        }),
-      });
-      backendOrderNumber = saved.order.order_number;
-      setSavedOrderNumber(backendOrderNumber);
+      if (confirmedOrderNumber) {
+        backendOrderNumber = confirmedOrderNumber;
+        setSavedOrderNumber(backendOrderNumber);
+      } else {
+        const saved = await backendFetch<{ order: BackendOrder }>("/orders", {
+          method: "POST",
+          body: JSON.stringify({
+            customer: {
+              name: customerName,
+              email: data.get("email"),
+              phone: data.get("phone"),
+              address: ["address", "apartment", "city", "state", "pin"].map((name) => data.get(name)).filter(Boolean).join(", "),
+            },
+            items: items.map((item) => ({ id: productSlug(item.product), name: item.product.name, colour: item.product.colours[item.colour].name, size: item.size, quantity: item.quantity, unit_price: salePrice(item.product) })),
+            subtotal,
+            shipping_charge: shippingCharge,
+            shipping_method: shipping,
+            coupon_code: coupon.code || null,
+            payment_method: payment,
+            business_details: business ? { name: data.get("business"), gstin: data.get("gstin") } : null,
+            note: [localStorage.getItem("starkvibe-order-note"), paymentId ? `Razorpay payment: ${paymentId}` : null].filter(Boolean).join("\n") || null,
+          }),
+        });
+        backendOrderNumber = saved.order.order_number;
+        setSavedOrderNumber(backendOrderNumber);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to save your order right now.";
       setSubmitError(paymentId ? `Payment ${paymentId} was verified, but the order could not be saved. Contact support with this payment ID. ${message}` : message);
@@ -253,7 +234,7 @@ export function Checkout() {
       items: analyticsItems,
     });
     setSubmitting(false);
-    window.location.assign(`/my-account?order=${encodeURIComponent(backendOrderNumber)}`);
+    window.location.assign(`/my-account?order=${encodeURIComponent(backendOrderNumber)}&mode=register`);
   }
 
   async function placeOrder(event: FormEvent<HTMLFormElement>) {
@@ -269,22 +250,29 @@ export function Checkout() {
     }
 
     try {
-      const publicKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-      if (!publicKey) throw new Error("Razorpay key is missing. Add NEXT_PUBLIC_RAZORPAY_KEY_ID and restart the Next.js server.");
       await loadRazorpayCheckout();
       const RazorpayConstructor = window.Razorpay;
       if (!RazorpayConstructor) throw new Error("Razorpay checkout is unavailable. Please try again.");
 
-      const orderResponse = await fetch("/api/create-order", {
+      const orderBody = await backendFetch<{ key_id: string; order_id: string; amount: number; currency: string; order_number: string }>("/payment/razorpay-order", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: Math.round(orderTotal * 100), receipt: `sv_${Date.now()}` }),
+        body: JSON.stringify({
+          customer: {
+            name: `${data.get("first")} ${data.get("last")}`.trim(),
+            email: String(data.get("email") || ""),
+            phone: String(data.get("phone") || ""),
+            address: ["address", "apartment", "city", "state", "pin"].map((name) => data.get(name)).filter(Boolean).join(", "),
+          },
+          items: items.map((item) => ({ product_slug: productSlug(item.product), colour: item.product.colours[item.colour].name, size: item.size, quantity: item.quantity })),
+          shipping_method: shipping,
+          coupon_code: coupon.code || null,
+          business_details: business ? { name: data.get("business"), gstin: data.get("gstin") } : null,
+          note: localStorage.getItem("starkvibe-order-note") || null,
+        }),
       });
-      const orderBody = await orderResponse.json().catch(() => ({}));
-      if (!orderResponse.ok) throw new Error(orderBody.message || "Unable to start payment.");
 
       const razorpay = new RazorpayConstructor({
-        key: publicKey,
+        key: orderBody.key_id,
         amount: orderBody.amount,
         currency: orderBody.currency,
         name: "StarkVibe",
@@ -297,19 +285,12 @@ export function Checkout() {
         },
         handler: async (response) => {
           try {
-            const verifyResponse = await fetch("/api/verify-payment", {
+            const verifyBody = await backendFetch<{ verified: boolean; order_number: string }>("/payment/razorpay-verify", {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...response,
-                amount: orderBody.amount,
-                currency: orderBody.currency,
-                verification_token: orderBody.verification_token,
-              }),
+              body: JSON.stringify(response),
             });
-            const verifyBody = await verifyResponse.json().catch(() => ({}));
-            if (!verifyResponse.ok || !verifyBody.verified) throw new Error(verifyBody.message || "Payment verification failed.");
-            await finishOrder(data, response.razorpay_payment_id);
+            if (!verifyBody.verified) throw new Error("Payment verification failed.");
+            await finishOrder(data, response.razorpay_payment_id, verifyBody.order_number);
           } catch (error) {
             setSubmitError(error instanceof Error ? error.message : "Payment could not be confirmed. Please contact support before retrying.");
             setSubmitting(false);
@@ -461,11 +442,9 @@ export function Checkout() {
                 className="min-w-0"
               >
                 <Section number={1} title="Contact">
-                  <div id="checkout-google-login" className="mb-7 border border-ink/20 bg-[#eeece5] p-5 sm:p-6">
-                    <p className="mb-3 text-sm font-bold">Already have a Google account?</p>
-                    <GoogleSignIn onCredential={signInWithGoogle} onError={setGoogleError} />
-                    {googleError && <p role="alert" className="mt-3 text-sm font-semibold text-red-800">{googleError}</p>}
-                    {!loggedIn && <p className="mt-4 text-sm text-[#55544f]">Google sign-in is optional. You can also check out as a guest.</p>}
+                  <div className="mb-7 border border-ink/20 bg-[#eeece5] p-5 sm:p-6">
+                    <p className="text-sm font-bold">Guest checkout is available. Gmail sign-in is not required.</p>
+                    <p className="mt-2 text-sm text-[#55544f]">Already registered? <Link href="/my-account" className="font-bold underline">Log in</Link>. New here? <Link href="/my-account?mode=register" className="font-bold underline">Create an account</Link>.</p>
                   </div>
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Field
@@ -635,37 +614,9 @@ export function Checkout() {
                     ))}
                   </div>
                 </Section>
-                <Section number={4} title="Payment">
-                  <div
-                    role="group"
-                    aria-label="Payment method"
-                    className="mb-6 grid grid-cols-2 gap-2.5 xl:grid-cols-4"
-                  >
-                    {paymentMethods.map((method) => (
-                      <button
-                        key={method}
-                        type="button"
-                        aria-pressed={payment === method}
-                        onClick={() => setPayment(method)}
-                        className={`min-h-16 border-[1.5px] border-ink px-3 py-3 text-base font-bold transition-colors ${payment === method ? "bg-ink text-paper" : "hover:bg-ink/5"}`}
-                      >
-                        {method}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="border-[1.5px] border-ink p-5 sm:p-8">
-                    <h3 className="mb-2 font-bold">{payment === "Cash on delivery" ? "Cash on delivery" : "Secure online payment"}</h3>
-                    <p className="text-[15px] leading-relaxed text-[#3f3e3a]">
-                      {payment === "Cash on delivery"
-                        ? "Pay when your order arrives. The team will confirm COD availability for your delivery address before dispatch."
-                        : "Pay securely with Razorpay using UPI, cards, net banking or supported wallets. Your order is saved after payment is verified."}
-                    </p>
-                  </div>
-                </Section>
+                <p className="max-w-[520px] text-sm leading-relaxed text-[#55544f]">Choose Cash on delivery or Razorpay in the order panel to continue. Your delivery method is selected above.</p>
                 <p className="max-w-[520px] text-sm leading-relaxed text-[#55544f]">
-                  Placing an order prepares a request for the team.
-                  Availability, shipping charges and payment are confirmed
-                  before your order is accepted.
+                  Your selected delivery method and final order total are included with your order. Razorpay orders are confirmed after payment verification.
                 </p>
             {submitError && <p className="mt-4 border border-red-800 bg-red-50 p-4 text-sm font-semibold text-red-900" role="alert">{submitError}</p>}
               </form>
@@ -749,6 +700,14 @@ export function Checkout() {
                   Your selected delivery method will be included in your order
                   request.
                 </p>
+                <p className="mb-3 text-xs font-bold tracking-[.16em] text-gold uppercase">4 · Payment method</p>
+                <div role="group" aria-label="Payment method" className="mb-5 grid grid-cols-2 gap-2.5">
+                  {paymentMethods.map((method) => (
+                    <button key={method} type="button" aria-pressed={payment === method} onClick={() => setPayment(method)} className={`min-h-14 border border-paper px-3 py-3 text-sm font-bold transition-colors ${payment === method ? "bg-gold text-ink" : "bg-transparent text-paper hover:bg-paper/10"}`}>
+                      {method}
+                    </button>
+                  ))}
+                </div>
                 <button
                   type="submit"
                   form="checkout-form"

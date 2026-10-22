@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Coupon;
 use App\Models\Product;
+use App\Models\RazorpaySetting;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,20 +39,37 @@ class AdminDashboardController extends Controller
     {
         $orders = Order::with('user')->latest()->get();
         $coupons = Coupon::latest()->get();
-        $section = in_array(request('section'), ['overview', 'coupons', 'products', 'orders'], true) ? request('section') : 'overview';
+        $section = in_array(request('section'), ['overview', 'coupons', 'products', 'orders', 'payments'], true) ? request('section') : 'overview';
         $products = Product::orderBy('sort_order')->orderBy('id')->get();
 
         return view('admin.dashboard', [
             'orders' => $orders,
             'orderCount' => $orders->count(),
-            'pendingCount' => $orders->whereIn('status', ['received', 'cancellation_requested'])->count(),
+            'pendingCount' => $orders->whereIn('status', ['awaiting_payment', 'received', 'cancellation_requested'])->count(),
             'cancelledCount' => $orders->where('status', 'cancelled')->count(),
             'deliveredCount' => $orders->where('status', 'delivered')->count(),
-            'revenue' => $orders->where('status', '!=', 'cancelled')->sum(fn ($order) => (float) $order->subtotal + (float) $order->shipping_charge - (float) $order->discount_amount),
+            'revenue' => $orders->whereNotIn('status', ['cancelled', 'awaiting_payment'])->sum(fn ($order) => (float) $order->subtotal + (float) $order->shipping_charge - (float) $order->discount_amount),
             'coupons' => $coupons,
             'section' => $section,
             'products' => $products,
+            'razorpaySettings' => RazorpaySetting::current(),
         ]);
+    }
+
+    public function updatePaymentSettings(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'key_id' => ['required', 'string', 'max:120'],
+            'key_secret' => ['nullable', 'string', 'max:255'],
+        ]);
+        $settings = RazorpaySetting::current();
+        $settings->key_id = trim($data['key_id']);
+        if (filled($data['key_secret'] ?? null)) {
+            $settings->key_secret = trim($data['key_secret']);
+        }
+        $settings->save();
+
+        return back()->with('status', 'Razorpay settings saved securely.');
     }
 
     public function storeCoupon(Request $request): RedirectResponse
@@ -232,7 +250,7 @@ class AdminDashboardController extends Controller
     public function updateOrder(Request $request, Order $order): RedirectResponse
     {
         $data = $request->validate([
-            'status' => ['required', 'in:received,confirmed,processing,shipped,delivered,cancellation_requested,cancelled'],
+            'status' => ['required', 'in:awaiting_payment,received,confirmed,processing,shipped,delivered,cancellation_requested,cancelled'],
         ]);
         $order->update($data);
 

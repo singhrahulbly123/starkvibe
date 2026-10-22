@@ -12,7 +12,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id', 'order_number', 'customer', 'items', 'subtotal',
-        'shipping_method', 'shipping_charge', 'coupon_code', 'discount_amount', 'payment_method', 'business_details', 'note', 'status',
+        'shipping_method', 'shipping_charge', 'coupon_code', 'discount_amount', 'payment_method', 'payment_status', 'razorpay_order_id', 'razorpay_payment_id', 'business_details', 'note', 'status',
     ];
 
     protected function casts(): array

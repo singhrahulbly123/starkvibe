@@ -1,6 +1,7 @@
 export type Colour = { name: string; hex: string; file: string; image?: string };
 export type Product = {
   id: string;
+  slug?: string;
   name: string;
   gsm: number;
   price: number;
@@ -45,8 +46,8 @@ export function sanitizeRichText(value: string) {
 export function plainRichText(value: string) {
   return sanitizeRichText(value).replace(/<[^>]+>/g, "");
 }
-export function productSlug(product: Pick<Product, "name">) {
-  return product.name
+export function productSlug(product: Pick<Product, "name"> & Partial<Pick<Product, "slug">>) {
+  return product.slug || product.name
     .toLowerCase()
     .replace(/&/g, "and")
     .replace(/[^a-z0-9]+/g, "-")
@@ -109,6 +110,7 @@ export function productFromApi(value: {
   };
   return {
     id: legacyIds[value.slug] || value.slug,
+    slug: value.slug,
     name: value.name,
     gsm: value.gsm,
     price: Number(value.price),

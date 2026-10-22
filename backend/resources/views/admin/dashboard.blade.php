@@ -20,6 +20,7 @@
             <a href="{{ route('admin.products.index') }}">Products</a>
             <a class="{{ $section === 'coupons' ? 'active' : '' }}" href="{{ route('admin.dashboard', ['section' => 'coupons']) }}">Coupons</a>
             <a class="{{ $section === 'orders' ? 'active' : '' }}" href="{{ route('admin.dashboard', ['section' => 'orders']) }}">Orders</a>
+            <a class="{{ $section === 'payments' ? 'active' : '' }}" href="{{ route('admin.dashboard', ['section' => 'payments']) }}">Payments</a>
         </nav>
         <div class="side-footer">
             <strong>{{ auth()->user()->name }}</strong>
@@ -175,6 +176,19 @@
         @endif
     </section>
     @endif
+    @if ($section === 'payments')
+    <section class="panel" id="payments" aria-label="Payment settings">
+        <h2>Razorpay settings</h2>
+        <p>{{ filled($razorpaySettings->key_id) && filled($razorpaySettings->key_secret) ? 'Razorpay credentials are configured.' : 'Add your Razorpay API credentials to enable online payments.' }}</p>
+        <form class="coupon-form" style="grid-template-columns:1fr 1fr auto;margin-top:20px" method="POST" action="{{ route('admin.payment-settings.update') }}">
+            @csrf
+            <label>Razorpay Key ID<input name="key_id" value="{{ old('key_id', $razorpaySettings->key_id) }}" placeholder="rzp_test_… or rzp_live_…" required></label>
+            <label>Razorpay Key Secret<input name="key_secret" type="password" autocomplete="new-password" placeholder="{{ filled($razorpaySettings->key_secret) ? 'Saved securely; blank keeps the current secret' : 'Enter your key secret' }}"></label>
+            <button class="dark" type="submit">Save credentials</button>
+        </form>
+        <p class="mt-4">The secret is encrypted in the database and is never returned to the storefront.</p>
+    </section>
+    @endif
     @if ($section === 'orders')
     <section class="orders" id="orders" aria-label="Orders">
         @if ($orders->isEmpty())
@@ -182,7 +196,7 @@
         @else
             <table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr></thead><tbody>
             @foreach ($orders as $order)
-                <tr><td><strong>{{ $order->order_number }}</strong><small>{{ $order->created_at->format('d M Y, H:i') }}</small></td><td><strong>{{ $order->customer['name'] ?? '—' }}</strong><small>{{ $order->customer['email'] ?? '—' }}</small><small>{{ $order->customer['phone'] ?? '—' }}</small></td><td>@foreach ($order->items as $item)<div>{{ $item['quantity'] ?? 1 }} × {{ $item['name'] ?? 'Product' }} · {{ $item['colour'] ?? '—' }} · {{ $item['size'] ?? '—' }}</div>@endforeach</td><td><strong>₹{{ number_format((float) $order->subtotal + (float) $order->shipping_charge - (float) $order->discount_amount) }}</strong><small>{{ $order->coupon_code ? $order->coupon_code.' · ' : '' }}{{ $order->shipping_method }} · {{ $order->payment_method }}</small></td><td><form method="POST" action="{{ route('admin.orders.update', $order) }}">@csrf @method('PATCH')<select name="status" aria-label="Order status">@foreach (['received','confirmed','processing','shipped','delivered','cancellation_requested','cancelled'] as $status)<option value="{{ $status }}" @selected($order->status === $status)>{{ str_replace('_', ' ', $status) }}</option>@endforeach</select><button class="save" type="submit">Save</button></form></td></tr>
+                <tr><td><strong>{{ $order->order_number }}</strong><small>{{ $order->created_at->format('d M Y, H:i') }}</small></td><td><strong>{{ $order->customer['name'] ?? '—' }}</strong><small>{{ $order->customer['email'] ?? '—' }}</small><small>{{ $order->customer['phone'] ?? '—' }}</small></td><td>@foreach ($order->items as $item)<div>{{ $item['quantity'] ?? 1 }} × {{ $item['name'] ?? 'Product' }} · {{ $item['colour'] ?? '—' }} · {{ $item['size'] ?? '—' }}</div>@endforeach</td><td><strong>₹{{ number_format((float) $order->subtotal + (float) $order->shipping_charge - (float) $order->discount_amount) }}</strong><small>{{ $order->coupon_code ? $order->coupon_code.' · ' : '' }}{{ $order->shipping_method }} · {{ $order->payment_method }} · {{ $order->payment_status }}</small></td><td><form method="POST" action="{{ route('admin.orders.update', $order) }}">@csrf @method('PATCH')<select name="status" aria-label="Order status">@foreach (['awaiting_payment','received','confirmed','processing','shipped','delivered','cancellation_requested','cancelled'] as $status)<option value="{{ $status }}" @selected($order->status === $status)>{{ str_replace('_', ' ', $status) }}</option>@endforeach</select><button class="save" type="submit">Save</button></form></td></tr>
             @endforeach
             </tbody></table>
         @endif

@@ -14,6 +14,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/dashboard', [AdminDashboardController::class, 'dashboard'])->name('dashboard');
     Route::patch('/orders/{order}', [AdminDashboardController::class, 'updateOrder'])->name('orders.update');
     Route::post('/coupons', [AdminDashboardController::class, 'storeCoupon'])->name('coupons.store');
+    Route::post('/payment-settings', [AdminDashboardController::class, 'updatePaymentSettings'])->name('payment-settings.update');
     Route::patch('/coupons/{coupon}', [AdminDashboardController::class, 'updateCoupon'])->name('coupons.update');
     Route::delete('/coupons/{coupon}', [AdminDashboardController::class, 'destroyCoupon'])->name('coupons.destroy');
     Route::post('/products', [AdminDashboardController::class, 'storeProduct'])->name('products.store');
