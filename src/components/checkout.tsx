@@ -18,10 +18,53 @@ import { GoogleSignIn } from "@/components/google-sign-in";
 
 const paymentMethods = [
   "Cash on delivery",
+  "Razorpay",
 ] as const;
 const FREE_SHIPPING_THRESHOLD = 2000;
 const STANDARD_SHIPPING_CHARGE = 50;
 const EXPRESS_SHIPPING_CHARGE = 149;
+
+type RazorpayPaymentResponse = { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string };
+type RazorpayCheckout = {
+  open: () => void;
+  on: (event: "payment.failed", callback: (response: { error?: { description?: string } }) => void) => void;
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: {
+      key: string;
+      amount: number;
+      currency: string;
+      name: string;
+      description: string;
+      order_id: string;
+      prefill: { name: string; email: string; contact: string };
+      handler: (response: RazorpayPaymentResponse) => void;
+      modal: { ondismiss: () => void };
+    }) => RazorpayCheckout;
+  }
+}
+
+let razorpayScriptPromise: Promise<void> | null = null;
+
+function loadRazorpayCheckout() {
+  if (window.Razorpay) return Promise.resolve();
+  if (!razorpayScriptPromise) {
+    razorpayScriptPromise = new Promise<void>((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => window.Razorpay ? resolve() : reject(new Error("Razorpay checkout did not load. Please try again."));
+      script.onerror = () => reject(new Error("Razorpay checkout could not load. Check your connection and try again."));
+      document.body.appendChild(script);
+    }).catch((error) => {
+      razorpayScriptPromise = null;
+      throw error;
+    });
+  }
+  return razorpayScriptPromise;
+}
 
 function Field({
   label,
@@ -139,17 +182,7 @@ export function Checkout() {
     }
   }, [ready, items, subtotal]);
 
-  async function placeOrder(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!items.length || submitting) return;
-    if (!loggedIn) {
-      setSubmitError("Please sign in with Google or open My Account before placing your order.");
-      document.getElementById("checkout-google-login")?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    setSubmitting(true);
-    setSubmitError("");
-    const data = new FormData(event.currentTarget);
+  async function finishOrder(data: FormData, paymentId?: string) {
     const orderId = `SV-${Date.now().toString().slice(-8)}`;
     const customerName = `${data.get("first")} ${data.get("last")}`.trim();
     let backendOrderNumber = orderId;
@@ -170,13 +203,14 @@ export function Checkout() {
            coupon_code: coupon.code || null,
           payment_method: payment,
           business_details: business ? { name: data.get("business"), gstin: data.get("gstin") } : null,
-          note: localStorage.getItem("starkvibe-order-note") || null,
+          note: [localStorage.getItem("starkvibe-order-note"), paymentId ? `Razorpay payment: ${paymentId}` : null].filter(Boolean).join("\n") || null,
         }),
       });
       backendOrderNumber = saved.order.order_number;
       setSavedOrderNumber(backendOrderNumber);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Unable to save your order right now.");
+      const message = error instanceof Error ? error.message : "Unable to save your order right now.";
+      setSubmitError(paymentId ? `Payment ${paymentId} was verified, but the order could not be saved. Contact support with this payment ID. ${message}` : message);
       setSubmitting(false);
       return;
     }
@@ -220,6 +254,83 @@ export function Checkout() {
     });
     setSubmitting(false);
     window.location.assign(`/my-account?order=${encodeURIComponent(backendOrderNumber)}`);
+  }
+
+  async function placeOrder(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!items.length || submitting) return;
+    setSubmitting(true);
+    setSubmitError("");
+    const data = new FormData(event.currentTarget);
+
+    if (payment === "Cash on delivery") {
+      await finishOrder(data);
+      return;
+    }
+
+    try {
+      const publicKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+      if (!publicKey) throw new Error("Razorpay key is missing. Add NEXT_PUBLIC_RAZORPAY_KEY_ID and restart the Next.js server.");
+      await loadRazorpayCheckout();
+      const RazorpayConstructor = window.Razorpay;
+      if (!RazorpayConstructor) throw new Error("Razorpay checkout is unavailable. Please try again.");
+
+      const orderResponse = await fetch("/api/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: Math.round(orderTotal * 100), receipt: `sv_${Date.now()}` }),
+      });
+      const orderBody = await orderResponse.json().catch(() => ({}));
+      if (!orderResponse.ok) throw new Error(orderBody.message || "Unable to start payment.");
+
+      const razorpay = new RazorpayConstructor({
+        key: publicKey,
+        amount: orderBody.amount,
+        currency: orderBody.currency,
+        name: "StarkVibe",
+        description: "Order payment",
+        order_id: orderBody.order_id,
+        prefill: {
+          name: `${data.get("first")} ${data.get("last")}`.trim(),
+          email: String(data.get("email") || ""),
+          contact: String(data.get("phone") || ""),
+        },
+        handler: async (response) => {
+          try {
+            const verifyResponse = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...response,
+                amount: orderBody.amount,
+                currency: orderBody.currency,
+                verification_token: orderBody.verification_token,
+              }),
+            });
+            const verifyBody = await verifyResponse.json().catch(() => ({}));
+            if (!verifyResponse.ok || !verifyBody.verified) throw new Error(verifyBody.message || "Payment verification failed.");
+            await finishOrder(data, response.razorpay_payment_id);
+          } catch (error) {
+            setSubmitError(error instanceof Error ? error.message : "Payment could not be confirmed. Please contact support before retrying.");
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setSubmitError("Payment was cancelled. You can try again or choose cash on delivery.");
+            setSubmitting(false);
+          },
+        },
+      });
+      razorpay.on("payment.failed", (response) => {
+        setSubmitError(response.error?.description || "Payment failed. Please try again or choose cash on delivery.");
+        setSubmitting(false);
+      });
+      razorpay.open();
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Unable to start payment. Please try again.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -354,7 +465,7 @@ export function Checkout() {
                     <p className="mb-3 text-sm font-bold">Already have a Google account?</p>
                     <GoogleSignIn onCredential={signInWithGoogle} onError={setGoogleError} />
                     {googleError && <p role="alert" className="mt-3 text-sm font-semibold text-red-800">{googleError}</p>}
-                    {!loggedIn && <p className="mt-4 border-l-4 border-red-700 bg-red-50 px-3 py-2 text-sm font-bold leading-relaxed text-red-800">Please login with Google first, then place your order.</p>}
+                    {!loggedIn && <p className="mt-4 text-sm text-[#55544f]">Google sign-in is optional. You can also check out as a guest.</p>}
                   </div>
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Field
@@ -543,12 +654,12 @@ export function Checkout() {
                     ))}
                   </div>
                   <div className="border-[1.5px] border-ink p-5 sm:p-8">
-                    <>
-                      <h3 className="mb-2 font-bold">Cash on delivery</h3>
-                      <p className="text-[15px] leading-relaxed text-[#3f3e3a]">
-                        Pay when your order arrives. The team will confirm COD availability for your delivery address before dispatch.
-                      </p>
-                    </>
+                    <h3 className="mb-2 font-bold">{payment === "Cash on delivery" ? "Cash on delivery" : "Secure online payment"}</h3>
+                    <p className="text-[15px] leading-relaxed text-[#3f3e3a]">
+                      {payment === "Cash on delivery"
+                        ? "Pay when your order arrives. The team will confirm COD availability for your delivery address before dispatch."
+                        : "Pay securely with Razorpay using UPI, cards, net banking or supported wallets. Your order is saved after payment is verified."}
+                    </p>
                   </div>
                 </Section>
                 <p className="max-w-[520px] text-sm leading-relaxed text-[#55544f]">
@@ -560,7 +671,7 @@ export function Checkout() {
               </form>
               <aside
                 aria-label="Your order"
-                className="min-w-0 bg-ink p-6 text-paper sm:p-10"
+                className="min-w-0 bg-ink p-6 text-paper sm:p-10 lg:sticky lg:top-24 lg:self-start"
               >
                 <div className="mb-6 flex items-baseline justify-between gap-3">
                   <h2 className="font-display text-[44px] leading-[.95] font-black uppercase">
@@ -642,21 +753,16 @@ export function Checkout() {
                   type="submit"
                   form="checkout-form"
                   disabled={submitting}
-                  onClick={() => {
-                    if (!loggedIn) {
-                      setSubmitError("Please login with Google first, then place your order.");
-                      document.getElementById("checkout-google-login")?.scrollIntoView({ behavior: "smooth", block: "center" });
-                    }
-                  }}
                   style={{ backgroundColor: "#e8bc63" }}
                   className="flex h-16 w-full items-center justify-center gap-3 rounded-sm bg-[#e8bc63] px-4 text-[17px] font-extrabold text-ink shadow-[0_5px_0_rgba(232,188,99,0.35)] ring-2 ring-[#e8bc63] ring-offset-2 ring-offset-ink transition-all hover:-translate-y-0.5 hover:bg-[#dca94c] hover:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-paper disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {submitting ? "Saving order…" : "Place order"} {!submitting && <ArrowRight size={18} />}
+                  {submitting ? (payment === "Razorpay" ? "Processing payment…" : "Saving order…") : payment === "Razorpay" ? "Pay securely" : "Place order"} {!submitting && <ArrowRight size={18} />}
                 </button>
-                {!loggedIn && <p className="mt-3 text-center text-sm font-semibold text-[#e8bc63]">Sign in with Google above to continue.</p>}
+                {payment === "Razorpay" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Complete the contact and delivery fields to open Razorpay checkout.</p>}
+                {submitError && <p className="mt-3 border border-red-400 bg-red-50 p-3 text-sm font-semibold text-red-900" role="alert">{submitError}</p>}
                 <ul className="mt-6 space-y-3 text-sm text-[#c9c7be]">
                   {[
-                    "No payment collected on this page",
+                    payment === "Razorpay" ? "Payment verified before order confirmation" : "Pay when your order arrives",
                     "Delivery details confirmed with you",
                     "Your bag stays saved until confirmation",
                   ].map((text) => (

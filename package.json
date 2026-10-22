@@ -10,18 +10,19 @@
     "check:seo": "node scripts/check-seo-metadata.mjs"
   },
   "dependencies": {
-    "next": "16.4.0",
-    "react": "latest",
-    "react-dom": "latest",
     "lucide-react": "latest",
-    "motion": "latest"
+    "motion": "latest",
+    "next": "16.4.2",
+    "razorpay": "^2.9.8",
+    "react": "latest",
+    "react-dom": "latest"
   },
   "devDependencies": {
-    "typescript": "latest",
+    "@tailwindcss/postcss": "latest",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "tailwindcss": "latest",
-    "@tailwindcss/postcss": "latest"
+    "typescript": "latest"
   }
 }
