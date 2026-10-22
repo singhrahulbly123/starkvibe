@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin dashboard — StarkVibe</title>
     <style>
         :root{font-family:Arial,sans-serif;color:#111;background:#f2f0e9}*{box-sizing:border-box}body{margin:0}.shell{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:#111;color:#fff;padding:28px 20px;display:flex;flex-direction:column}.brand{font-size:20px;font-weight:900;letter-spacing:.04em}.brand small{display:block;margin-top:7px;color:#e8bc63;font-size:10px;letter-spacing:.2em;text-transform:uppercase}.side-nav{display:grid;gap:7px;margin-top:52px}.side-nav a{padding:14px 15px;color:#c9c7be;text-decoration:none;font-weight:700}.side-nav a.active,.side-nav a:hover{background:#e8bc63;color:#111}.side-footer{margin-top:auto;border-top:1px solid #373633;padding-top:18px;color:#9a988f;font-size:13px}.side-footer strong{display:block;color:#fff;margin-bottom:4px}.side-footer button{margin-top:15px;padding:0;background:transparent;border:0;color:#e8bc63;text-decoration:underline;cursor:pointer;font-weight:700}.content{min-width:0;padding:34px 38px 70px}.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:1px solid #111;padding-bottom:26px}.eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#436d16;font-weight:700}h1{font-size:clamp(54px,8vw,110px);line-height:.85;text-transform:uppercase;margin:14px 0 0;font-weight:900}.top-right{display:flex;align-items:center;gap:18px;font-weight:700}.logout{background:transparent;border:0;text-decoration:underline;cursor:pointer;font-weight:700}.overview-hero{margin-top:32px;padding:clamp(28px,5vw,70px);background:#111;color:#fff;position:relative;overflow:hidden}.overview-hero:after{content:'✦';position:absolute;right:6%;top:8%;font-size:180px;color:#e8bc63;opacity:.16}.overview-hero h2{max-width:680px;margin:0;font-size:clamp(42px,6vw,92px);line-height:.9;text-transform:uppercase}.overview-hero p{max-width:520px;margin:26px 0 0;color:#c9c7be;line-height:1.6}.overview-hero strong{color:#e8bc63}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.stat{padding:24px;background:#eeece5;border:1px solid #bdbbb3}.stat.gold{background:#e8bc63;border-color:#e8bc63}.stat p{margin:0;font-size:14px}.stat strong{display:block;font-size:30px;margin-top:18px}.panel{margin-top:36px;border:1px solid #bdbbb3;background:#eeece5;padding:24px}.panel h2{margin:0 0 18px;font-size:28px}.coupon-form,.coupon-row{display:grid;grid-template-columns:1.2fr .8fr .7fr 1fr 1fr auto;gap:10px;align-items:center}.coupon-form{border-bottom:1px solid #d1cec4;padding-bottom:20px}.coupon-row{padding:14px 0;border-bottom:1px solid #d1cec4}.coupon-row:last-child{border-bottom:0}.coupon-form input,.coupon-form select,.coupon-row input,.coupon-row select{width:100%;min-width:0;padding:11px;border:1px solid #111;background:transparent}.check{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}.check input{width:auto}.orders{margin-top:36px;border:1px solid #bdbbb3;background:#eeece5;overflow:auto}table{width:100%;min-width:940px;border-collapse:collapse;text-align:left;font-size:14px}th{background:#111;color:#fff;padding:15px}td{padding:15px;border-top:1px solid #d1cec4;vertical-align:top}td strong{display:block}td small{display:block;color:#68665f;margin-top:5px}select{padding:9px;border:1px solid #111;background:transparent;font-weight:700}button.save,button.dark{background:#111;color:#fff;border:0;padding:10px 12px;font-weight:700;margin-left:5px;cursor:pointer}button.delete{background:#8a2a12;color:#fff;border:0;padding:10px 12px;font-weight:700;cursor:pointer}.notice{margin-top:18px;color:#436d16;font-weight:700}.error{margin-top:18px;color:#8a2a12;font-weight:700}.empty{padding:30px;text-align:center;color:#68665f}@media(max-width:1000px){.shell{grid-template-columns:210px 1fr}.content{padding:28px 22px}.coupon-form,.coupon-row{grid-template-columns:1fr 1fr}.coupon-form button,.coupon-row button{grid-column:1/-1}}@media(max-width:700px){.shell{display:block}.sidebar{position:relative;height:auto;padding:18px 16px}.side-nav{display:flex;overflow:auto;margin-top:20px}.side-nav a{white-space:nowrap}.side-footer{display:none}.content{padding:24px 16px 50px}.top{align-items:flex-start;flex-direction:column}.cards{grid-template-columns:1fr}.top-right{width:100%;justify-content:space-between}}
@@ -182,11 +183,13 @@
         <h2>Razorpay settings</h2>
         <p>{{ $razorpayConfigured ? 'Razorpay credentials are configured. Online payments are enabled.' : 'Add your Razorpay API credentials to enable online payments.' }}</p>
         @if ($razorpayConfigured)
-            <div class="coupon-form" style="grid-template-columns:1fr 1fr auto;margin-top:20px">
+            <div class="coupon-form" style="grid-template-columns:1fr 1fr auto auto;margin-top:20px">
                 <label>Razorpay Key ID<input value="{{ $razorpaySettings->key_id }}" disabled></label>
-                <label>Razorpay Key Secret<input value="Saved securely" disabled></label>
+                <label>Razorpay Key Secret<input id="razorpay-saved-secret" type="password" value="" placeholder="Saved securely" readonly autocomplete="off"></label>
+                <button class="dark" id="razorpay-reveal-secret" type="button" data-url="{{ route('admin.payment-settings.reveal-secret') }}" style="margin-left:0">View secret</button>
                 <button class="dark" type="button" disabled>Credentials saved</button>
             </div>
+            <p id="razorpay-secret-feedback" class="error" role="status" aria-live="polite" hidden></p>
             <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px;margin-top:20px">
                 <details @if ($errors->has('key_id') || $errors->has('key_secret')) open @endif style="flex:1 1 400px;border:1px solid #bdbbb3;padding:16px;background:#f7f5ef">
                     <summary style="cursor:pointer;font-weight:700">Edit Razorpay credentials</summary>
@@ -230,6 +233,48 @@
 </main>
 <script>
 (() => {
+    const revealButton = document.getElementById("razorpay-reveal-secret");
+    const secretField = document.getElementById("razorpay-saved-secret");
+    const secretFeedback = document.getElementById("razorpay-secret-feedback");
+    if (revealButton && secretField && secretFeedback) {
+        revealButton.addEventListener("click", async () => {
+            if (revealButton.dataset.revealed === "true") {
+                secretField.value = "";
+                secretField.type = "password";
+                revealButton.dataset.revealed = "false";
+                revealButton.textContent = "View secret";
+                secretFeedback.hidden = true;
+                return;
+            }
+
+            revealButton.disabled = true;
+            revealButton.textContent = "Loading…";
+            secretFeedback.hidden = true;
+            try {
+                const response = await fetch(revealButton.dataset.url, {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Accept": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                });
+                const result = await response.json();
+                if (!response.ok || !result.key_secret) throw new Error(result.message || "Could not load the saved secret.");
+                secretField.value = result.key_secret;
+                secretField.type = "text";
+                revealButton.dataset.revealed = "true";
+                revealButton.textContent = "Hide secret";
+            } catch (error) {
+                secretFeedback.textContent = error instanceof Error ? error.message : "Could not load the saved secret.";
+                secretFeedback.hidden = false;
+                revealButton.textContent = "View secret";
+            } finally {
+                revealButton.disabled = false;
+            }
+        });
+    }
+
     const addRow = (editor, values = {}) => {
         const row = document.createElement("div");
         row.className = "colour-row";

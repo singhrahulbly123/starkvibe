@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\RazorpaySetting;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -84,6 +85,19 @@ class AdminDashboardController extends Controller
         $settings->save();
 
         return back()->with('status', 'Razorpay credentials deleted. Online payments are disabled.');
+    }
+
+    public function revealPaymentSecret(): JsonResponse
+    {
+        $secret = RazorpaySetting::current()->key_secret;
+        if (! filled($secret)) {
+            return response()->json(['message' => 'No Razorpay secret is saved.'], 404)
+                ->header('Cache-Control', 'no-store, private');
+        }
+
+        return response()->json(['key_secret' => $secret])
+            ->header('Cache-Control', 'no-store, private')
+            ->header('Pragma', 'no-cache');
     }
 
     public function storeCoupon(Request $request): RedirectResponse
