@@ -6,9 +6,11 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { trackEvent } from "@/lib/analytics";
 
 const consentKey = "starkvibe-analytics-consent";
+const googleAdsId = "AW-18533455332";
 
 export function SiteAnalytics() {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const googleTagId = measurementId || googleAdsId;
   const [consent, setConsent] = useState<"granted" | "denied" | "unknown">("unknown");
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -41,15 +43,15 @@ export function SiteAnalytics() {
 
   return (
     <>
-      {measurementId && consent === "granted" && (
+      {consent === "granted" && (
         <>
-          <Script src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`} strategy="afterInteractive" />
-          <Script id="starkvibe-ga4" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || []; function gtag(){window.dataLayer.push(arguments);} window.gtag = gtag; gtag('js', new Date()); gtag('config', '${measurementId}', { anonymize_ip: true, send_page_view: false });`}</Script>
+          <Script src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`} strategy="afterInteractive" />
+          <Script id="starkvibe-google-tags" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || []; function gtag(){window.dataLayer.push(arguments);} window.gtag = gtag; gtag('js', new Date()); ${measurementId ? `gtag('config', '${measurementId}', { anonymize_ip: true, send_page_view: false });` : ""} gtag('config', '${googleAdsId}');`}</Script>
         </>
       )}
-      {measurementId && consent === "unknown" && (
+      {(measurementId || googleAdsId) && consent === "unknown" && (
         <div className="fixed inset-x-3 bottom-3 z-[120] mx-auto flex max-w-[680px] flex-wrap items-center justify-between gap-4 border border-ink bg-paper p-4 text-sm text-ink shadow-xl" role="dialog" aria-label="Analytics preferences">
-          <p className="max-w-[450px] leading-5">We use privacy-conscious analytics to understand site visits and improve StarkVibe. Read our <a className="font-semibold underline" href="/privacy-policy">Privacy Policy</a>.</p>
+          <p className="max-w-[450px] leading-5">We use analytics and advertising measurement to understand site visits and improve StarkVibe. Read our <a className="font-semibold underline" href="/privacy-policy">Privacy Policy</a>.</p>
           <div className="flex gap-2"><button onClick={() => saveConsent("denied")} className="border border-ink px-4 py-2 font-semibold">Decline</button><button onClick={() => saveConsent("granted")} className="bg-ink px-4 py-2 font-semibold text-paper">Accept analytics</button></div>
         </div>
       )}
