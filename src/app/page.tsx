@@ -11,6 +11,7 @@ import { CustomPrintingOfferSlider } from "@/components/custom-printing-offer-sl
 import { HomeOfferBanner } from "@/components/prepaid-offer-banner";
 import { CustomBrandingImageSlider } from "@/components/custom-branding-image-slider";
 import { HomeProductSlider } from "@/components/home-product-slider";
+import { getCatalogueProducts } from "@/lib/catalogue-server";
 
 export const metadata = buildMetadata({
   title: "Premium Cotton T-Shirts & Custom Printing India | StarkVibe",
@@ -207,7 +208,8 @@ const websiteJsonLd = {
   url: "https://starkvibe.com",
 };
 
-export default function Home() {
+export default async function Home() {
+  const catalogueProducts = await getCatalogueProducts();
   return (
     <>
       <JsonLd data={organizationJsonLd} />
@@ -359,9 +361,9 @@ export default function Home() {
               </div>
             </div>
           </section>
-          <HomeProductSlider />
-          <HomeProductSlider hoodiesOnly />
-          <HomeProductSlider sweatshirtsOnly />
+          <HomeProductSlider initialProducts={catalogueProducts} />
+          <HomeProductSlider hoodiesOnly initialProducts={catalogueProducts} />
+          <HomeProductSlider sweatshirtsOnly initialProducts={catalogueProducts} />
           <CustomPrintingOfferSlider />
           <section id="categories" className={`${container} pt-6 lg:pt-10`}>
             <Reveal>

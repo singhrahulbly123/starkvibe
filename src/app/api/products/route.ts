@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const apiUrl = (process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000/api").replace(/\/$/, "");
+  const defaultApiUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000/api" : "https://api.starkvibe.com/api";
+  const apiUrl = (process.env.NEXT_PUBLIC_BACKEND_URL || defaultApiUrl).replace(/\/$/, "");
   const isLocalPreview = process.env.NODE_ENV === "development";
   const endpoint = new URL(`${apiUrl}/products`);
   if (isLocalPreview) endpoint.searchParams.set("include_drafts", "1");

@@ -8,12 +8,12 @@ import { collectionDefaultColourIndex, mrpPrice, plainRichText, prioritizeFleece
 import { sizesFor } from "@/lib/product-details";
 
 
-export function HomeProductSlider({ hoodiesOnly = false, sweatshirtsOnly = false }: { hoodiesOnly?: boolean; sweatshirtsOnly?: boolean }) {
+export function HomeProductSlider({ hoodiesOnly = false, sweatshirtsOnly = false, initialProducts = [] }: { hoodiesOnly?: boolean; sweatshirtsOnly?: boolean; initialProducts?: Product[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [selectedColours, setSelectedColours] = useState<Record<string, number>>({});
   const [addedProduct, setAddedProduct] = useState<string | null>(null);
-  const [catalogueProducts, setCatalogueProducts] = useState<Product[]>([]);
+  const [catalogueProducts, setCatalogueProducts] = useState<Product[]>(initialProducts);
   useEffect(() => {
     fetch("/api/products")
       .then((response) => (response.ok ? response.json() : null))
