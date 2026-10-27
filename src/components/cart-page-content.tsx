@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { productColourHref, productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { addBagItem, formatPrice, useBag } from "@/lib/bag";
 import { validateCoupon } from "@/lib/backend-api";
 import { CartItem } from "./cart-item";
@@ -236,7 +236,7 @@ export function CartPageContent() {
                 className="flex flex-wrap items-center gap-x-6 gap-y-4 border-b border-ink/60 py-[18px]"
               >
                 <Link
-                  href={`/products/${productSlug(item.product)}?colour=${item.product.colours[item.colour].file}`}
+                  href={productColourHref(item.product, item.product.colours[item.colour])}
                 >
                   <Image
                     src={productImage(
@@ -307,7 +307,7 @@ export function CartPageContent() {
               <article key={product.id} className="group flex min-w-0 flex-col border border-ink/15 bg-[#eeece5] p-3 transition-shadow duration-300 hover:shadow-[0_16px_35px_rgba(13,13,12,.1)]">
                 <div className="relative">
                   <Link
-                    href={`/products/${productSlug(product)}?colour=${colour.file}`}
+                    href={productColourHref(product, colour)}
                     className="relative block h-[400px] w-full overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] p-1"
                   >
                     <Image

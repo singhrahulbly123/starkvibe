@@ -1,4 +1,4 @@
-export type Colour = { name: string; hex: string; file: string; image?: string };
+export type Colour = { name: string; hex: string; file: string; image?: string; gallery?: string[] };
 export type Product = {
   id: string;
   slug?: string;
@@ -10,6 +10,10 @@ export type Product = {
   long_description?: string;
   material?: string;
   fit?: string;
+  neckline?: string;
+  sleeve?: string;
+  sizes?: string[];
+  size_chart?: Array<{ size: string; chest: string; shoulder: string; length: string; sleeve: string }>;
   finish?: string;
   construction?: string;
   washing?: string;
@@ -18,6 +22,8 @@ export type Product = {
   shipping_info?: string;
   benefits?: string[];
   canonical_url?: string;
+  meta_title?: string;
+  meta_description?: string;
   labels?: string[];
   variants?: ProductVariant[];
   colours: Colour[];
@@ -53,21 +59,20 @@ export function productSlug(product: Pick<Product, "name"> & Partial<Pick<Produc
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 }
+export function productColourHref(product: Product, colour: Colour) {
+  const path = `/products/${productSlug(product)}`;
+  return product.colours.length > 1
+    ? `${path}?colour=${encodeURIComponent(colour.file)}`
+    : path;
+}
 export function salePrice(product: Product) {
   return product.sale_price ?? product.price;
 }
 
-export function mrpPrice(product: Pick<Product, "id">) {
-  const prices: Record<string, number> = {
-    oversized: 1350,
-    regular: 1350,
-    terry: 1750,
-    polo: 1450,
-    kids: 1250,
-    sweatshirt: 3230,
-    hoodie: 3230,
-  };
-  return prices[product.id];
+export function mrpPrice(product: Pick<Product, "id" | "price" | "sale_price">) {
+  return product.sale_price != null && product.sale_price < product.price
+    ? product.price
+    : undefined;
 }
 
 export function prioritizeFleeceProducts<T extends Pick<Product, "id">>(products: T[]) {
@@ -88,6 +93,10 @@ export function productFromApi(value: {
   long_description?: string;
   material?: string;
   fit?: string;
+  neckline?: string;
+  sleeve?: string;
+  sizes?: string[];
+  size_chart?: Array<{ size: string; chest: string; shoulder: string; length: string; sleeve: string }>;
   finish?: string;
   construction?: string;
   washing?: string;
@@ -96,6 +105,8 @@ export function productFromApi(value: {
   shipping_info?: string;
   benefits?: string[];
   canonical_url?: string;
+  meta_title?: string;
+  meta_description?: string;
   labels?: string[];
   variants?: ProductVariant[];
 }): Product {
@@ -122,6 +133,10 @@ export function productFromApi(value: {
     long_description: value.long_description,
     material: value.material,
     fit: value.fit,
+    neckline: value.neckline,
+    sleeve: value.sleeve,
+    sizes: value.sizes,
+    size_chart: value.size_chart,
     finish: value.finish,
     construction: value.construction,
     washing: value.washing,
@@ -130,6 +145,8 @@ export function productFromApi(value: {
     shipping_info: value.shipping_info,
     benefits: value.benefits,
     canonical_url: value.canonical_url,
+    meta_title: value.meta_title,
+    meta_description: value.meta_description,
     labels: value.labels,
     variants: value.variants,
   };

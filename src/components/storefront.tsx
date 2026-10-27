@@ -17,7 +17,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { collectionDefaultColourIndex, collectionProductImage, filters, mrpPrice, prioritizeFleeceProducts, productFromApi, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { collectionDefaultColourIndex, collectionProductImage, filters, mrpPrice, prioritizeFleeceProducts, productColourHref, productFromApi, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { Reveal } from "./reveal";
 import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
 
@@ -372,9 +372,7 @@ export function Storefront({
                     <button
                       aria-label={`View ${p.name}`}
                       onClick={() => {
-                        router.push(
-                          `/products/${productSlug(p)}?colour=${p.colours[selected].file}`,
-                        );
+                        router.push(productColourHref(p, p.colours[selected]));
                       }}
                       className="relative h-[400px] w-full overflow-hidden border border-ink/10 bg-gradient-to-br from-[#e4e2da] via-[#f4f1e9] to-[#d8d3c7] p-1 text-left"
                     >
@@ -402,9 +400,7 @@ export function Storefront({
                   </p>
                   <button
                     onClick={() => {
-                      router.push(
-                        `/products/${productSlug(p)}?colour=${p.colours[selected].file}`,
-                      );
+                      router.push(productColourHref(p, p.colours[selected]));
                     }}
                     className="mt-3 flex h-[52px] items-center justify-center gap-2 border border-ink text-[15px] font-bold transition-colors hover:bg-ink hover:text-paper"
                   >

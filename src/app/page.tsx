@@ -360,6 +360,8 @@ export default function Home() {
             </div>
           </section>
           <HomeProductSlider />
+          <HomeProductSlider hoodiesOnly />
+          <HomeProductSlider sweatshirtsOnly />
           <CustomPrintingOfferSlider />
           <section id="categories" className={`${container} pt-6 lg:pt-10`}>
             <Reveal>

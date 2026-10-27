@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { productImage, productSlug, salePrice } from "@/lib/catalogue";
-import { productSku } from "@/lib/product-seo";
 import { buildMetadata, productMetaDescription, productMetaTitle } from "@/lib/seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
@@ -32,15 +31,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     ...metadata,
     alternates: { canonical: canonicalUrl },
-    other: { "product:sku": productSku(product) },
   };
 }
 export default async function ProductPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const { colour } = await searchParams;
+  const hoodieColourSlugs: Record<string, string> = {
+    black: "350-gsm-fleece-hoodie-black",
+    "coffee-brown": "350-gsm-fleece-hoodie-coffee-brown",
+    "off-white": "350-gsm-fleece-hoodie-off-white",
+    "olive-green": "350-gsm-fleece-hoodie-olive-green",
+    beige: "350-gsm-fleece-hoodie-beige",
+  };
+  if (slug === "350-gsm-fleece-hoodie") {
+    redirect(`/products/${hoodieColourSlugs[colour || "black"] || hoodieColourSlugs.black}`);
+  }
   const catalogue = await getCatalogueProducts();
   const product = catalogue.find((item) => item.id === slug || productSlug(item) === slug);
   if (!product) notFound();
-  const { colour } = await searchParams;
   const selected = Math.max(
     0,
     product.colours.findIndex((c) => c.file === colour),
@@ -54,7 +62,6 @@ export default async function ProductPage({ params, searchParams }: Props) {
           name: product.name,
           description: product.long_description || product.note,
           image: productImage(product, product.colours[0]),
-          sku: productSku(product),
           brand: { "@type": "Brand", name: "StarkVibe" },
           category: product.category,
           color: product.colours.map((item) => item.name),
@@ -68,7 +75,6 @@ export default async function ProductPage({ params, searchParams }: Props) {
             url: `https://starkvibe.com/products/${productSlug(product)}`,
             priceCurrency: "INR",
             price: salePrice(product),
-            availability: "https://schema.org/InStock",
             seller: { "@type": "Organization", name: "StarkVibe" },
           },
         }}

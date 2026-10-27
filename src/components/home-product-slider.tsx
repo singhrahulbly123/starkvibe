@@ -4,11 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { collectionDefaultColourIndex, mrpPrice, prioritizeFleeceProducts, productFromApi, productImage, productSlug, salePrice, type Product } from "@/lib/catalogue";
+import { collectionDefaultColourIndex, mrpPrice, plainRichText, prioritizeFleeceProducts, productColourHref, productFromApi, productImage, salePrice, type Product } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
 
 
-export function HomeProductSlider() {
+export function HomeProductSlider({ hoodiesOnly = false, sweatshirtsOnly = false }: { hoodiesOnly?: boolean; sweatshirtsOnly?: boolean }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [selectedSizes, setSelectedSizes] = useState<Record<string, string>>({});
   const [selectedColours, setSelectedColours] = useState<Record<string, number>>({});
@@ -22,19 +22,27 @@ export function HomeProductSlider() {
       })
       .catch(() => undefined);
   }, []);
-  const displayedProducts = prioritizeFleeceProducts(catalogueProducts);
+  const hoodieProducts = catalogueProducts.filter((product) =>
+    product.slug?.startsWith("350-gsm-fleece-hoodie-") && product.colours.length === 1,
+  );
+  const sweatshirtProducts = catalogueProducts.filter((product) =>
+    product.slug?.startsWith("350-gsm-fleece-sweatshirt-") && product.colours.length === 1,
+  );
+  const displayedProducts = prioritizeFleeceProducts(
+    hoodiesOnly ? hoodieProducts : sweatshirtsOnly ? sweatshirtProducts : catalogueProducts,
+  );
   const scroll = (direction: -1 | 1) => {
     const track = trackRef.current;
     if (track) track.scrollBy({ left: direction * track.clientWidth * 0.82, behavior: "smooth" });
   };
 
   return (
-    <section aria-labelledby="home-product-slider-title" className="bg-[#e8e2d7] py-12 sm:py-16">
+    <section aria-labelledby={hoodiesOnly ? "home-hoodie-slider-title" : sweatshirtsOnly ? "home-sweatshirt-slider-title" : "home-product-slider-title"} className="bg-[#e8e2d7] py-5 sm:py-6">
       <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12">
         <div className="mb-7 flex items-end justify-between gap-5 sm:mb-9">
           <div>
-            <p className="mb-2 text-[10px] font-bold tracking-[.22em] text-olive uppercase sm:text-xs">The StarkVibe collection</p>
-            <h2 id="home-product-slider-title" className="font-display text-[clamp(30px,4vw,52px)] leading-none font-black uppercase">Made to wear. Made to last.</h2>
+            <p className="mb-2 text-[10px] font-bold tracking-[.22em] text-olive uppercase sm:text-xs">{hoodiesOnly || sweatshirtsOnly ? "350 GSM fleece collection" : "The StarkVibe collection"}</p>
+            <h2 id={hoodiesOnly ? "home-hoodie-slider-title" : sweatshirtsOnly ? "home-sweatshirt-slider-title" : "home-product-slider-title"} className="font-display text-[clamp(30px,4vw,52px)] leading-none font-black uppercase">{hoodiesOnly ? "Hoodies" : sweatshirtsOnly ? "Sweatshirts" : "Made to wear. Made to last."}</h2>
           </div>
           <div className="hidden gap-2 sm:flex">
             <button type="button" aria-label="Previous products" onClick={() => scroll(-1)} className="flex size-11 items-center justify-center rounded-full border border-ink/25 transition-colors hover:bg-ink hover:text-paper">
@@ -49,7 +57,7 @@ export function HomeProductSlider() {
           {displayedProducts.map((product, productIndex) => {
             const colourIndex = selectedColours[product.id] ?? collectionDefaultColourIndex(product, productIndex);
             const colour = product.colours[colourIndex];
-            const productHref = `/products/${productSlug(product)}?colour=${colour.file}`;
+            const productHref = productColourHref(product, colour);
             return (
               <article
                 key={product.id}
@@ -68,8 +76,8 @@ export function HomeProductSlider() {
                 </Link>
                 <div className="border-x border-b border-ink/15 bg-[#f4f1e9] p-4 sm:p-5">
                   <Link href={productHref} title={product.name} className="block truncate whitespace-nowrap font-display text-lg leading-tight font-bold uppercase hover:text-olive sm:text-xl">{product.name}</Link>
-                  <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-relaxed text-ink/65">{product.note}</p>
-                  <div role="group" aria-label={`${product.name} colours`} className="mt-4 flex flex-wrap items-center gap-1.5 border-t border-ink/15 pt-3">
+                  <p className="mt-2 line-clamp-2 min-h-10 text-sm leading-relaxed text-ink/65">{plainRichText(product.note)}</p>
+                  {product.colours.length > 1 && <div role="group" aria-label={`${product.name} colours`} className="mt-4 flex flex-wrap items-center gap-1.5 border-t border-ink/15 pt-3">
                     {product.colours.map((item, index) => (
                       <button
                         key={item.file}
@@ -83,7 +91,7 @@ export function HomeProductSlider() {
                       </button>
                     ))}
                     <span className="ml-1 text-[11px] text-ink/55">{colour.name}</span>
-                  </div>
+                  </div>}
                   <div className="mt-4 flex items-center justify-between border-t border-ink/15 pt-3">
                     <span className="flex items-baseline gap-2">
                       {mrpPrice(product) && <del className="text-sm font-normal text-ink/55">₹{mrpPrice(product)}</del>}

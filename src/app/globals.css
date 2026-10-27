@@ -11,15 +11,18 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 24px;
-    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
     overscroll-behavior-x: none;
   }
   body {
     background: var(--color-paper);
     color: var(--color-ink);
+    width: 100%;
     min-width: 0;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow-x: clip;
     overscroll-behavior-x: none;
   }
   button,
@@ -61,6 +64,13 @@
   a[class~="border"][class*="px-"]:not([class*="border-b"]):hover {
     color: #f1f0eb !important;
     background-color: #336000 !important;
+  }
+}
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: clip;
   }
 }
 @media (max-width: 1023px) {

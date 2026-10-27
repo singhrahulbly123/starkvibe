@@ -19,12 +19,6 @@ const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
 const sectionHeading =
   "font-display text-[clamp(46px,6vw,92px)] leading-[.88] font-black uppercase";
 const eyebrow = "mb-[18px] text-[13px] font-bold tracking-[.18em] uppercase";
-const benefits = [
-  "100% premium cotton",
-  "Double bio-washed",
-  "Silicon washed",
-  "Double stitched seams",
-];
 
 export function ProductDetails({
   product,
@@ -40,30 +34,19 @@ export function ProductDetails({
   const [size, setSize] = useState(sizesFor(product)[2]);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
-  const [activeFaq, setActiveFaq] = useState("Benefits");
+  const [activeFaq, setActiveFaq] = useState("Product details");
   const [relatedColours, setRelatedColours] = useState<Record<string, number>>({});
   const colour = product.colours[colourIndex];
   const fit = product.fit || productFit(product);
   const sizeGuide = sizeGuideFor(product);
-  const fabric =
-    product.category === "fleece"
-      ? "100% cotton fleece"
-      : product.id === "terry"
-        ? "100% cotton French Terry"
-        : "100% premium cotton";
-  const description = `${product.note} Available in ${product.colours.map((item) => item.name).join(", ")}.`;
-  const finish = `${fabric} at ${product.gsm} GSM. Double bio-washed and silicon washed for a soft, smooth surface and long-lasting colour. Double stitched seams for strength and a clean, premium fit.`;
+  const sizeLabel = product.id === "kids" ? "Age group" : "Size";
+  const fabric = product.material || "";
+  const description = product.note + " Available sizes: " + sizesFor(product).join(", ") + ".";
   const productDescription = product.long_description || description;
   const detailFabric = product.material || fabric;
-  const detailFinish = product.finish || finish;
-  const detailConstruction = product.construction || "Double stitched seams";
-  const detailWashing =
-    product.washing || "Wash gently with similar colours; turn printed garments inside out";
-  const detailBestFor =
-    product.best_for ||
-    (product.id === "kids"
-      ? "Active days, teams, custom printing"
-      : "Everyday, streetwear, custom printing");
+  const detailConstruction = product.construction || "";
+  const detailWashing = product.washing || "";
+  const detailBestFor = product.best_for || "";
   const weightPosition = ((product.gsm - 180) / 170) * 100;
   const related = relatedProducts.filter((item) => item.id !== product.id).slice(0, 4);
   const comparison = [product, ...relatedProducts.filter((item) => item.id !== product.id)].slice(0, 7);
@@ -79,9 +62,14 @@ export function ProductDetails({
 
   function selectColour(index: number) {
     setColourIndex(index);
+    setView("Front");
     setAdded(false);
     const url = new URL(window.location.href);
-    url.searchParams.set("colour", product.colours[index].file);
+    if (product.colours.length > 1) {
+      url.searchParams.set("colour", product.colours[index].file);
+    } else {
+      url.searchParams.delete("colour");
+    }
     window.history.replaceState(null, "", url.toString());
   }
   function prepareQuote() {
@@ -109,97 +97,43 @@ export function ProductDetails({
     );
     setAdded(true);
   }
+  const variantSku = productSku(product, colour.name, size);
   const specs = [
     ["Material", detailFabric],
-    ["SKU", productSku(product)],
-    ["GSM", `${product.gsm} GSM`],
+    ["SKU", variantSku || ""],
+    ["GSM", product.gsm + " GSM"],
     ["Fit", fit],
-    ["Finish", detailFinish],
+    ["Neckline / collar", product.neckline || ""],
+    ["Sleeve", product.sleeve || ""],
     ["Construction", detailConstruction],
     ["Colour options", product.colours.map((item) => item.name).join(", ")],
     ["Washing", detailWashing],
     ["Best for", detailBestFor],
-  ];
-  const productLabel =
-    product.id === "kids"
-      ? "kids cotton t-shirt"
-      : product.id === "polo"
-        ? "cotton polo t-shirt"
-        : product.category === "fleece"
-          ? product.id === "hoodie"
-            ? "cotton fleece hoodie"
-            : "cotton fleece sweatshirt"
-          : product.id === "terry"
-            ? "French Terry t-shirt"
-            : "cotton t-shirt";
-  const useCases =
-    product.id === "kids"
-      ? "school days, playtime, family outings and custom birthday wear"
-      : product.category === "fleece"
-        ? "cool mornings, travel, casual layering and event merchandise"
-        : "everyday outfits, streetwear looks, group events and custom gifts";
+  ].filter(([, value]) => Boolean(value));
   const colourNames = product.colours.map((item) => item.name).join(", ");
   const accordion: [string, string][] = [
-    [
-      "Benefits",
-      `${product.name} is designed as a dependable ${productLabel} for people who want comfort, structure and an easy styling experience in one piece. At ${product.gsm} GSM, it gives you a clear sense of fabric weight without making the garment difficult to wear. The ${fit.toLowerCase()} shape works well on its own and also layers naturally with denim, trousers, jackets or seasonal outerwear. It is a practical choice for ${useCases}.\n\nThe garment is made for repeat wear rather than a one-time look. Double bio-washing and silicon washing help create a softer hand feel, while double stitched seams support the areas that experience regular movement. That balance makes it useful for personal wardrobes, family orders, team clothing, college groups, birthday celebrations and event gifting. If you are planning custom printing, the clean surface gives your artwork a clear base and lets the design remain the focus.\n\nThe available colour range includes ${colourNames}. This gives you room to create coordinated outfits, mixed-colour group orders or a simple everyday rotation. Choose a classic shade for maximum versatility, or select a brighter colour when the garment needs to feel more expressive. Every product detail, including size, shade and quantity, can be confirmed before a larger custom printing order is produced.`,
-    ],
-    [
-      "Fabric and finish",
-      `${finish} The fabric choice is intended to feel substantial while remaining comfortable across normal daily movement. The ${fit.toLowerCase()} fit gives the garment a clear silhouette, so it can work as a standalone piece without looking unfinished. It also leaves enough room for natural movement, making it suitable for active days, casual styling and planned group appearances.\n\nThe surface has been prepared for a smoother, cleaner finish. Double bio-washing helps reduce a rough hand feel and gives the fabric a more broken-in character, while silicon washing supports a soft touch. Double stitched seams add strength at important construction points and help the garment hold its shape through regular use. These details matter when you are buying one piece for yourself, ordering matching clothing for a party or preparing custom printed t-shirts and hoodies for an event.\n\nFor artwork, the flat front and clean construction provide a dependable starting point for custom printing. You can share your design, preferred colour, quantity and size breakdown before production. The team can then confirm the most suitable print approach, available quantities and expected turnaround. This makes the product useful not only as everyday clothing, but also as a considered base for birthday t-shirts, party outfits, event merchandise and thoughtful personalised gifts.`,
-    ],
-    [
-      "Care",
-      `To keep your ${productLabel} looking its best, wash it gently with similar colours and follow the care label attached to the garment. Turn printed garments inside out before washing to reduce unnecessary friction on the artwork. Use a mild detergent, avoid direct high heat and dry away from harsh sunlight when possible. These simple habits help preserve the colour, softness and overall finish for longer.\n\nAvoid using strong bleach or aggressive treatment unless the care label specifically allows it. Do not iron directly over a printed design. If ironing is needed, turn the garment inside out or place a thin cloth between the iron and the artwork. Store the piece folded or on a suitable hanger once fully dry. Proper care is especially useful for group orders because it helps different garments continue to look consistent after repeated wear.\n\nBefore ordering, check the size guide and compare the measurements with a garment you already like. For custom printing, confirm the artwork, print placement, colour, size range and quantity before production begins. This reduces errors and gives the team a clear brief for birthday clothing, party groups, event uniforms or personalised gifting. If you need help selecting a size, shade or print quantity, send an enquiry and the team can guide you before the order is confirmed.`,
-    ],
-    [
-      "Shipping and printing",
-      `Standard delivery usually takes 5–7 working days across India. Express delivery usually takes 3–4 working days where available. Shipping charges and the final delivery estimate for your PIN code are confirmed before dispatch. For a standard order, the team will confirm the selected product, colour, size and quantity. For custom printing, they will also review your artwork, print position, print method, order quantity and production timeline before approval. This keeps the process clear and helps avoid surprises at the final stage.\n\nThese garments are suitable for custom birthday t-shirts, party group clothing, school or college events, family celebrations, team activities and personalised gifts. You can order a single piece for a special present or discuss a larger quantity when several people need a coordinated look. Mixed colours may be possible depending on the order, so share your preferred colour plan and size breakdown when you contact the team.\n\nFor the best result, send a high-quality logo, illustration or text design and mention the intended garment colour. The team can confirm whether the artwork needs adjustment and whether the chosen design is suitable for the selected fabric. Production begins after the important details are agreed. If you are unsure what to order, tell us the occasion, number of people, preferred garments and delivery requirement. We will help shape the order around your event rather than treating it like a generic bulk purchase.`,
-    ],
-  ];
-  if (product.long_description) accordion[0][1] = product.long_description;
-  if (product.finish) accordion[1][1] = product.finish;
-  if (product.care_instructions) accordion[2][1] = product.care_instructions;
-  if (product.shipping_info) accordion[3][1] = product.shipping_info;
+    ["Product details", productDescription],
+    ["Fabric and fit", [detailFabric, product.gsm + " GSM", fit, product.neckline, product.sleeve].filter(Boolean).join(". ")],
+    ["Care", product.care_instructions || ""],
+    ["Shipping and printing", product.shipping_info || ""],
+  ].filter(([, content]) => Boolean(content)) as [string, string][];
   const faqPoints: Record<string, string[]> = {
-    Benefits: [
-      `${product.gsm} GSM ${fabric.toLowerCase()} with a structured feel`,
-      `${fit} fit for everyday styling and easy movement`,
-      "Double stitched seams for dependable everyday wear",
-      `Available in ${colourNames} for single pieces or coordinated groups`,
-    ],
-    "Fabric and finish": [
-      detailFabric,
-      `${product.gsm} GSM weight`,
-      detailFinish,
-      "Clean base for custom birthday, party and event printing",
-    ],
-    Care: [
-      detailWashing,
-      "Turn printed garments inside out before washing",
-      "Avoid strong bleach and direct high heat",
-      "Do not iron directly over printed artwork",
-    ],
-    "Shipping and printing": [
-      product.shipping_info || "Confirm product, colour, size and quantity before ordering",
-      "Share artwork and print placement for custom orders",
-      "Mention your event date and delivery requirement",
-      "Suitable for birthdays, parties, events and personalised gifts",
-    ],
+    "Product details": [detailFabric, product.gsm + " GSM", fit, product.neckline || "", product.sleeve || "", "Colours: " + colourNames, "Sizes: " + sizesFor(product).join(", ")].filter(Boolean),
+    "Fabric and fit": [detailFabric, product.gsm + " GSM", fit, product.neckline || "", product.sleeve || ""].filter(Boolean),
+    Care: product.care_instructions ? [product.care_instructions] : [],
+    "Shipping and printing": product.shipping_info ? [product.shipping_info] : [],
   };
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: productSeoDescription(product),
-    sku: productSku(product),
+    ...(product.variants?.length ? { sku: product.variants[0].sku } : {}),
     brand: { "@type": "Brand", name: "StarkVibe" },
     category: `${product.category} clothing`,
     material: detailFabric || productMaterial(product),
     audience: {
       "@type": "PeopleAudience",
-      suggestedGender: "unisex",
-      suggestedMinAge: product.id === "kids" ? 2 : undefined,
     },
     image: product.colours.map(
       (item) => `https://starkvibe.com${productImage(product, item)}`,
@@ -209,16 +143,14 @@ export function ProductDetails({
     additionalProperty: [
       { "@type": "PropertyValue", name: "Fabric weight", value: `${product.gsm} GSM` },
       { "@type": "PropertyValue", name: "Fit", value: fit },
-      { "@type": "PropertyValue", name: "Finish", value: detailFinish },
-      { "@type": "PropertyValue", name: "Construction", value: detailConstruction },
+      ...(product.neckline ? [{ "@type": "PropertyValue", name: "Neckline or collar", value: product.neckline }] : []),
+      ...(product.sleeve ? [{ "@type": "PropertyValue", name: "Sleeve", value: product.sleeve }] : []),
     ],
     offers: {
       "@type": "Offer",
       url: `https://starkvibe.com/products/${productSlug(product)}`,
       priceCurrency: "INR",
       price: salePrice(product),
-      priceValidUntil: "2027-12-31",
-      availability: "https://schema.org/InStock",
       itemCondition: "https://schema.org/NewCondition",
       hasMerchantReturnPolicy: {
         "@type": "MerchantReturnPolicy",
@@ -261,7 +193,6 @@ export function ProductDetails({
           colour={colour}
           view={view}
           onViewChange={setView}
-          onColourChange={selectColour}
         />
         <div className="min-w-0 max-w-[560px]">
           <p className="mb-3.5 text-[13px] font-bold tracking-[.18em] text-olive uppercase">
@@ -342,32 +273,25 @@ export function ProductDetails({
               <span>350</span>
             </div>
           </div>
-          <p className="mb-3.5 text-sm font-bold">
-            Colour — <span className="font-medium">{colour.name}</span>
-          </p>
-          <div
-            role="group"
-            aria-label="Choose colour"
-            className="mb-[30px] flex flex-wrap gap-1.5"
-          >
-            {product.colours.map((c, i) => (
-              <button
-                key={c.file}
-                aria-label={c.name}
-                aria-pressed={i === colourIndex}
-                onClick={() => selectColour(i)}
-                className="flex size-12 items-center justify-center"
-              >
-                <span
-                  style={{ backgroundColor: c.hex }}
-                  className={`size-[34px] rounded-full border border-ink/30 ${i === colourIndex ? "ring-2 ring-ink ring-offset-[3px] ring-offset-paper" : ""}`}
-                />
-              </button>
-            ))}
-          </div>
+          {product.colours.length > 1 ? (
+            <>
+              <p className="mb-3.5 text-sm font-bold">
+                Colour — <span className="font-medium">{colour.name}</span>
+              </p>
+              <div role="group" aria-label="Choose colour" className="mb-[30px] flex flex-wrap gap-1.5">
+                {product.colours.map((c, i) => (
+                  <button key={c.file} aria-label={c.name} aria-pressed={i === colourIndex} onClick={() => selectColour(i)} className="flex size-12 items-center justify-center">
+                    <span style={{ backgroundColor: c.hex }} className={`size-[34px] rounded-full border border-ink/30 ${i === colourIndex ? "ring-2 ring-ink ring-offset-[3px] ring-offset-paper" : ""}`} />
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p className="mb-[30px] text-sm font-bold">Colour: <span className="font-medium">{colour.name}</span></p>
+          )}
           <div className="mb-3.5 flex items-baseline justify-between">
             <span className="text-sm font-bold">
-              Size — <span className="font-medium">{size}</span>
+              {sizeLabel} — <span className="font-medium">{size}</span>
             </span>
             <a
               href="#sizes"
@@ -384,7 +308,7 @@ export function ProductDetails({
             {sizesFor(product).map((s) => (
               <button
                 key={s}
-                aria-label={`Size ${s}`}
+                aria-label={`${sizeLabel} ${s}`}
                 aria-pressed={s === size}
                 onClick={() => {
                   setSize(s);
@@ -443,8 +367,8 @@ export function ProductDetails({
           >
             Need it custom printed? Get a quote
           </Link>
-          <div className="mb-8 grid grid-cols-1 gap-x-5 gap-y-3 text-sm font-semibold sm:grid-cols-2">
-            {(product.benefits?.length ? product.benefits : benefits).map((text) => (
+          {product.benefits?.length ? <div className="mb-8 grid grid-cols-1 gap-x-5 gap-y-3 text-sm font-semibold sm:grid-cols-2">
+            {product.benefits.map((text) => (
               <div key={text} className="flex items-center gap-2.5">
                 <Check
                   size={20}
@@ -454,7 +378,7 @@ export function ProductDetails({
                 {text}
               </div>
             ))}
-          </div>
+          </div> : null}
         </div>
       </section>
       <section className={`${container} w-full pt-10`}>
@@ -476,7 +400,7 @@ export function ProductDetails({
           <div role="tabpanel" className="w-full py-8">
             <div className="space-y-7">
               <ul className="grid gap-3 sm:grid-cols-2">
-                {faqPoints[activeFaq].map((point) => (
+                {(faqPoints[activeFaq] || []).map((point) => (
                   <li
                     key={point}
                     className="border-l-2 border-olive pl-4 text-[15px] leading-[1.5] font-semibold text-[#3f3e3a]"
@@ -613,7 +537,7 @@ export function ProductDetails({
           })}
         </div>
       </section>
-      <section className={`${container} pt-20 lg:pt-[136px]`}>
+      {product.colours.length > 1 && <section className={`${container} pt-20 lg:pt-[136px]`}>
         <Reveal>
           <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
             <div>
@@ -679,16 +603,34 @@ export function ProductDetails({
             );
           })}
         </div>
-      </section>
+      </section>}
       <section id="sizes" className={`${container} pt-20 lg:pt-[136px]`}>
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <h2 className="font-display text-[clamp(44px,5vw,76px)] leading-[.9] font-black uppercase">
-            Size guide
+            {product.category === "fleece"
+              ? "Sweatshirt aur Hoodie — 350 GSM"
+              : product.id === "polo"
+                ? "Polo T-Shirt — 220 GSM"
+                : product.id === "oversized" || product.id === "terry"
+                  ? "Oversized T-Shirt — 220 GSM aur French Terry — 240 GSM"
+                : product.id === "regular"
+                  ? "Regular Fit T-Shirt — 180 GSM"
+                : "Size guide"}
           </h2>
           <p className="text-sm text-[#55544f]">
             {product.name} · {fit} fit · Available sizes: {sizesFor(product).join(", ")}
           </p>
         </div>
+        {product.category === "fleece" && (
+          <p className="mb-5 text-sm text-[#55544f]">
+            Supplier ke dono products ke liye catalogue measurements same hain.
+          </p>
+        )}
+        {(product.id === "oversized" || product.id === "terry") && (
+          <p className="mb-5 text-sm text-[#55544f]">
+            Dono products ke catalogue mein same measurements hain.
+          </p>
+        )}
         <div
           role="region"
           aria-label="Size measurements"
@@ -701,7 +643,7 @@ export function ProductDetails({
             </caption>
             <thead>
               <tr className="border-y border-ink text-left">
-                {["Size", "Chest", "Length", "Shoulder", "Sleeve"].map(
+                {[sizeLabel, "Chest (in)", "Shoulder (in)", "Length (in)", "Sleeve (in)"].map(
                   (label) => (
                     <th
                       key={label}
@@ -726,9 +668,9 @@ export function ProductDetails({
                   >
                     {measurement.size}
                   </th>
-                  {[measurement.chest, measurement.length, measurement.shoulder, measurement.sleeve].map((value, i) => (
+                  {[measurement.chest, measurement.shoulder, measurement.length, measurement.sleeve].map((value, i) => (
                     <td key={`measurement-${i}`} className="px-3 py-[18px] text-[#55544f]">
-                      {value}&quot;
+                      {value}
                     </td>
                   ))}
                 </tr>
@@ -737,8 +679,8 @@ export function ProductDetails({
           </table>
         </div>
         <p className="mt-4 text-sm text-[#55544f]">
-          Measurements are approximate garment dimensions in inches. Compare
-          them with a similar garment you already own before ordering.
+          Measurements are in inches. Please confirm with the supplier whether
+          chest measurements are flat or garment circumference before using them to assess fit.
         </p>
       </section>
       <section

@@ -1,5 +1,4 @@
-import { salePrice, type Product } from "./catalogue";
-
+import type { Product } from "./catalogue";
 import type { Metadata } from "next";
 
 const siteUrl = "https://starkvibe.com";
@@ -17,54 +16,25 @@ function cleanPath(path: string) {
   return pathname || "/";
 }
 
-export function buildMetadata({
-  title,
-  description,
-  path,
-  image = defaultImage,
-}: BuildMetadataOptions): Metadata {
+export function buildMetadata({ title, description, path, image = defaultImage }: BuildMetadataOptions): Metadata {
   const pathname = cleanPath(path);
   const url = pathname === "/" ? siteUrl : `${siteUrl}${pathname}`;
   const imageUrl = image.startsWith("http") ? image : `${siteUrl}${cleanPath(image)}`;
-
   return {
     title,
     description,
     alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      images: [{ url: imageUrl, width: 1200, height: 630, alt: title }],
-    },
-    twitter: {
-      title,
-      description,
-      images: [imageUrl],
-    },
+    openGraph: { title, description, url, images: [{ url: imageUrl, width: 1200, height: 630, alt: title }] },
+    twitter: { title, description, images: [imageUrl] },
   };
 }
 
 export function productMetaTitle(product: Product) {
-  if (product.id === "oversized") {
-    return "Oversized T-Shirt 220 GSM Cotton | Buy Online India | StarkVibe";
-  }
-  return `${product.name} | Cotton Wear | StarkVibe`;
+  return product.meta_title || `${product.name} | Starkvibe`;
 }
 
 export function productMetaDescription(product: Product) {
-  const price = `₹${salePrice(product).toLocaleString("en-IN")}`;
-  const colours = product.colours.map((item) => item.name).join(", ");
-  const descriptions: Record<string, string> = {
-    oversized: `Buy a 220 GSM oversized cotton T-shirt in ${colours}. Double-washed, double-stitched and made for relaxed everyday comfort. From ${price}.`,
-    regular: `Choose a breathable 180 GSM regular-fit cotton tee in ${colours}. Soft everyday comfort, clean structure and easy custom printing from ${price}.`,
-    terry: `Shop a 240 GSM oversized French Terry tee in ${colours}. Soft, structured streetwear comfort with a premium hand-feel, from ${price}.`,
-    polo: `Upgrade everyday dressing with a 220 GSM Matty polo in ${colours}. Breathable comfort and a polished fit for work, events and branding from ${price}.`,
-    kids: `Find a soft 180 GSM kids cotton T-shirt in ${colours}. Flexible, comfortable and ready for active days or custom printing, from ${price}.`,
-    sweatshirt: `Stay warm in a 350 GSM cotton-fleece sweatshirt in ${colours}. Soft, durable and built for winter teams, layering and everyday wear from ${price}.`,
-    hoodie: `Shop a 350 GSM cotton-fleece hoodie in ${colours}. Warm everyday streetwear with a comfortable fit for winter, teams and custom branding from ${price}.`,
-  };
-  return descriptions[product.id] ?? `${product.name} in ${colours}, with ${product.note.toLowerCase()} Available from ${price} at StarkVibe.`;
+  return product.meta_description || product.note;
 }
 
 export function categoryMetaTitle(category: string) {
