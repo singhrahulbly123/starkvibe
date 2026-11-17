@@ -60,6 +60,12 @@ export function ProductDetails({
     });
   }, [product]);
 
+  useEffect(() => {
+    const colourFile = new URLSearchParams(window.location.search).get("colour");
+    const selectedColour = product.colours.findIndex((item) => item.file === colourFile);
+    setColourIndex(selectedColour >= 0 ? selectedColour : initialColour);
+  }, [initialColour, product]);
+
   function selectColour(index: number) {
     setColourIndex(index);
     setView("Front");

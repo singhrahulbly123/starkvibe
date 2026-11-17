@@ -10,7 +10,6 @@ import { getCatalogueProducts } from "@/lib/catalogue-server";
 
 type Props = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ colour?: string }>;
 };
 export async function generateStaticParams() {
   const catalogue = await getCatalogueProducts();
@@ -33,9 +32,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: canonicalUrl },
   };
 }
-export default async function ProductPage({ params, searchParams }: Props) {
+export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const { colour } = await searchParams;
   const hoodieColourSlugs: Record<string, string> = {
     black: "350-gsm-fleece-hoodie-black",
     "coffee-brown": "350-gsm-fleece-hoodie-coffee-brown",
@@ -44,15 +42,11 @@ export default async function ProductPage({ params, searchParams }: Props) {
     beige: "350-gsm-fleece-hoodie-beige",
   };
   if (slug === "350-gsm-fleece-hoodie") {
-    redirect(`/products/${hoodieColourSlugs[colour || "black"] || hoodieColourSlugs.black}`);
+    redirect(`/products/${hoodieColourSlugs.black}`);
   }
   const catalogue = await getCatalogueProducts();
   const product = catalogue.find((item) => item.id === slug || productSlug(item) === slug);
   if (!product) notFound();
-  const selected = Math.max(
-    0,
-    product.colours.findIndex((c) => c.file === colour),
-  );
   return (
     <>
       <JsonLd
@@ -99,7 +93,7 @@ export default async function ProductPage({ params, searchParams }: Props) {
           <ProductDetails
             key={product.id}
             product={product}
-            initialColour={selected}
+            initialColour={0}
             relatedProducts={catalogue}
           />
         </main>
