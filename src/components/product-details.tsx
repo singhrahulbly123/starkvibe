@@ -234,11 +234,7 @@ export function ProductDetails({
               </>
             ) : (
               <>
-                {product.gsm} GSM
-                <br />
-                fleece
-                <br />
-                {product.id}
+                {product.gsm} GSM fleece {product.id}
               </>
             )}
           </h1>
