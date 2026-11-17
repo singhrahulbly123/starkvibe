@@ -11,10 +11,7 @@ import { getCatalogueProducts } from "@/lib/catalogue-server";
 type Props = {
   params: Promise<{ slug: string }>;
 };
-export async function generateStaticParams() {
-  const catalogue = await getCatalogueProducts();
-  return catalogue.map((product) => ({ slug: productSlug(product) }));
-}
+export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const catalogue = await getCatalogueProducts();
