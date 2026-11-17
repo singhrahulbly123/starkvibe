@@ -1,0 +1,380 @@
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowUpRight, Check } from "lucide-react";
+import { CustomDesignForm } from "./custom-design-form";
+import { JsonLd } from "./json-ld";
+import { Reveal } from "./reveal";
+import { SiteFooter } from "./site-footer";
+import { Storefront } from "./storefront";
+import { breadcrumbJsonLd, faqPageJsonLd } from "@/lib/structured-data";
+import { CUSTOM_PRINT_AREA, CUSTOM_PRINT_DISCOUNT_PERCENT, customPrintDiscountedPrice, customPrintOptions } from "@/lib/custom-printing-pricing";
+
+const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
+
+type CustomPageKey =
+  | "overview"
+  | "birthday"
+  | "office-bulk"
+  | "anniversary"
+  | "gifting"
+  | "political-campaigns";
+
+type CustomPageContent = {
+  label: string;
+  title: React.ReactNode;
+  description: string;
+  image: string;
+  imageAlt: string;
+  introTitle: string;
+  intro: string;
+  benefits: string[];
+  productLinks: { title: string; text: string; href: string }[];
+};
+
+const pages: Record<CustomPageKey, CustomPageContent> = {
+  overview: {
+    label: "Custom printing",
+    title: (
+      <>
+        Custom T-Shirt
+        <br />
+        Printing India.
+      </>
+    ),
+    description:
+      "Custom t-shirt printing in India for birthdays, office teams, events and brands. Order bulk t-shirt printing, hoodie printing or personalised cotton polos with artwork support from StarkVibe.",
+    image: "/products/starkvibe-custom-apparel/180-gsm-regular-tee-black.webp",
+    imageAlt: "Black custom-printing t-shirt",
+    introTitle: "Print the moment, not just the garment.",
+    intro:
+      "StarkVibe provides custom t-shirt printing in India for real occasions: birthday groups, office teams, family celebrations, anniversaries, college events and thoughtful gifts. Choose a comfortable cotton base, send your artwork or idea, and we will help you plan bulk t-shirt printing, hoodie printing, colour options, size mix and quantity.",
+    benefits: [
+      "Birthday and party t-shirts with names, dates or inside jokes",
+      "Office and bulk orders for teams, employees and company events",
+      "Anniversary and family designs made for a shared memory",
+      "Personalised gifts that feel considered, useful and easy to wear",
+    ],
+    productLinks: [
+      { title: "Birthday printing", text: "For the whole crew.", href: "/custom-printing/birthday" },
+      { title: "Office & bulk", text: "For teams that move together.", href: "/custom-printing/office-bulk" },
+      { title: "Anniversary wear", text: "For your shared story.", href: "/custom-printing/anniversary" },
+      { title: "Custom gifting", text: "For a gift with meaning.", href: "/custom-printing/gifting" },
+      { title: "Campaign merchandise", text: "For organised public teams.", href: "/custom-printing/political-campaigns" },
+    ],
+  },
+  birthday: {
+    label: "Birthday printing",
+    title: (
+      <>
+        Wear the
+        good time.
+      </>
+    ),
+    description:
+      "Matching birthday t-shirts and hoodies for the people who make the day special. One idea, many sizes, a memory everyone can wear.",
+    image: "/products/starkvibe-custom-apparel/180-gsm-kids-regular-tee-sea-green.webp",
+    imageAlt: "Custom birthday t-shirt for a group celebration",
+    introTitle: "From first birthdays to big ones.",
+    intro:
+      "Create a birthday look that feels personal without making the planning complicated. Add a name, age, date, phrase, illustration or matching theme to comfortable cotton t-shirts and hoodies. We can help you organise adult and kids sizes, mixed colours and the quantity you need for the celebration.",
+    benefits: [
+      "Matching family and friends t-shirts for birthday photos",
+      "Kids birthday designs with playful names, numbers and themes",
+      "Bridesmaid-style group looks for parties and pre-wedding events",
+      "Small or larger orders with a clear size and colour breakdown",
+    ],
+    productLinks: [
+      { title: "Kids cotton tees", text: "Soft bases for little guests.", href: "/products/kids-regular-180-gsm-tee" },
+      { title: "Regular fit tees", text: "An easy group uniform.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Oversized tees", text: "Relaxed party energy.", href: "/products/oversized-220-gsm-tee" },
+      { title: "Request a birthday quote", text: "Tell us the plan.", href: "/custom-printing#enquiry" },
+    ],
+  },
+  "office-bulk": {
+    label: "Office & bulk printing",
+    title: (
+      <>
+        Built for
+        the team.
+      </>
+    ),
+    description:
+      "Professional custom t-shirts, polos, sweatshirts and hoodies for employees, events, campaigns and bulk team orders.",
+    image: "/products/starkvibe-custom-apparel/350-gsm-hoodie-black.webp",
+    imageAlt: "Custom office and bulk order hoodie",
+    introTitle: "A better uniform for the people behind the work.",
+    intro:
+      "Your team does not need a loud uniform to look connected. A well-chosen cotton tee, polo or hoodie with a clean print can work at an office event, launch, workshop, campus drive or company offsite. Share your logo, artwork, preferred garments and size list, and we will help shape a practical bulk order.",
+    benefits: [
+      "Employee t-shirts and hoodies for company culture and offsites",
+      "Polos for a cleaner, more polished event uniform",
+      "Bulk size planning with adult and mixed-colour options",
+      "Artwork and production details confirmed before the order begins",
+    ],
+    productLinks: [
+      { title: "Cotton polos", text: "Smart, breathable teamwear.", href: "/products/polo-220-gsm-matty-tee" },
+      { title: "Fleece hoodies", text: "Warm layers for your crew.", href: "/products/350-gsm-fleece-hoodie" },
+      { title: "Fleece sweatshirts", text: "A clean event essential.", href: "/products/350-gsm-fleece-sweatshirt" },
+      { title: "Start a bulk enquiry", text: "Share your quantity.", href: "/custom-printing#enquiry" },
+    ],
+  },
+  anniversary: {
+    label: "Anniversary printing",
+    title: (
+      <>
+        Keep the
+       
+        story close.
+      </>
+    ),
+    description:
+      "Personalised anniversary t-shirts, hoodies and keepsakes for couples, families and the milestones worth celebrating together.",
+    image: "/products/starkvibe-custom-apparel/350-gsm-sweatshirt-maroon.webp",
+    imageAlt: "Custom anniversary sweatshirt",
+    introTitle: "Make the date wearable.",
+    intro:
+      "An anniversary design can be understated or full of personality. Use a date, initials, a line from your story, a small illustration or a shared reference. We print your idea on comfortable everyday pieces so the gift feels meaningful on the day and useful afterwards.",
+    benefits: [
+      "Couple t-shirts and hoodies with dates, initials or personal messages",
+      "Family anniversary designs for parents and grandparents",
+      "Coordinated colours for photos, dinners and celebration trips",
+      "Gift-ready custom pieces designed around your story",
+    ],
+    productLinks: [
+      { title: "Premium sweatshirts", text: "A warmer anniversary gift.", href: "/products/350-gsm-fleece-sweatshirt" },
+      { title: "Regular fit tees", text: "Simple, personal and wearable.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Oversized hoodies", text: "Comfort with character.", href: "/products/350-gsm-fleece-hoodie" },
+      { title: "Plan an anniversary print", text: "Send the story.", href: "/custom-printing#enquiry" },
+    ],
+  },
+  gifting: {
+    label: "Personalised gifting",
+    title: (
+      <>
+        Give them
+       
+        something real.
+      </>
+    ),
+    description:
+      "Custom printed clothing for thoughtful gifts: a design they will recognise, in a garment they will actually wear.",
+    image: "/products/starkvibe-custom-apparel/220-gsm-polo-white.webp",
+    imageAlt: "Personalised custom printed polo gift",
+    introTitle: "A good gift has a point of view.",
+    intro:
+      "Personalised gifting works best when it feels specific. Choose a phrase only your friend understands, a family illustration, a hobby reference or a clean monogram. We can help you select a suitable garment, colour and size before turning the idea into a considered custom print.",
+    benefits: [
+      "Personalised birthday and festival gifts for friends and family",
+      "Custom couple, family and hobby designs with a personal touch",
+      "Useful cotton garments instead of one-time novelty products",
+      "Single gifts or coordinated sets for a group of recipients",
+    ],
+    productLinks: [
+      { title: "Premium polos", text: "A polished gift choice.", href: "/products/polo-220-gsm-matty-tee" },
+      { title: "Everyday cotton tees", text: "Easy to personalise.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Warm fleece layers", text: "Comfort they can keep.", href: "/products/350-gsm-fleece-sweatshirt" },
+      { title: "Create a gift enquiry", text: "Tell us who it is for.", href: "/custom-printing#enquiry" },
+    ],
+  },
+  "political-campaigns": {
+    label: "Campaign merchandise",
+    title: (
+      <>
+        Made for
+        <br />
+        the movement.
+      </>
+    ),
+    description:
+      "Custom printed t-shirts, polos and hoodies for campaign teams, volunteers, public events and organised community programmes.",
+    image: "/products/starkvibe-custom-apparel/180-gsm-regular-tee-navy.webp",
+    imageAlt: "Custom campaign merchandise t-shirt",
+    introTitle: "One team. One clear identity.",
+    intro:
+      "When a campaign, community programme or public event needs a coordinated look, custom apparel helps teams be easy to recognise. Choose comfortable cotton garments, share your approved artwork and plan the right colour and size mix for volunteers, organisers and event staff. We support practical bulk printing for lawful, transparent campaign merchandise and public-facing events.",
+    benefits: [
+      "Volunteer and campaign team t-shirts for rallies, meetings and public events",
+      "Polos and hoodies for organisers, coordinators and field teams",
+      "Bulk size planning with clear colour and quantity breakdowns",
+      "Artwork review before production so names, symbols and details are clear",
+    ],
+    productLinks: [
+      { title: "Regular fit tees", text: "A reliable campaign base.", href: "/products/regular-fit-180-gsm-tee" },
+      { title: "Cotton polos", text: "A polished organiser layer.", href: "/products/polo-220-gsm-matty-tee" },
+      { title: "Fleece hoodies", text: "For long event days.", href: "/products/350-gsm-fleece-hoodie" },
+      { title: "Start a campaign enquiry", text: "Share your approved artwork.", href: "/custom-printing#enquiry" },
+    ],
+  },
+};
+
+const portfolioExamples = [
+  {
+    title: "Team uniforms",
+    text: "Clean chest branding on everyday cotton tees for office teams and company events.",
+    image: "/heroslider/Custom%20Printing%20for%20Every%20Occasion.png",
+  },
+  {
+    title: "Event merchandise",
+    text: "Coordinated colours and sizes for group orders, celebrations and campaign teams.",
+    image: "/products/starkvibe-custom-apparel/350-gsm-hoodie-black.webp",
+  },
+  {
+    title: "Personalised gifting",
+    text: "Comfortable cotton pieces prepared for names, artwork, dates and shared memories.",
+    image: "/products/starkvibe-custom-apparel/220-gsm-polo-white.webp",
+  },
+];
+
+export function CustomPrintingPage({ page }: { page: CustomPageKey }) {
+  const content = pages[page];
+  const pagePath = page === "overview" ? "/custom-printing" : `/custom-printing/${page}`;
+  const faq = [
+    ["Can I order a single custom printed garment?", "Yes. Single personalised pieces and larger group or bulk orders can be discussed. Share the garment, colour, size and artwork so the team can confirm the quote."],
+    ["Which garments can be custom printed?", "StarkVibe offers cotton t-shirts, polos, kids tees, sweatshirts and hoodies. The best option depends on your artwork, occasion, colour and quantity."],
+            ["What details are needed for a custom printing quote?", "Send your artwork or idea, garment preference, colour, size breakdown, quantity and required delivery date. The listed print rates cover a 10 × 10 print area; garment price is separate. The team will confirm the final quote before production."],
+  ];
+  const faqSchema = faqPageJsonLd(
+    faq.map(([question, answer]) => ({ question, answer })),
+  );
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Custom printing", path: "/custom-printing" },
+    ...(page === "overview" ? [] : [{ name: content.label, path: pagePath }]),
+  ]);
+  return (
+    <>
+      <JsonLd data={faqSchema} />
+      <JsonLd data={breadcrumbSchema} />
+      <Storefront hideRange>
+        <main>
+          <section className="bg-ink text-paper">
+            <div className={`${container} py-10 lg:py-16`}>
+              <Reveal className="mb-10">
+                <p className="mb-5 text-[13px] font-bold tracking-[.18em] text-gold uppercase">
+                  {content.label}
+                </p>
+                <h1 className="font-display text-[clamp(64px,9vw,100px)] leading-[.82] font-black uppercase">
+                  {content.title}
+                </h1>
+                <p className="mt-8 max-w-[720px] text-lg leading-[1.6] text-[#c9c7be]">
+                  {content.description}
+                </p>
+                <Link href="/design-your-own" className="mt-7 inline-flex items-center gap-2 bg-gold px-5 py-3 text-sm font-bold text-ink transition-transform hover:-translate-y-0.5">
+                  Create your own design <ArrowUpRight size={17} />
+                </Link>
+              </Reveal>
+              <Reveal>
+                <CustomDesignForm
+                  pageLabel={content.label}
+                  previewImage={content.image}
+                />
+              </Reveal>
+            </div>
+          </section>
+
+          <section className={`${container} grid gap-12 py-20 lg:grid-cols-[.8fr_1.2fr] lg:gap-24 lg:py-32`}>
+            <Reveal>
+              <p className="mb-5 text-[13px] font-bold tracking-[.18em] text-olive uppercase">
+                Why custom print
+              </p>
+              <h2 className="font-display text-[clamp(48px,6vw,67px)] leading-[.88] font-black uppercase">
+                {content.introTitle}
+              </h2>
+            </Reveal>
+            <Reveal>
+              <p className="max-w-[680px] text-[18px] leading-[1.7] text-[#3f3e3a]">
+                {content.intro}
+              </p>
+              <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+                {content.benefits.map((benefit) => (
+                  <li key={benefit} className="flex gap-3 border-t border-ink/25 pt-4 text-[15px] font-semibold leading-[1.5]">
+                    <Check className="mt-0.5 shrink-0 text-olive" size={19} />
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </section>
+
+          <section className="bg-[#e2dfd6] py-20 lg:py-28">
+            <div className={container}>
+              <Reveal>
+                <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+                  <div>
+                    <p className="mb-4 text-[13px] font-bold tracking-[.18em] text-olive uppercase">Explore the options</p>
+                    <h2 className="font-display text-[clamp(48px,6vw,88px)] leading-[.88] font-black uppercase">Choose your moment.</h2>
+                  </div>
+                  <p className="max-w-[350px] text-[16px] leading-[1.6] text-[#55544f]">Start with the occasion, then choose the garment, colour, artwork and quantity that make sense for it.</p>
+                </div>
+              </Reveal>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {content.productLinks.map((link, index) => (
+                  <Link key={link.title} href={link.href} className="group flex min-h-[190px] flex-col justify-between border border-ink bg-paper p-5 transition-transform hover:-translate-y-1">
+                    <span className="font-display text-5xl font-black text-olive">0{index + 1}</span>
+                    <span>
+                      <span className="flex items-center justify-between gap-3 text-lg font-bold">{link.title}<ArrowUpRight size={18} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" /></span>
+                      <span className="mt-1 block text-sm text-[#55544f]">{link.text}</span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="enquiry" className={`${container} py-20 lg:py-32`}>
+            <Reveal>
+              <p className="mb-5 text-[13px] font-bold tracking-[.18em] text-olive uppercase">The simple process</p>
+              <h2 className="font-display text-[clamp(52px,6vw,92px)] leading-[.88] font-black uppercase">Idea in.<br />Print out.</h2>
+              <div className="mt-10 space-y-5 border-t border-ink pt-5 text-[16px] leading-[1.6]">
+                <p><strong>01. Tell us the occasion.</strong><br />Birthday, office event, anniversary, gift or something entirely your own.</p>
+                <p><strong>02. Share the details.</strong><br />Send your artwork, preferred garments, colours, sizes and quantity.</p>
+                <p><strong>03. Confirm the plan.</strong><br />We review the design and confirm the quote, production timeline and delivery details.</p>
+              </div>
+            </Reveal>
+          </section>
+          <section className="border-t border-ink/20 bg-gold py-14 lg:py-20" aria-labelledby="pricing-minimums-heading">
+            <div className={container}>
+              <div className="mb-8 grid gap-5 lg:grid-cols-[.7fr_1.3fr] lg:items-end">
+                <h2 id="pricing-minimums-heading" className="font-display text-[clamp(48px,6vw,82px)] leading-[.88] font-black uppercase">Custom design &amp; print rates.</h2>
+                <p className="max-w-[720px] text-base leading-7 text-ink">{CUSTOM_PRINT_AREA} print area · {CUSTOM_PRINT_DISCOUNT_PERCENT}% off applied. Garment price is separate; final artwork and order quote are confirmed before printing.</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {Object.entries(customPrintOptions).map(([key, option]) => {
+                  const discountedPrice = customPrintDiscountedPrice(option.regularPrice);
+                  return (
+                    <article key={key} className="border border-ink/20 bg-paper p-5 sm:p-7">
+                      <p className="text-xs font-bold tracking-[.15em] text-olive uppercase">{option.label} · {CUSTOM_PRINT_AREA}</p>
+                      <div className="mt-3 flex flex-wrap items-baseline gap-3">
+                        <del className="text-lg text-ink/50">₹{option.regularPrice}</del>
+                        <span className="font-display text-5xl leading-none font-black">₹{discountedPrice}</span>
+                        <span className="text-sm font-bold">per garment</span>
+                      </div>
+                      <p className="mt-3 text-sm text-ink/70">Includes {CUSTOM_PRINT_DISCOUNT_PERCENT}% custom printing discount. Garment price additional.</p>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+          <section className="border-t border-ink/20 bg-[#eeece5] py-16 lg:py-24">
+            <div className={`${container} grid gap-10 lg:grid-cols-[.7fr_1.3fr]`}>
+              <div>
+                <p className="mb-4 text-[13px] font-bold tracking-[.18em] text-olive uppercase">Custom printing FAQ</p>
+                <h2 className="font-display text-[clamp(48px,6vw,78px)] leading-[.88] font-black uppercase">Before you print.</h2>
+              </div>
+              <div className="divide-y divide-ink/20 border-y border-ink/25">
+                {faq.map(([question, answer]) => (
+                  <details key={question} className="py-5">
+                    <summary className="cursor-pointer text-lg font-bold">{question}</summary>
+                    <p className="mt-3 max-w-2xl text-[15px] leading-[1.7] text-[#55544f]">{answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </section>
+        </main>
+      </Storefront>
+      <SiteFooter />
+    </>
+  );
+}

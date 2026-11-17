@@ -1,0 +1,85 @@
+@import "tailwindcss";
+@theme inline {
+  --color-ink: #0d0d0c;
+  --color-paper: #f1f0eb;
+  --color-gold: #e6c173;
+  --color-olive: #336000;
+  --font-sans: var(--font-hanken);
+  --font-display: var(--font-shoulders);
+}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 24px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
+  }
+  button,
+  a,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button,
+  summary {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-olive);
+    outline-offset: 5px;
+  }
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+}
+@layer components {
+  button:not([aria-label]):not([title]):not([style]):not([class*="rounded-full"]):not([class*="size-"]):not([class*="min-w-"]),
+  a[class~="bg-ink"]:not([class*="absolute"]),
+  a[class~="bg-gold"]:not([class*="absolute"]):not(.offer-banner-panel),
+  a[class~="bg-olive"]:not([class*="absolute"]),
+  a[class~="border"][class*="px-"]:not([class*="border-b"]) {
+    border: 0 !important;
+    color: #f1f0eb !important;
+    background-color: #0d0d0c !important;
+    background-image: none !important;
+    box-shadow: none;
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  button:not([aria-label]):not([title]):not([style]):not([class*="rounded-full"]):not([class*="size-"]):not([class*="min-w-"]):hover,
+  a[class~="bg-ink"]:not([class*="absolute"]):hover,
+  a[class~="bg-gold"]:not([class*="absolute"]):not(.offer-banner-panel):hover,
+  a[class~="bg-olive"]:not([class*="absolute"]):hover,
+  a[class~="border"][class*="px-"]:not([class*="border-b"]):hover {
+    color: #f1f0eb !important;
+    background-color: #336000 !important;
+  }
+}
+@media (max-width: 767px) {
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+}
+@media (max-width: 1023px) {
+  body {
+    padding-bottom: calc(68px + env(safe-area-inset-bottom));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
