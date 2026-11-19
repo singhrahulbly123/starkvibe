@@ -173,7 +173,9 @@ export function ShopCatalogue({
   const filteredProducts = catalogueProducts
     .filter(
       (p) =>
-        (!productIds || filters.category !== fixedCategory || productIds.includes(p.id)) &&
+        (!productIds ||
+          filters.category !== fixedCategory ||
+          productIds.some((id) => p.id === id || p.slug === id || p.slug?.startsWith(`${id}-`))) &&
         matchesFilters(p, filters, saved, shopColours),
     )
     .sort(

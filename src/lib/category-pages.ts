@@ -27,7 +27,7 @@ export const categoryPages: Record<string, CategoryShopConfig> = {
   },
   sweatshirts: {
     path: "/shop/sweatshirts", label: "Sweatshirts", heading: "Sweatshirts.", category: "fleece",
-    productIds: ["sweatshirt"], introTitle: "Substantial 350 GSM cotton fleece",
+    productIds: ["350-gsm-fleece-sweatshirt"], introTitle: "Substantial 350 GSM cotton fleece",
     introParagraphs: [
       "The StarkVibe sweatshirt is made in 350 GSM cotton fleece for a substantial feel with warmth, softness and durability. It gives cooler-weather dressing a simple everyday layer, while the clean surface also leaves room for a custom-printing or group-clothing direction. The heavier fabric weight makes it easy to distinguish from the lighter 180, 220 and 240 GSM T-shirts.",
       "The sweatshirt is double bio-washed, silicon washed and double stitched. That combination keeps the product story focused on fabric feel and construction rather than extra claims. Review the product card for its available colours and details, then use the custom-printing link when you are planning a branded group order. The page shows the sweatshirt on its own for a focused choice.",
@@ -35,7 +35,7 @@ export const categoryPages: Record<string, CategoryShopConfig> = {
   },
   hoodies: {
     path: "/shop/hoodies", label: "Hoodies", heading: "Hoodies.", category: "fleece",
-    productIds: ["hoodie"], introTitle: "350 GSM cotton fleece for layering",
+    productIds: ["350-gsm-fleece-hoodie"], introTitle: "350 GSM cotton fleece for layering",
     introParagraphs: [
       "The StarkVibe hoodie is a 350 GSM 100% cotton fleece layer with the warmth, softness and durability associated with the heavier end of the range. Its streetwear direction makes it a natural option for everyday outfits, group clothing and custom branding where a substantial layer is useful. The product page keeps the hoodie separate from the matching sweatshirt.",
       "The hoodie is double bio-washed, silicon washed and double stitched. Browse its product card for the current colour options and product details, then use the custom-printing route if you are planning a design for a group or campaign. The product grid keeps this hoodie focused, while the shop filters still let you compare fabric weight and other choices.",
