@@ -127,7 +127,7 @@ export function Storefront({
   }
   return (
     <>
-      <header className="fixed top-0 left-0 z-[100] isolate box-border flex h-[60px] w-full max-w-full flex-nowrap overflow-x-clip items-center gap-1 border-b border-ink/15 bg-paper/95 px-3 py-2 shadow-[0_6px_18px_rgba(13,13,12,.08)] backdrop-blur-md sm:gap-2 sm:px-5 lg:h-[76px] lg:gap-3 lg:px-12">
+      <header className="fixed top-0 left-0 z-[100] isolate box-border grid h-[60px] w-[100dvw] max-w-[100dvw] grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 overflow-hidden border-b border-ink/15 bg-paper/95 px-3 py-2 shadow-[0_6px_18px_rgba(13,13,12,.08)] backdrop-blur-md sm:gap-2 sm:px-5 lg:flex lg:h-[76px] lg:w-full lg:max-w-full lg:gap-3 lg:px-12">
         <nav
           aria-label="Main navigation"
           className="hidden gap-6 whitespace-nowrap text-[13px] font-semibold tracking-[.02em] uppercase lg:absolute lg:left-1/2 lg:flex lg:-translate-x-1/2"
@@ -147,28 +147,28 @@ export function Storefront({
           aria-label="Open menu"
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(true)}
-          className="order-3 flex size-11 shrink-0 items-center justify-center border border-ink/15 bg-paper transition-colors hover:bg-ink hover:text-paper lg:hidden"
+          className="order-3 flex size-10 shrink-0 items-center justify-center border border-ink/15 bg-paper transition-colors hover:bg-ink hover:text-paper lg:hidden"
         >
           <Menu size={22} />
         </button>
         <a
           href="/#top"
           aria-label="StarkVibe home"
-          className="order-first flex min-w-0 max-w-[38vw] items-center"
+          className="order-first flex min-w-0 items-center"
         >
           <Image
             src="/branding/starkvibe-wordmark-premium.png"
             alt="StarkVibe"
             width={280}
             height={88}
-            className="h-auto w-[38vw] min-w-[96px] max-w-[150px] lg:w-[190px]"
+            className="h-auto w-[min(38vw,150px)] min-w-0 max-w-full lg:w-[190px]"
           />
         </a>
-        <div className="order-2 ml-auto flex min-w-0 items-center justify-end gap-0 sm:gap-1 lg:flex-1">
+        <div className="order-2 ml-auto flex min-w-0 shrink-0 items-center justify-end gap-0 sm:gap-1 lg:flex-1">
           <button
             aria-label="Search products"
             onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2 lg:p-3"
+            className="flex size-10 shrink-0 items-center justify-center lg:size-auto lg:p-3"
           >
             <Search size={22} />
           </button>
@@ -183,7 +183,7 @@ export function Storefront({
           <Link
             href="/cart"
             aria-label={`Open cart (${count} items)`}
-            className="relative flex size-11 shrink-0 items-center justify-center bg-ink text-paper lg:h-11 lg:w-auto lg:gap-2 lg:px-4 lg:text-sm"
+            className="relative flex size-10 shrink-0 items-center justify-center bg-ink text-paper lg:h-11 lg:w-auto lg:gap-2 lg:px-4 lg:text-sm"
           >
             <ShoppingBag size={18} />
             <span className="absolute -top-1 -right-1 flex size-4 items-center justify-center rounded-full bg-gold text-[9px] font-bold text-ink lg:static lg:size-auto lg:rounded-none lg:bg-transparent lg:text-sm lg:font-semibold lg:text-paper">
