@@ -9,7 +9,7 @@ import {
 } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Banknote, Check, LockKeyhole, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, LockKeyhole, Mail } from "lucide-react";
 import { useBag, formatPrice } from "@/lib/bag";
 import { productImage, productSlug, salePrice } from "@/lib/catalogue";
 import { trackEvent, trackPurchase, type EcommerceItem } from "@/lib/analytics";
@@ -17,12 +17,14 @@ import { backendFetch, saveAuth, type BackendOrder, type BackendUser } from "@/l
 import { GoogleSignIn } from "@/components/google-sign-in";
 
 const paymentMethods = [
-  "Cash on delivery",
   "Partial COD (20% advance)",
   "Razorpay",
 ] as const;
-const COD_SHIPPING_CHARGE = 50;
+const PARTIAL_COD_SHIPPING_CHARGE = 50;
 const EXPRESS_DELIVERY_CHARGE = 100;
+const defaultStates = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Kerala", "Maharashtra", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"];
+type CitySuggestion = { city: string; state: string; pincode: string };
+type PinSuggestion = { pin: string; office: string };
 
 type RazorpayPaymentResponse = { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string };
 type RazorpayCheckout = {
@@ -132,12 +134,16 @@ export function Checkout() {
   const [lastName, setLastName] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [states, setStates] = useState(defaultStates);
+  const [citySuggestions, setCitySuggestions] = useState<CitySuggestion[]>([]);
+  const [pinSuggestions, setPinSuggestions] = useState<PinSuggestion[]>([]);
+  const [addressLoading, setAddressLoading] = useState(false);
   const [pinNotice, setPinNotice] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; discountPercentage: number | null }>({ code: "", discount: 0, discountPercentage: null });
   const shippingCharge = shipping === "Express delivery"
     ? EXPRESS_DELIVERY_CHARGE
-    : payment === "Cash on delivery" || payment === "Partial COD (20% advance)"
-      ? COD_SHIPPING_CHARGE
+    : payment === "Partial COD (20% advance)"
+      ? PARTIAL_COD_SHIPPING_CHARGE
       : 0;
   const couponDiscount = coupon.discountPercentage === null ? coupon.discount : Math.round((subtotal * coupon.discountPercentage) / 100 * 100) / 100;
   const orderTotal = Math.max(0, subtotal - couponDiscount) + shippingCharge;
@@ -148,8 +154,26 @@ export function Checkout() {
     setPinNotice("Looking up PIN code…");
     try {
       const result = await backendFetch<{ city: string; state: string }>(`/address/pincode/${pin}`);
-      setCity(result.city || ""); setState(result.state || ""); setPinNotice("City and state filled from PIN code.");
+      setCity(result.city || ""); setState(result.state || ""); setCitySuggestions([]); setPinNotice("Address details updated from PIN code.");
+      await loadPincodes(result.state || "", result.city || "");
     } catch (error) { setPinNotice(error instanceof Error ? error.message : "Please enter city and state manually."); }
+  }
+
+  async function searchCities(nextState: string, query: string) {
+    if (!nextState || query.trim().length < 2) { setCitySuggestions([]); return; }
+    setAddressLoading(true);
+    try {
+      const result = await backendFetch<{ cities: CitySuggestion[] }>(`/address/cities?state=${encodeURIComponent(nextState)}&query=${encodeURIComponent(query)}`);
+      setCitySuggestions(result.cities);
+    } catch { setCitySuggestions([]); } finally { setAddressLoading(false); }
+  }
+
+  async function loadPincodes(nextState: string, nextCity: string) {
+    if (!nextState || nextCity.trim().length < 2) { setPinSuggestions([]); return; }
+    try {
+      const result = await backendFetch<{ pincodes: PinSuggestion[] }>(`/address/pincodes?state=${encodeURIComponent(nextState)}&city=${encodeURIComponent(nextCity)}`);
+      setPinSuggestions(result.pincodes);
+    } catch { setPinSuggestions([]); }
   }
 
   const analyticsItems: EcommerceItem[] = items.map((item) => ({
@@ -161,6 +185,7 @@ export function Checkout() {
 
   useEffect(() => {
     setEmail(window.localStorage.getItem("starkvibe-user-email") || "");
+    backendFetch<{ states: string[] }>("/address/states").then((result) => setStates(result.states)).catch(() => undefined);
   }, []);
 
   async function signInWithGoogle(credential: string): Promise<void> {
@@ -294,7 +319,7 @@ export function Checkout() {
     }
     if (!payment) {
       setShowPaymentOptions(true);
-      setSubmitError("Choose Cash on delivery, Partial COD, or Razorpay to continue.");
+      setSubmitError("Choose Partial COD or Razorpay to continue.");
       return;
     }
     if ((payment === "Razorpay" || payment === "Partial COD (20% advance)") && !razorpayEnabled) {
@@ -305,11 +330,6 @@ export function Checkout() {
     setSubmitting(true);
     setSubmitError("");
     const data = new FormData(event.currentTarget);
-
-    if (payment === "Cash on delivery") {
-      await finishOrder(data);
-      return;
-    }
 
     try {
       await loadRazorpayCheckout();
@@ -592,42 +612,27 @@ export function Checkout() {
                     />
                   </div>
                   <div className="mt-5 grid gap-5 sm:grid-cols-3">
-                    <Field
-                      label="City"
-                      id="city"
-                      name="city"
-                      autoComplete="address-level2"
-                      value={city}
-                      onChange={(event) => setCity(event.target.value)}
-                      list="indian-cities"
-                      required
-                    />
-                    <Field
-                      label="State"
-                      id="state"
-                      name="state"
-                      autoComplete="address-level1"
-                      value={state}
-                      onChange={(event) => setState(event.target.value)}
-                      list="indian-states"
-                      required
-                    />
-                    <Field
-                      label="PIN code"
-                      id="pin"
-                      name="pin"
-                      autoComplete="postal-code"
-                      inputMode="numeric"
-                      pattern="[1-9][0-9]{5}"
-                      maxLength={6}
-                      title="Enter a six-digit Indian PIN code"
-                      onBlur={(event) => lookupPin(event.target.value)}
-                      required
-                    />
+                    <div className="min-w-0">
+                      <label htmlFor="state" className="mb-2 block text-sm font-bold">State</label>
+                      <select id="state" name="state" value={state} onChange={(event) => { const nextState = event.target.value; setState(nextState); setCity(""); setCitySuggestions([]); setPinSuggestions([]); setPinNotice(""); }} required className="h-14 w-full appearance-none border-[1.5px] border-ink bg-transparent px-4 text-base font-semibold text-ink focus:outline-none focus:ring-2 focus:ring-olive">
+                        <option value="">Select state</option>
+                        {states.map((option) => <option key={option} value={option}>{option}</option>)}
+                      </select>
+                    </div>
+                    <div className="relative min-w-0">
+                      <Field label="City / district" id="city" name="city" autoComplete="off" value={city} disabled={!state} placeholder={state ? "Start typing your city" : "Select state first"} onChange={(event) => { const nextCity = event.target.value; setCity(nextCity); setPinSuggestions([]); searchCities(state, nextCity); }} onBlur={() => window.setTimeout(() => setCitySuggestions([]), 150)} required />
+                      {(addressLoading || citySuggestions.length > 0) && <div className="absolute z-20 mt-1 max-h-52 w-full overflow-auto border-[1.5px] border-ink bg-paper shadow-[4px_4px_0_#1c1d18]">
+                        {addressLoading && <p className="px-4 py-3 text-sm font-semibold text-[#55544f]">Finding cities…</p>}
+                        {citySuggestions.map((suggestion) => <button key={`${suggestion.city}-${suggestion.pincode}`} type="button" onMouseDown={() => { setCity(suggestion.city); setCitySuggestions([]); setPinNotice("Choose a PIN code below, or enter one manually."); loadPincodes(state, suggestion.city); }} className="block w-full border-b border-ink/15 px-4 py-3 text-left text-sm font-bold hover:bg-[#e2dfd6]">{suggestion.city}<span className="ml-2 text-xs font-normal text-[#55544f]">{suggestion.state}</span></button>)}
+                      </div>}
+                    </div>
+                    <div className="min-w-0">
+                      <Field label="PIN code" id="pin" name="pin" autoComplete="postal-code" inputMode="numeric" pattern="[1-9][0-9]{5}" maxLength={6} title="Enter a six-digit Indian PIN code" placeholder="Enter or select PIN" onChange={(event) => { if (event.target.value.length === 6) lookupPin(event.target.value); }} required />
+                    </div>
                   </div>
-                  <datalist id="indian-states">{["Andhra Pradesh","Delhi","Gujarat","Karnataka","Kerala","Maharashtra","Rajasthan","Tamil Nadu","Telangana","Uttar Pradesh","West Bengal"].map((option) => <option key={option} value={option} />)}</datalist>
-                  <datalist id="indian-cities">{["Ahmedabad","Bengaluru","Chennai","Delhi","Hyderabad","Jaipur","Kochi","Kolkata","Mumbai","Pune"].map((option) => <option key={option} value={option} />)}</datalist>
-                  {pinNotice && <p className="mt-3 text-sm text-[#55544f]" role="status">{pinNotice}</p>}
+                  {pinSuggestions.length > 0 && <div className="mt-4 border-[1.5px] border-ink bg-[#e2dfd6] p-4"><p className="mb-3 text-xs font-bold tracking-[.14em] text-olive uppercase">PIN codes for {city}</p><div className="flex flex-wrap gap-2">{pinSuggestions.map((suggestion) => <button key={suggestion.pin} type="button" onClick={() => { const pin = document.getElementById("pin") as HTMLInputElement | null; if (pin) { pin.value = suggestion.pin; pin.dispatchEvent(new Event("input", { bubbles: true })); } setPinNotice(`${suggestion.pin} selected${suggestion.office ? ` · ${suggestion.office}` : ""}.`); }} className="border border-ink bg-paper px-3 py-2 text-sm font-bold hover:bg-gold">{suggestion.pin}</button>)}</div></div>}
+                  <p className="mt-3 text-sm leading-relaxed text-[#55544f]">Select your state, then search for your city. You can select a suggested PIN or type and change the six-digit PIN yourself.</p>
+                  {pinNotice && <p className="mt-2 text-sm font-semibold text-olive" role="status">{pinNotice}</p>}
                   <div
                     className={`mt-6 border-[1.5px] border-ink p-5 ${business ? "bg-[#e2dfd6]" : ""}`}
                   >
@@ -780,28 +785,18 @@ export function Checkout() {
                   </div>
                 </dl>
                 <p className="mb-7 text-[13px] leading-relaxed text-[#9a988f]">
-                  {shipping === "Express delivery" ? "Express delivery has a ₹100 shipping charge." : shipping ? `Delivery: ${shipping}. COD has a ₹50 shipping charge; online payment has no shipping charge.` : "Select a delivery option to continue. Express delivery adds ₹100; standard COD adds ₹50 and standard online payment is free."}
+                  {shipping === "Express delivery" ? "Express delivery has a ₹100 shipping charge." : shipping ? `Delivery: ${shipping}. Partial COD adds ₹50; full online payment has free standard shipping.` : "Select a delivery option to continue. Express delivery adds ₹100; Partial COD adds ₹50 and full online payment is free."}
                 </p>
                 {showPaymentOptions && <>
                   <p className="mb-3 text-xs font-bold tracking-[.16em] text-gold uppercase">4 · Select payment method</p>
                   <div role="group" aria-label="Payment method" className="mb-5 grid grid-cols-2 gap-2.5">
                     <button
                       type="button"
-                      aria-label="Pay with cash on delivery"
-                      aria-pressed={payment === "Cash on delivery"}
-                      onClick={() => { setPayment("Cash on delivery"); setSubmitError(""); }}
-                      className={`flex min-h-16 items-center justify-center gap-2 border-2 px-3 py-3 text-sm font-extrabold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-paper ${payment === "Cash on delivery" ? "border-gold bg-gold text-ink" : "border-paper bg-paper text-ink hover:bg-[#e2dfd6]"}`}
-                    >
-                      <Banknote size={20} strokeWidth={2.5} />
-                      <span className="text-left leading-tight">Cash on<br />delivery</span>
-                    </button>
-                    <button
-                      type="button"
                       aria-pressed={payment === "Partial COD (20% advance)"}
                       disabled={razorpayConfigLoading || !razorpayEnabled}
                       onClick={() => { setPayment("Partial COD (20% advance)"); setSubmitError(""); }}
-                      className={`flex min-h-16 items-center justify-center border-2 px-3 py-3 text-sm font-extrabold ${payment === "Partial COD (20% advance)" ? "border-gold bg-gold text-ink" : "border-paper bg-paper text-ink"}`}
-                    >Partial COD<br /><span className="ml-1 text-xs">Pay 20% now</span></button>
+                      className={`flex min-h-16 items-center justify-center border-2 px-3 py-3 text-sm font-extrabold ${payment === "Partial COD (20% advance)" ? "border-gold bg-gold text-ink" : "border-paper bg-paper text-ink hover:bg-[#e2dfd6]"}`}
+                    ><span className="text-left leading-tight">Partial COD<span className="mt-0.5 block text-[11px] font-semibold">20% advance online</span></span></button>
                     <button
                       type="button"
                       aria-label="Pay securely with Razorpay"
@@ -824,15 +819,15 @@ export function Checkout() {
                   style={{ backgroundColor: "#e8bc63" }}
                   className="flex h-16 w-full items-center justify-center gap-3 rounded-sm bg-[#e8bc63] px-4 text-[17px] font-extrabold text-ink shadow-[0_5px_0_rgba(232,188,99,0.35)] ring-2 ring-[#e8bc63] ring-offset-2 ring-offset-ink transition-all hover:-translate-y-0.5 hover:bg-[#dca94c] hover:shadow-none focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-paper disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {submitting ? (payment === "Razorpay" ? "Processing payment…" : "Saving order…") : payment === "Razorpay" ? "Pay securely" : payment === "Cash on delivery" ? "Place order" : "Choose payment method"} {!submitting && <ArrowRight size={18} />}
+                  {submitting ? "Processing payment…" : payment === "Razorpay" ? "Pay securely" : payment === "Partial COD (20% advance)" ? "Pay 20% advance" : "Choose payment method"} {!submitting && <ArrowRight size={18} />}
                 </button>
-                {!payment && <p className="mt-3 text-center text-xs text-[#c9c7be]">Select delivery first, then choose COD or online payment.</p>}
+                {!payment && <p className="mt-3 text-center text-xs text-[#c9c7be]">Select delivery first, then choose Partial COD or online payment.</p>}
                 {payment === "Partial COD (20% advance)" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Pay {formatPrice(partialAdvance)} now (20%). The remaining {formatPrice(orderTotal - partialAdvance)} is payable on delivery.</p>}
                   {payment === "Razorpay" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Online payment selected. {shipping === "Express delivery" ? "Express delivery adds ₹100." : "Standard shipping is free."}</p>}
                 {submitError && <p className="mt-3 border border-red-400 bg-red-50 p-3 text-sm font-semibold text-red-900" role="alert">{submitError}</p>}
                 <ul className="mt-6 space-y-3 text-sm text-[#c9c7be]">
                   {[
-                    payment === "Razorpay" ? "Payment verified before order confirmation" : "Pay when your order arrives",
+                    payment === "Partial COD (20% advance)" ? "20% is verified now; balance is due on delivery" : "Payment verified before order confirmation",
                     "Delivery details confirmed with you",
                     "Your bag stays saved until confirmation",
                   ].map((text) => (
