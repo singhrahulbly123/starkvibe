@@ -22,6 +22,7 @@ const paymentMethods = [
 ] as const;
 const PARTIAL_COD_SHIPPING_CHARGE = 50;
 const EXPRESS_DELIVERY_CHARGE = 100;
+const GST_RATE = 5;
 const defaultStates = ["Andhra Pradesh", "Delhi", "Gujarat", "Karnataka", "Kerala", "Maharashtra", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "West Bengal"];
 type CitySuggestion = { city: string; state: string; pincode: string };
 type PinSuggestion = { pin: string; office: string };
@@ -148,6 +149,8 @@ export function Checkout() {
   const couponDiscount = coupon.discountPercentage === null ? coupon.discount : Math.round((subtotal * coupon.discountPercentage) / 100 * 100) / 100;
   const orderTotal = Math.max(0, subtotal - couponDiscount) + shippingCharge;
   const partialAdvance = Math.round(orderTotal * 20) / 100;
+  const taxableAmount = Math.round((orderTotal / (1 + GST_RATE / 100)) * 100) / 100;
+  const gstAmount = Math.round((orderTotal - taxableAmount) * 100) / 100;
 
   async function lookupPin(pin: string) {
     if (!/^[1-9][0-9]{5}$/.test(pin)) return;
@@ -646,7 +649,7 @@ export function Checkout() {
                       This is a business order
                     </label>
                     <p className="mt-0.5 ml-9 text-sm text-[#55544f]">
-                      Add your GSTIN to request a tax invoice.
+                      Add your GSTIN for the business billing details on the tax invoice.
                     </p>
                     {business && (
                       <div className="mt-[18px] grid gap-5 sm:grid-cols-2">
@@ -783,6 +786,10 @@ export function Checkout() {
                       {formatPrice(orderTotal)}
                     </dd>
                   </div>
+                  <div className="flex justify-between gap-4 border-t border-[#2e2e2a] pt-3 text-xs text-[#c9c7be]">
+                    <span>Includes GST ({GST_RATE}%)</span>
+                    <span>Taxable {formatPrice(taxableAmount)} · GST {formatPrice(gstAmount)}</span>
+                  </div>
                 </dl>
                 <p className="mb-7 text-[13px] leading-relaxed text-[#9a988f]">
                   {shipping === "Express delivery" ? "Express delivery has a ₹100 shipping charge." : shipping ? `Delivery: ${shipping}. Partial COD adds ₹50; full online payment has free standard shipping.` : "Select a delivery option to continue. Express delivery adds ₹100; Partial COD adds ₹50 and full online payment is free."}
@@ -795,7 +802,7 @@ export function Checkout() {
                       aria-pressed={payment === "Partial COD (20% advance)"}
                       disabled={razorpayConfigLoading || !razorpayEnabled}
                       onClick={() => { setPayment("Partial COD (20% advance)"); setSubmitError(""); }}
-                      className={`flex min-h-16 items-center justify-center border-2 px-3 py-3 text-sm font-extrabold ${payment === "Partial COD (20% advance)" ? "border-gold bg-gold text-ink" : "border-paper bg-paper text-ink hover:bg-[#e2dfd6]"}`}
+                      className={`flex min-h-16 items-center justify-center border-2 px-3 py-3 text-sm font-extrabold ${payment === "Partial COD (20% advance)" ? "border-gold bg-[#e2dfd6] text-ink" : "border-paper bg-[#e2dfd6] text-ink hover:bg-[#e2dfd6]"}`}
                     ><span className="text-left leading-tight">Partial COD<span className="mt-0.5 block text-[11px] font-semibold">20% advance online</span></span></button>
                     <button
                       type="button"
