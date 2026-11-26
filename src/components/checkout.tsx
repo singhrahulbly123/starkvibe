@@ -696,13 +696,13 @@ export function Checkout() {
                           </span>
                         </span>
                         <span className="text-right text-sm font-bold">
-                          {method === "Express delivery" ? `+${formatPrice(EXPRESS_DELIVERY_CHARGE)}` : payment === "Cash on delivery" ? `+${formatPrice(COD_SHIPPING_CHARGE)} COD` : payment === "Razorpay" ? "FREE online" : "COD +₹50 · Online FREE"}
+                          {method === "Express delivery" ? `+${formatPrice(EXPRESS_DELIVERY_CHARGE)}` : payment === "Partial COD (20% advance)" ? `+${formatPrice(PARTIAL_COD_SHIPPING_CHARGE)} Partial COD` : payment === "Razorpay" ? "FREE online" : "Partial COD +₹50 · Online FREE"}
                         </span>
                       </label>
                     ))}
                   </div>
                 </Section>
-                <p className="max-w-[520px] text-sm leading-relaxed text-[#55544f]">Choose Cash on delivery or Razorpay in the order panel to continue. Your delivery method is selected above.</p>
+                <p className="max-w-[520px] text-sm leading-relaxed text-[#55544f]">Choose Partial COD or Razorpay in the order panel to continue. Your delivery method is selected above.</p>
                 <p className="max-w-[520px] text-sm leading-relaxed text-[#55544f]">
                   Your selected delivery method and final order total are included with your order. Razorpay orders are confirmed after payment verification.
                 </p>
