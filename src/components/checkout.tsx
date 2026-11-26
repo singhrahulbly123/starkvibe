@@ -18,6 +18,7 @@ import { GoogleSignIn } from "@/components/google-sign-in";
 
 const paymentMethods = [
   "Cash on delivery",
+  "Partial COD (20% advance)",
   "Razorpay",
 ] as const;
 const COD_SHIPPING_CHARGE = 50;
@@ -129,14 +130,27 @@ export function Checkout() {
   const [googleError, setGoogleError] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [pinNotice, setPinNotice] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; discountPercentage: number | null }>({ code: "", discount: 0, discountPercentage: null });
   const shippingCharge = shipping === "Express delivery"
     ? EXPRESS_DELIVERY_CHARGE
-    : payment === "Cash on delivery"
+    : payment === "Cash on delivery" || payment === "Partial COD (20% advance)"
       ? COD_SHIPPING_CHARGE
       : 0;
   const couponDiscount = coupon.discountPercentage === null ? coupon.discount : Math.round((subtotal * coupon.discountPercentage) / 100 * 100) / 100;
   const orderTotal = Math.max(0, subtotal - couponDiscount) + shippingCharge;
+  const partialAdvance = Math.round(orderTotal * 20) / 100;
+
+  async function lookupPin(pin: string) {
+    if (!/^[1-9][0-9]{5}$/.test(pin)) return;
+    setPinNotice("Looking up PIN code…");
+    try {
+      const result = await backendFetch<{ city: string; state: string }>(`/address/pincode/${pin}`);
+      setCity(result.city || ""); setState(result.state || ""); setPinNotice("City and state filled from PIN code.");
+    } catch (error) { setPinNotice(error instanceof Error ? error.message : "Please enter city and state manually."); }
+  }
 
   const analyticsItems: EcommerceItem[] = items.map((item) => ({
     item_id: item.product.id,
@@ -207,6 +221,7 @@ export function Checkout() {
               email: data.get("email"),
               phone: data.get("phone"),
               address: ["address", "apartment", "city", "state", "pin"].map((name) => data.get(name)).filter(Boolean).join(", "),
+              city: String(data.get("city") || ""), state: String(data.get("state") || ""), pin: String(data.get("pin") || ""),
             },
             items: items.map((item) => ({ id: productSlug(item.product), name: item.product.name, colour: item.product.colours[item.colour].name, size: item.size, quantity: item.quantity, unit_price: salePrice(item.product) })),
             subtotal,
@@ -279,10 +294,10 @@ export function Checkout() {
     }
     if (!payment) {
       setShowPaymentOptions(true);
-      setSubmitError("Choose Cash on delivery or Razorpay to continue.");
+      setSubmitError("Choose Cash on delivery, Partial COD, or Razorpay to continue.");
       return;
     }
-    if (payment === "Razorpay" && !razorpayEnabled) {
+    if ((payment === "Razorpay" || payment === "Partial COD (20% advance)") && !razorpayEnabled) {
       setPayment("");
       setSubmitError("Razorpay is currently unavailable. Please choose cash on delivery or try again later.");
       return;
@@ -309,12 +324,14 @@ export function Checkout() {
             email: String(data.get("email") || ""),
             phone: String(data.get("phone") || ""),
             address: ["address", "apartment", "city", "state", "pin"].map((name) => data.get(name)).filter(Boolean).join(", "),
+            city: String(data.get("city") || ""), state: String(data.get("state") || ""), pin: String(data.get("pin") || ""),
           },
           items: items.map((item) => ({ product_slug: productSlug(item.product), colour: item.product.colours[item.colour].name, size: item.size, quantity: item.quantity })),
           shipping_method: shipping,
           coupon_code: coupon.code || null,
           business_details: business ? { name: data.get("business"), gstin: data.get("gstin") } : null,
           note: localStorage.getItem("starkvibe-order-note") || null,
+          payment_mode: payment === "Partial COD (20% advance)" ? "partial_cod" : "full",
         }),
       });
 
@@ -323,7 +340,7 @@ export function Checkout() {
         amount: orderBody.amount,
         currency: orderBody.currency,
         name: "StarkVibe",
-        description: "Order payment",
+        description: payment === "Partial COD (20% advance)" ? "20% advance for Partial COD" : "Order payment",
         order_id: orderBody.order_id,
         prefill: {
           name: `${data.get("first")} ${data.get("last")}`.trim(),
@@ -580,6 +597,9 @@ export function Checkout() {
                       id="city"
                       name="city"
                       autoComplete="address-level2"
+                      value={city}
+                      onChange={(event) => setCity(event.target.value)}
+                      list="indian-cities"
                       required
                     />
                     <Field
@@ -587,6 +607,9 @@ export function Checkout() {
                       id="state"
                       name="state"
                       autoComplete="address-level1"
+                      value={state}
+                      onChange={(event) => setState(event.target.value)}
+                      list="indian-states"
                       required
                     />
                     <Field
@@ -598,9 +621,13 @@ export function Checkout() {
                       pattern="[1-9][0-9]{5}"
                       maxLength={6}
                       title="Enter a six-digit Indian PIN code"
+                      onBlur={(event) => lookupPin(event.target.value)}
                       required
                     />
                   </div>
+                  <datalist id="indian-states">{["Andhra Pradesh","Delhi","Gujarat","Karnataka","Kerala","Maharashtra","Rajasthan","Tamil Nadu","Telangana","Uttar Pradesh","West Bengal"].map((option) => <option key={option} value={option} />)}</datalist>
+                  <datalist id="indian-cities">{["Ahmedabad","Bengaluru","Chennai","Delhi","Hyderabad","Jaipur","Kochi","Kolkata","Mumbai","Pune"].map((option) => <option key={option} value={option} />)}</datalist>
+                  {pinNotice && <p className="mt-3 text-sm text-[#55544f]" role="status">{pinNotice}</p>}
                   <div
                     className={`mt-6 border-[1.5px] border-ink p-5 ${business ? "bg-[#e2dfd6]" : ""}`}
                   >
@@ -770,6 +797,13 @@ export function Checkout() {
                     </button>
                     <button
                       type="button"
+                      aria-pressed={payment === "Partial COD (20% advance)"}
+                      disabled={razorpayConfigLoading || !razorpayEnabled}
+                      onClick={() => { setPayment("Partial COD (20% advance)"); setSubmitError(""); }}
+                      className={`flex min-h-16 items-center justify-center border-2 px-3 py-3 text-sm font-extrabold ${payment === "Partial COD (20% advance)" ? "border-gold bg-gold text-ink" : "border-paper bg-paper text-ink"}`}
+                    >Partial COD<br /><span className="ml-1 text-xs">Pay 20% now</span></button>
+                    <button
+                      type="button"
                       aria-label="Pay securely with Razorpay"
                       aria-pressed={payment === "Razorpay"}
                       disabled={razorpayConfigLoading || !razorpayEnabled}
@@ -793,7 +827,8 @@ export function Checkout() {
                   {submitting ? (payment === "Razorpay" ? "Processing payment…" : "Saving order…") : payment === "Razorpay" ? "Pay securely" : payment === "Cash on delivery" ? "Place order" : "Choose payment method"} {!submitting && <ArrowRight size={18} />}
                 </button>
                 {!payment && <p className="mt-3 text-center text-xs text-[#c9c7be]">Select delivery first, then choose COD or online payment.</p>}
-                {payment === "Razorpay" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Online payment selected. {shipping === "Express delivery" ? "Express delivery adds ₹100." : "Standard shipping is free."}</p>}
+                {payment === "Partial COD (20% advance)" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Pay {formatPrice(partialAdvance)} now (20%). The remaining {formatPrice(orderTotal - partialAdvance)} is payable on delivery.</p>}
+                  {payment === "Razorpay" && <p className="mt-3 text-center text-xs text-[#c9c7be]">Online payment selected. {shipping === "Express delivery" ? "Express delivery adds ₹100." : "Standard shipping is free."}</p>}
                 {submitError && <p className="mt-3 border border-red-400 bg-red-50 p-3 text-sm font-semibold text-red-900" role="alert">{submitError}</p>}
                 <ul className="mt-6 space-y-3 text-sm text-[#c9c7be]">
                   {[
