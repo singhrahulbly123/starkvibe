@@ -2,7 +2,7 @@ export type BackendUser = { id: number; name: string; email: string; phone?: str
 export type BackendOrder = {
   id: number; order_number: string; customer: { name: string; email: string; phone: string; address?: string };
   items: Array<{ name: string; colour: string; size: string; quantity: number; unit_price: number }>;
-  subtotal: string; shipping_charge?: string; coupon_code?: string; discount_amount?: string; shipping_method: string; payment_method: string; status: string; created_at: string;
+  subtotal: string; shipping_charge?: string; coupon_code?: string; discount_amount?: string; advance_amount?: string; pending_amount?: string; shipping_method: string; payment_method: string; payment_status?: string; status: string; created_at: string;
 };
 
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000/api";
@@ -30,6 +30,7 @@ export async function register(payload: { name: string; email: string; phone: st
 export function getMe() { return backendFetch<{ user: BackendUser }>("/auth/me"); }
 export function getOrders() { return backendFetch<{ orders: BackendOrder[] }>("/account/orders"); }
 export function cancelOrder(id: number) { return backendFetch<{ order: BackendOrder }>(`/account/orders/${id}/cancel`, { method: "POST" }); }
+export function invoiceUrl(id: number) { return `${API_URL}/account/orders/${id}/invoice`; }
 export function submitReview(payload: { product_slug: string; product_name: string; name: string; email?: string; rating: number; review: string }) {
   return backendFetch<{ message: string }>("/reviews", { method: "POST", body: JSON.stringify(payload) });
 }
