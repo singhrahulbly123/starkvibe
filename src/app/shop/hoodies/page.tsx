@@ -1,6 +1,7 @@
 import { CategoryShopPage } from "@/components/category-shop-page";
 import { categoryPages } from "@/lib/category-pages";
 import { buildMetadata } from "@/lib/seo";
+import { getCategoryPageContent } from "@/lib/category-pages-server";
 
 export const metadata = buildMetadata({
   title: "350 GSM Cotton Fleece Hoodies | StarkVibe",
@@ -8,6 +9,7 @@ export const metadata = buildMetadata({
   path: "/shop/hoodies",
 });
 
-export default function HoodiesPage() {
-  return <CategoryShopPage config={categoryPages.hoodies} />;
+export default async function HoodiesPage() {
+  const content = await getCategoryPageContent("hoodies");
+  return <CategoryShopPage config={categoryPages.hoodies} content={content} />;
 }

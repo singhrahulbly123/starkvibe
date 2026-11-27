@@ -26,7 +26,7 @@ const images = [
   },
   {
     src: "/slider/Starkvibe%20Wear%20Your%20Vibe%20Campaign.png",
-    alt: "Starkvibe wear your vibe campaign",
+    alt: "StarkVibe wear your vibe campaign",
     color: "#e4d7c8",
   },
 ];

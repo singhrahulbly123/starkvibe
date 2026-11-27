@@ -85,6 +85,7 @@ export function ShopCatalogue({
   breadcrumbLabel = "Shop",
   fixedCategory,
   productIds,
+  summary,
 }: {
   introTitle: string;
   introParagraphs: string[];
@@ -92,6 +93,7 @@ export function ShopCatalogue({
   breadcrumbLabel?: string;
   fixedCategory?: ShopFilters["category"];
   productIds?: string[];
+  summary?: string;
 }) {
   const [filters, setFilters] = useState<ShopFilters>(defaultShopFilters);
   const [filtersOpen, setFiltersOpen] = useState(true);
@@ -99,7 +101,10 @@ export function ShopCatalogue({
   const [saved, setSaved] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [catalogueProducts, setCatalogueProducts] = useState<Product[]>([]);
-  const shopColours = shopColoursFromProducts(catalogueProducts);
+  const categoryProducts = catalogueProducts.filter((product) =>
+    !productIds || productIds.some((id) => product.id === id || product.slug === id || product.slug?.startsWith(`${id}-`)),
+  );
+  const shopColours = shopColoursFromProducts(categoryProducts);
   useEffect(() => {
     fetch("/api/products")
       .then((response) => (response.ok ? response.json() : null))
@@ -174,7 +179,6 @@ export function ShopCatalogue({
     .filter(
       (p) =>
         (!productIds ||
-          filters.category !== fixedCategory ||
           productIds.some((id) => p.id === id || p.slug === id || p.slug?.startsWith(`${id}-`))) &&
         matchesFilters(p, filters, saved, shopColours),
     )
@@ -225,8 +229,9 @@ export function ShopCatalogue({
         </h1>
         <div className="max-w-[420px]">
           <p className="text-[17px] leading-[1.6] text-[#55544f]">
-            Seven pieces in 100% cotton, from 180 GSM tees to 350 GSM fleece.
-            All double bio-washed, silicon washed and double stitched.
+            {summary || (heading === "Fleece Hoodies"
+              ? "350 GSM 100% cotton fleece hoodies in five colours. Double bio-washed, silicon washed and double stitched."
+              : "Seven pieces in 100% cotton, from 180 GSM tees to 350 GSM fleece. All double bio-washed, silicon washed and double stitched.")}
           </p>
           <p className="mt-4 text-xs font-bold tracking-[.18em] text-olive uppercase">
             Start by picking a weight
@@ -250,7 +255,7 @@ export function ShopCatalogue({
               {weight || "All"}
             </span>
             <span className="text-xs font-semibold">
-              {catalogueProducts.filter((p) => !weight || p.gsm === weight).length}{" "}
+              {categoryProducts.filter((p) => !weight || p.gsm === weight).length}{" "}
               pieces{weight ? " · GSM" : ""}
             </span>
           </button>
@@ -356,7 +361,7 @@ export function ShopCatalogue({
           <ShopFiltersPanel
             filters={filters}
             onChange={changeFilters}
-            products={catalogueProducts}
+            products={categoryProducts}
             colours={shopColours}
           />
           </aside>

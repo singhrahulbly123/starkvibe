@@ -1,4 +1,4 @@
-import type { Product } from "./catalogue";
+import { salePrice, type Product } from "./catalogue";
 
 export const weightOptions = [0, 180, 220, 240, 350];
 export const shopCategories = [
@@ -66,13 +66,14 @@ export function matchesFilters(
   const colour = availableColours.find((c) => c.name === filters.colour);
   if (colour && !product.colours.some((c) => colour.files.includes(c.file)))
     return false;
-  if (filters.price === "under200" && product.price > 200) return false;
+  const currentPrice = salePrice(product);
+  if (filters.price === "under200" && currentPrice > 200) return false;
   if (
     filters.price === "200to300" &&
-    (product.price <= 200 || product.price > 300)
+    (currentPrice <= 200 || currentPrice > 300)
   )
     return false;
-  if (filters.price === "over300" && product.price <= 300) return false;
+  if (filters.price === "over300" && currentPrice <= 300) return false;
   return true;
 }
 export function sortProducts(products: Product[], sort: string) {

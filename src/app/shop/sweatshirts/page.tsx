@@ -1,6 +1,7 @@
 import { CategoryShopPage } from "@/components/category-shop-page";
 import { categoryPages } from "@/lib/category-pages";
 import { buildMetadata } from "@/lib/seo";
+import { getCategoryPageContent } from "@/lib/category-pages-server";
 
 export const metadata = buildMetadata({
   title: "350 GSM Cotton Fleece Sweatshirts | StarkVibe",
@@ -8,6 +9,7 @@ export const metadata = buildMetadata({
   path: "/shop/sweatshirts",
 });
 
-export default function SweatshirtsPage() {
-  return <CategoryShopPage config={categoryPages.sweatshirts} />;
+export default async function SweatshirtsPage() {
+  const content = await getCategoryPageContent("sweatshirts");
+  return <CategoryShopPage config={categoryPages.sweatshirts} content={content} />;
 }

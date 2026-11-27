@@ -13,5 +13,5 @@ export function productSeoDescription(product: Product) {
 }
 
 export function productSeoKeywords(product: Product) {
-  return [product.name, `${product.gsm} GSM`, productMaterial(product), "Starkvibe"].filter(Boolean);
+  return [product.name, `${product.gsm} GSM`, productMaterial(product), "StarkVibe"].filter(Boolean);
 }

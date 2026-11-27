@@ -61,6 +61,9 @@ export function productSlug(product: Pick<Product, "name"> & Partial<Pick<Produc
 }
 export function productColourHref(product: Product, colour: Colour) {
   const path = `/products/${productSlug(product)}`;
+  if (product.category === "fleece" && product.colours.length > 1) {
+    return `${path}-${colour.file}`;
+  }
   return product.colours.length > 1
     ? `${path}?colour=${encodeURIComponent(colour.file)}`
     : path;

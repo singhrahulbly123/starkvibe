@@ -30,7 +30,7 @@ export function buildMetadata({ title, description, path, image = defaultImage }
 }
 
 export function productMetaTitle(product: Product) {
-  return product.meta_title || `${product.name} | Starkvibe`;
+  return product.meta_title || `${product.name} | StarkVibe`;
 }
 
 export function productMetaDescription(product: Product) {

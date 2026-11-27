@@ -34,7 +34,7 @@ export const categoryPages: Record<string, CategoryShopConfig> = {
     ],
   },
   hoodies: {
-    path: "/shop/hoodies", label: "Hoodies", heading: "Hoodies.", category: "fleece",
+    path: "/shop/hoodies", label: "Hoodies", heading: "Fleece Hoodies", category: "fleece",
     productIds: ["350-gsm-fleece-hoodie"], introTitle: "350 GSM cotton fleece for layering",
     introParagraphs: [
       "The StarkVibe hoodie is a 350 GSM 100% cotton fleece layer with the warmth, softness and durability associated with the heavier end of the range. Its streetwear direction makes it a natural option for everyday outfits, group clothing and custom branding where a substantial layer is useful. The product page keeps the hoodie separate from the matching sweatshirt.",

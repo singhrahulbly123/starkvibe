@@ -174,11 +174,12 @@ export function Storefront({
           </button>
           <Link
             href="/my-account"
-            aria-label="My account"
+            aria-label="Account"
             aria-current={pathname === "/my-account" ? "page" : undefined}
-            className={`hidden size-11 shrink-0 items-center justify-center border border-ink/15 transition-colors hover:bg-ink hover:text-paper lg:flex ${pathname === "/my-account" ? "bg-ink text-paper" : ""}`}
+            className={`hidden h-11 shrink-0 items-center justify-center gap-2 border border-ink/15 px-3 text-sm font-semibold transition-colors hover:bg-ink hover:text-paper lg:flex ${pathname === "/my-account" ? "bg-ink text-paper" : ""}`}
           >
             <UserRound size={20} />
+            <span>Account</span>
           </Link>
           <Link
             href="/cart"

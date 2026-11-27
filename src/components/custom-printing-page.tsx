@@ -113,7 +113,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     ],
     productLinks: [
       { title: "Cotton polos", text: "Smart, breathable teamwear.", href: "/products/polo-220-gsm-matty-tee" },
-      { title: "Fleece hoodies", text: "Warm layers for your crew.", href: "/products/350-gsm-fleece-hoodie" },
+      { title: "Fleece hoodies", text: "Warm layers for your crew.", href: "/products/350-gsm-fleece-hoodie-black" },
       { title: "Fleece sweatshirts", text: "A clean event essential.", href: "/products/350-gsm-fleece-sweatshirt" },
       { title: "Start a bulk enquiry", text: "Share your quantity.", href: "/custom-printing#enquiry" },
     ],
@@ -143,7 +143,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     productLinks: [
       { title: "Premium sweatshirts", text: "A warmer anniversary gift.", href: "/products/350-gsm-fleece-sweatshirt" },
       { title: "Regular fit tees", text: "Simple, personal and wearable.", href: "/products/regular-fit-180-gsm-tee" },
-      { title: "Oversized hoodies", text: "Comfort with character.", href: "/products/350-gsm-fleece-hoodie" },
+      { title: "Oversized hoodies", text: "Comfort with character.", href: "/products/350-gsm-fleece-hoodie-black" },
       { title: "Plan an anniversary print", text: "Send the story.", href: "/custom-printing#enquiry" },
     ],
   },
@@ -201,7 +201,7 @@ const pages: Record<CustomPageKey, CustomPageContent> = {
     productLinks: [
       { title: "Regular fit tees", text: "A reliable campaign base.", href: "/products/regular-fit-180-gsm-tee" },
       { title: "Cotton polos", text: "A polished organiser layer.", href: "/products/polo-220-gsm-matty-tee" },
-      { title: "Fleece hoodies", text: "For long event days.", href: "/products/350-gsm-fleece-hoodie" },
+      { title: "Fleece hoodies", text: "For long event days.", href: "/products/350-gsm-fleece-hoodie-black" },
       { title: "Start a campaign enquiry", text: "Share your approved artwork.", href: "/custom-printing#enquiry" },
     ],
   },

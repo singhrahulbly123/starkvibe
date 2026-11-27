@@ -212,31 +212,7 @@ export function ProductDetails({
             · {fit} fit
           </p>
           <h1 className="mb-5 font-display text-[clamp(30px,4vw,60px)] leading-[.88] font-black uppercase">
-            {product.id === "oversized" ? (
-              <>
-                Oversized 220 GSM cotton tee
-              </>
-            ) : product.id === "terry" ? (
-              <>
-                Oversized 240 GSM French Terry
-              </>
-            ) : product.id === "regular" ? (
-              <>
-                Regular fit 180 GSM cotton tee
-              </>
-            ) : product.id === "polo" ? (
-              <>
-                Polo 220 GSM Matty tee
-              </>
-            ) : product.id === "kids" ? (
-              <>
-                Kids regular 180 GSM cotton tee
-              </>
-            ) : (
-              <>
-                {product.gsm} GSM fleece {product.id}
-              </>
-            )}
+            {product.name}
           </h1>
           <div className="mb-6 flex items-baseline gap-3.5">
             <span className="flex items-baseline gap-3.5">
@@ -610,7 +586,7 @@ export function ProductDetails({
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <h2 className="font-display text-[clamp(44px,5vw,76px)] leading-[.9] font-black uppercase">
             {product.category === "fleece"
-              ? "Sweatshirt aur Hoodie — 350 GSM"
+              ? "Size chart: 350 GSM Hoodie & Sweatshirt"
               : product.id === "polo"
                 ? "Polo T-Shirt — 220 GSM"
                 : product.id === "oversized" || product.id === "terry"
@@ -623,11 +599,6 @@ export function ProductDetails({
             {product.name} · {fit} fit · Available sizes: {sizesFor(product).join(", ")}
           </p>
         </div>
-        {product.category === "fleece" && (
-          <p className="mb-5 text-sm text-[#55544f]">
-            Supplier ke dono products ke liye catalogue measurements same hain.
-          </p>
-        )}
         {(product.id === "oversized" || product.id === "terry") && (
           <p className="mb-5 text-sm text-[#55544f]">
             Dono products ke catalogue mein same measurements hain.
@@ -681,8 +652,7 @@ export function ProductDetails({
           </table>
         </div>
         <p className="mt-4 text-sm text-[#55544f]">
-          Measurements are in inches. Please confirm with the supplier whether
-          chest measurements are flat or garment circumference before using them to assess fit.
+          Measurements are in inches.
         </p>
       </section>
       <section
