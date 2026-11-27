@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { productImage, productSlug, salePrice } from "@/lib/catalogue";
+import { plainRichText, productImage, productSlug, salePrice } from "@/lib/catalogue";
+import { galleryImages } from "@/lib/product-details";
 import { buildMetadata, productMetaDescription, productMetaTitle } from "@/lib/seo";
 import { ProductDetails } from "@/components/product-details";
 import { SiteFooter } from "@/components/site-footer";
 import { Storefront } from "@/components/storefront";
 import { JsonLd } from "@/components/json-ld";
 import { getCatalogueProducts } from "@/lib/catalogue-server";
+import { breadcrumbJsonLd } from "@/lib/structured-data";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -44,18 +46,22 @@ export default async function ProductPage({ params }: Props) {
   const catalogue = await getCatalogueProducts();
   const product = catalogue.find((item) => item.id === slug || productSlug(item) === slug);
   if (!product) notFound();
+  const category = product.slug?.includes("hoodie") ? { name: "Hoodies", path: "/shop/hoodies" } : product.slug?.includes("sweatshirt") ? { name: "Sweatshirts", path: "/shop/sweatshirts" } : product.category === "kids" ? { name: "Kids", path: "/shop/kids" } : product.category === "polo" ? { name: "Polos", path: "/shop/polos" } : { name: "T-shirts", path: "/shop/t-shirts" };
   return (
     <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Home", path: "/" }, { name: "Shop", path: "/shop" }, category, { name: product.name, path: `/products/${productSlug(product)}` }])} />
       <JsonLd
         data={{
           "@context": "https://schema.org",
           "@type": "Product",
           name: product.name,
-          description: product.long_description || product.note,
-          image: productImage(product, product.colours[0]),
+          description: plainRichText(product.long_description || product.note),
+          image: [...new Set(product.colours.flatMap((colour) => galleryImages(product, colour)))].map((url) => new URL(url, "https://starkvibe.com").href),
+          sku: product.variants?.[0]?.sku || productSlug(product),
           brand: { "@type": "Brand", name: "StarkVibe" },
           category: product.category,
           color: product.colours.map((item) => item.name),
+          ...(product.material ? { material: product.material } : {}),
           additionalProperty: {
             "@type": "PropertyValue",
             name: "Fabric weight",
@@ -63,9 +69,10 @@ export default async function ProductPage({ params }: Props) {
           },
           offers: {
             "@type": "Offer",
-            url: `https://starkvibe.com/products/${productSlug(product)}`,
+            url: product.canonical_url || `https://starkvibe.com/products/${productSlug(product)}`,
             priceCurrency: "INR",
             price: salePrice(product),
+            itemCondition: "https://schema.org/NewCondition",
             seller: { "@type": "Organization", name: "StarkVibe" },
           },
         }}
