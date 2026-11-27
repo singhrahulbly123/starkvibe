@@ -4,9 +4,11 @@ import { buildMetadata } from "@/lib/seo";
 import { getCategoryPageContent } from "@/lib/category-pages-server";
 
 export const metadata = buildMetadata({
-  title: "350 GSM Cotton Fleece Hoodies | StarkVibe",
-  description: "Shop the 350 GSM 100% cotton fleece hoodie from StarkVibe for warmth and streetwear styling, with double bio-wash, silicon wash and double stitching. Colours.",
+  title: "Fleece Hoodies for Men Online India | 350 GSM | StarkVibe",
+  description: "Shop 350 GSM 100% cotton fleece hoodies in 5 colours. Warm, soft and double stitched. Custom printing available across India.",
   path: "/shop/hoodies",
+  image: "/og-hoodies.png",
+  imageAlt: "StarkVibe fleece hoodies in multiple colours",
 });
 
 export default async function HoodiesPage() {

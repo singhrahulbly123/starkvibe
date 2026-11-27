@@ -14,10 +14,12 @@ import { HomeProductSlider } from "@/components/home-product-slider";
 import { getCatalogueProducts } from "@/lib/catalogue-server";
 
 export const metadata = buildMetadata({
-  title: "Premium Cotton T-Shirts & Custom Printing India | StarkVibe",
+  title: "StarkVibe | Winter Hoodies, Sweatshirts & Custom T-Shirts",
   description:
-    "100% cotton tees, polos, sweatshirts and hoodies from 180 to 350 GSM. Custom printing for birthdays, offices and teams. Prices from ₹745.",
+    "Shop 350 GSM fleece hoodies and sweatshirts for winter, plus 100% cotton tees and polos. Custom printing for teams, events and gifts across India.",
   path: "/",
+  image: "/og-home-winter.png",
+  imageAlt: "StarkVibe winter fleece collection campaign",
 });
 
 const container = "mx-auto max-w-[1400px] px-5 lg:px-12";
@@ -361,6 +363,14 @@ export default async function Home() {
               </div>
             </div>
           </section>
+          <section className={`${container} pt-10`}>
+            <h2 className="font-display text-4xl leading-none font-black uppercase">Winter wear: 350 GSM fleece hoodies and sweatshirts</h2>
+            <div className="mt-5 max-w-[920px] space-y-4 text-[15px] leading-7 text-[#55544f]">
+              <p>When the weather turns cooler, a heavier fabric makes the difference. StarkVibe fleece hoodies and sweatshirts are made from 350 GSM 100% cotton fleece, the heaviest weight in our range. They are double bio-washed, silicon washed and double stitched for a soft feel and a clean, structured fit.</p>
+              <p>Choose a hoodie with a kangaroo pocket for everyday layering, or a crewneck sweatshirt for a simple, classic look. Both are available in several colours and are suitable for custom printing for groups, colleges and teams.</p>
+              <div className="flex flex-wrap gap-5"><Link href="/shop/hoodies" className="font-bold underline">Shop fleece hoodies</Link><Link href="/shop/sweatshirts" className="font-bold underline">Shop fleece sweatshirts</Link></div>
+            </div>
+          </section>
           <HomeProductSlider initialProducts={catalogueProducts} />
           <HomeProductSlider hoodiesOnly initialProducts={catalogueProducts} />
           <HomeProductSlider sweatshirtsOnly initialProducts={catalogueProducts} />
@@ -392,7 +402,7 @@ export default async function Home() {
                 >
                   <Image
                     src={category.image}
-                    alt={`StarkVibe ${category.label} 100% cotton clothing collection`}
+                    alt={`StarkVibe ${category.label}`}
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 78vw"
                     className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.02]"
