@@ -9,6 +9,6 @@ export default function PrivacyPolicyPage() {
     { title: "How we use it", body: "Information is used to process orders, prepare quotations, confirm custom printing details, arrange delivery, provide support and send important order updates. We do not sell customer information." },
     { title: "Payments and security", body: "Payment and order details are handled through the services used for your order. We take reasonable steps to protect information, but no online transmission can be guaranteed to be completely secure." },
     { title: "Your choices", body: "You can ask us to correct or delete personal information where legally and operationally possible. Contact us at info@starkvibe.com for privacy requests." },
-    { title: "Analytics and consent", body: "If you choose to accept, StarkVibe loads Google Analytics, Google Ads measurement tags and the Meta Pixel to understand site visits and measure advertising. These tags load only after consent. Google Analytics is configured with IP anonymisation. You can decline or clear the consent choice in your browser at any time." },
+    { title: "Analytics and consent", body: "StarkVibe uses the Meta Pixel to measure advertising on this site. If you choose to accept, StarkVibe also loads Google Analytics and Google Ads measurement tags. Google Analytics is configured with IP anonymisation. You can decline or clear your Google analytics consent choice in your browser at any time." },
   ]} />;
 }
