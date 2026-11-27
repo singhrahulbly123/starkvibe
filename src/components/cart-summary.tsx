@@ -59,7 +59,7 @@ export function CartSummary({
                   onApplyCoupon();
                 }
               }}
-              placeholder="WINTER20"
+              placeholder="WINTER10"
               className="min-w-0 flex-1 border border-[#69675f] bg-transparent px-3 py-2.5 text-sm text-paper placeholder:text-[#9a988f]"
             />
             <button

@@ -171,10 +171,9 @@ export function ProductDetails({
   );
   return (
     <>
-      <JsonLd data={productSchema} />
-      <JsonLd data={faqSchema} />
       <Breadcrumbs
         compact
+        emitJsonLd={false}
         className="pt-1 pb-6"
         items={[
           { name: "Home", path: "/" },

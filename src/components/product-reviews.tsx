@@ -1,12 +1,19 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Product } from "@/lib/catalogue";
-import { submitReview } from "@/lib/backend-api";
+import { backendFetch, submitReview } from "@/lib/backend-api";
 
 export function ProductReviews({ product }: { product: Product }) {
   const [writing, setWriting] = useState(false);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [reviews, setReviews] = useState<Array<{ id: number; name: string; rating: number; review: string }>>([]);
+  useEffect(() => {
+    let active = true;
+    backendFetch<{ reviews: Array<{ id: number; name: string; rating: number; review: string }> }>(`/reviews/${encodeURIComponent(product.slug || product.id)}`)
+      .then((data) => { if (active) setReviews(data.reviews); }).catch(() => undefined);
+    return () => { active = false; };
+  }, [product.id, product.slug]);
   return (
     <section
       id="reviews"
@@ -20,7 +27,7 @@ export function ProductReviews({ product }: { product: Product }) {
           —
         </p>
         <p className="mt-4 mb-7 text-[15px] text-[#55544f]">
-          No published reviews yet
+          {reviews.length ? `${reviews.length} published ${reviews.length === 1 ? "review" : "reviews"}` : "No published reviews yet"}
         </p>
         <button
           onClick={() => setWriting(!writing)}
@@ -31,17 +38,19 @@ export function ProductReviews({ product }: { product: Product }) {
         </button>
       </div>
       <div className="border-t border-ink">
+        {reviews.map((review) => <div key={review.id} className="border-b border-ink py-7"><p className="font-bold">{review.name} · {review.rating}/5</p><p className="mt-2 leading-relaxed">{review.review}</p></div>)}
         {writing ? (
           <form
             className="grid gap-4 border-b border-ink py-7"
             onSubmit={async (e) => {
               e.preventDefault();
-              const data = new FormData(e.currentTarget);
+              const form = e.currentTarget;
+              const data = new FormData(form);
               setSubmitting(true);
               setMessage("");
               try {
                 await submitReview({
-                  product_slug: product.id,
+                  product_slug: product.slug || product.id,
                   product_name: product.name,
                   name: String(data.get("name") || ""),
                   email: String(data.get("email") || "") || undefined,
@@ -51,7 +60,7 @@ export function ProductReviews({ product }: { product: Product }) {
                 setMessage(
                   "Thank you. Your review has been submitted and will be published after moderation.",
                 );
-                e.currentTarget.reset();
+                form.reset();
               } catch {
                 setMessage(
                   "We could not submit the review right now. Please try again.",
@@ -99,6 +108,7 @@ export function ProductReviews({ product }: { product: Product }) {
               <textarea
                 name="review"
                 required
+                minLength={10}
                 rows={4}
                 className="mt-2 w-full border border-ink bg-transparent p-3"
               />
