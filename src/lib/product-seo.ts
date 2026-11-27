@@ -1,4 +1,5 @@
 import type { Product } from "./catalogue";
+import { productMetaDescription } from "./seo";
 
 export function productSku(product: Product, colour?: string, size?: string) {
   return product.variants?.find((variant) => variant.colour === colour && variant.size === size)?.sku;
@@ -9,7 +10,7 @@ export function productMaterial(product: Product) {
 }
 
 export function productSeoDescription(product: Product) {
-  return product.meta_description || product.long_description || product.note;
+  return productMetaDescription(product);
 }
 
 export function productSeoKeywords(product: Product) {

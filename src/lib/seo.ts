@@ -1,5 +1,6 @@
 import type { Product } from "./catalogue";
 import type { Metadata } from "next";
+import { sizesFor } from "./product-details";
 
 const siteUrl = "https://starkvibe.com";
 const defaultImage = "/branding/starkvibe-wordmark-premium.png";
@@ -9,6 +10,7 @@ type BuildMetadataOptions = {
   description: string;
   path: string;
   image?: string;
+  imageAlt?: string;
 };
 
 function cleanPath(path: string) {
@@ -16,7 +18,7 @@ function cleanPath(path: string) {
   return pathname || "/";
 }
 
-export function buildMetadata({ title, description, path, image = defaultImage }: BuildMetadataOptions): Metadata {
+export function buildMetadata({ title, description, path, image = defaultImage, imageAlt = title }: BuildMetadataOptions): Metadata {
   const pathname = cleanPath(path);
   const url = pathname === "/" ? siteUrl : `${siteUrl}${pathname}`;
   const imageUrl = image.startsWith("http") ? image : `${siteUrl}${cleanPath(image)}`;
@@ -24,17 +26,36 @@ export function buildMetadata({ title, description, path, image = defaultImage }
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, images: [{ url: imageUrl, width: 1200, height: 630, alt: title }] },
+    openGraph: { title, description, url, images: [{ url: imageUrl, width: 1200, height: 630, alt: imageAlt }] },
     twitter: { title, description, images: [imageUrl] },
   };
 }
 
 export function productMetaTitle(product: Product) {
+  if (product.meta_title) return plainMetadata(product.meta_title, product);
+  if (product.slug?.startsWith("350-gsm-fleece-hoodie-") || product.slug?.startsWith("350-gsm-fleece-sweatshirt-")) {
+    const kind = product.slug.includes("sweatshirt") ? "Sweatshirt" : "Hoodie";
+    return `${product.colours[0]?.name || ""} 350 GSM Fleece ${kind}${kind === "Hoodie" ? " for Men" : ""} | StarkVibe`.trim();
+  }
   return product.meta_title || `${product.name} | StarkVibe`;
 }
 
 export function productMetaDescription(product: Product) {
+  if (product.meta_description) return plainMetadata(product.meta_description, product);
+  if (product.slug?.startsWith("350-gsm-fleece-hoodie-") || product.slug?.startsWith("350-gsm-fleece-sweatshirt-")) {
+    const colour = product.colours[0]?.name || "";
+    const sizes = sizesFor(product).join(", ");
+    return product.slug.includes("sweatshirt")
+      ? `Buy the ${colour} 350 GSM 100% cotton fleece crewneck sweatshirt. Long sleeves, double stitched. Sizes ${sizes}. Custom printing available.`
+      : `Buy the ${colour} 350 GSM 100% cotton fleece hoodie. Regular fit, kangaroo pocket, double stitched. Sizes ${sizes}. Custom printing available.`;
+  }
   return product.meta_description || product.note;
+}
+
+function plainMetadata(value: string, product: Product) {
+  return value.replace(/\{colour\}/gi, product.colours[0]?.name || "")
+    .replace(/\{sizes\}/gi, sizesFor(product).join(", "))
+    .replace(/<[^>]*>/g, "").trim();
 }
 
 export function categoryMetaTitle(category: string) {

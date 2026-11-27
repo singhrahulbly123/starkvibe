@@ -50,7 +50,12 @@ export function sanitizeRichText(value: string) {
     });
 }
 export function plainRichText(value: string) {
-  return sanitizeRichText(value).replace(/<[^>]+>/g, "");
+  return sanitizeRichText(value)
+    .replace(/<\s*br\s*\/?\s*>|<\s*\/\s*(?:p|li|h2|h3|blockquote)\s*>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&lt;\/?\s*[a-z][^&]*?&gt;/gi, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&");
 }
 export function productSlug(product: Pick<Product, "name"> & Partial<Pick<Product, "slug">>) {
   return product.slug || product.name
