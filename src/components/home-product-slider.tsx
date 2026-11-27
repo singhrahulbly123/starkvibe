@@ -6,6 +6,7 @@ import { Check, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { collectionDefaultColourIndex, mrpPrice, plainRichText, prioritizeFleeceProducts, productColourHref, productFromApi, productImage, salePrice, type Product } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
+import { productImageAlt } from "@/lib/product-image-alt";
 
 
 export function HomeProductSlider({ hoodiesOnly = false, sweatshirtsOnly = false, initialProducts = [] }: { hoodiesOnly?: boolean; sweatshirtsOnly?: boolean; initialProducts?: Product[] }) {
@@ -66,7 +67,7 @@ export function HomeProductSlider({ hoodiesOnly = false, sweatshirtsOnly = false
                 <Link href={productHref} aria-label={`View ${product.name} in ${colour.name}`} className="relative block aspect-[.78] overflow-hidden bg-[#f4f1e9]">
                   <Image
                     src={productImage(product, colour)}
-                    alt={`${product.name} in ${colour.name}`}
+                    alt={productImageAlt(product, colour, productImage(product, colour))}
                     fill
                     sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 78vw"
                     className="object-contain p-2 transition-transform duration-500 group-hover:scale-[1.03]"

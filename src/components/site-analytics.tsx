@@ -8,7 +8,6 @@ import { trackEvent } from "@/lib/analytics";
 const consentKey = "starkvibe-analytics-consent";
 const googleAdsId = "AW-18533455332";
 const metaPixelId = "1479258844180263";
-const additionalMetaPixelId = "2982278382113522";
 
 export function SiteAnalytics() {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -49,7 +48,7 @@ export function SiteAnalytics() {
         <>
           <Script src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`} strategy="afterInteractive" />
           <Script id="starkvibe-google-tags" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || []; function gtag(){window.dataLayer.push(arguments);} window.gtag = gtag; gtag('js', new Date()); ${measurementId ? `gtag('config', '${measurementId}', { anonymize_ip: true, send_page_view: false });` : ""} gtag('config', '${googleAdsId}');`}</Script>
-          <Script id="starkvibe-meta-pixel" strategy="afterInteractive">{`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${metaPixelId}');fbq('init','${additionalMetaPixelId}');fbq('track','PageView');`}</Script>
+          <Script id="starkvibe-meta-pixel" strategy="afterInteractive">{`!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${metaPixelId}');fbq('track','PageView');`}</Script>
         </>
       )}
       {(measurementId || googleAdsId) && consent === "unknown" && (

@@ -15,6 +15,7 @@ import {
 import { ShopFiltersPanel } from "./shop-filters";
 import { ShopProductCard } from "./shop-product-card";
 import { Reveal } from "./reveal";
+import { FleeceCategoryContent } from "./fleece-category-content";
 
 const guide = [
   {
@@ -413,6 +414,7 @@ export function ShopCatalogue({
           {introParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
         </div>
       </section>
+      {(breadcrumbLabel === "Hoodies" || breadcrumbLabel === "Sweatshirts") && <FleeceCategoryContent type={breadcrumbLabel === "Hoodies" ? "hoodies" : "sweatshirts"} />}
       <section className="pt-24 lg:pt-[136px]">
         <Reveal>
           <div className="mb-10 flex flex-wrap items-end justify-between gap-6">

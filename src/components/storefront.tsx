@@ -20,6 +20,7 @@ import {
 import { collectionDefaultColourIndex, collectionProductImage, filters, mrpPrice, prioritizeFleeceProducts, productColourHref, productFromApi, productSlug, salePrice, type Product } from "@/lib/catalogue";
 import { Reveal } from "./reveal";
 import { Breadcrumbs, type BreadcrumbItem } from "./breadcrumbs";
+import { productImageAlt } from "@/lib/product-image-alt";
 
 
 export function Storefront({
@@ -379,7 +380,7 @@ export function Storefront({
                     >
                       <Image
                         src={collectionProductImage(p, p.colours[selected])}
-                        alt={`StarkVibe ${p.name} 100% cotton in ${p.colours[selected].name}`}
+                        alt={productImageAlt(p, p.colours[selected], collectionProductImage(p, p.colours[selected]))}
                         fill
                         sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                         className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"

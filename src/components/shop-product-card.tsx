@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Heart } from "lucide-react";
 import { mrpPrice, productColourHref, productImage, salePrice, type Product } from "@/lib/catalogue";
 import { sizesFor } from "@/lib/product-details";
+import { productImageAlt } from "@/lib/product-image-alt";
 
 export function ShopProductCard({
   product,
@@ -33,7 +34,7 @@ export function ShopProductCard({
         >
           <Image
             src={productImage(product, colour)}
-            alt={`StarkVibe ${product.name} 100% cotton in ${colour.name}`}
+            alt={productImageAlt(product, colour, productImage(product, colour))}
             fill
             sizes="(min-width: 1024px) 27vw, (min-width: 640px) 45vw, 100vw"
             className="object-contain p-1 transition-transform duration-700 group-hover:scale-[1.025]"

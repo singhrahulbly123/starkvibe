@@ -57,7 +57,6 @@ export function CustomBrandingImageSlider() {
               src={image.src}
               alt={image.alt}
               fill
-              priority={index === 0}
               sizes="100vw"
               className="object-contain object-center"
             />

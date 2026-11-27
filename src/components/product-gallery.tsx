@@ -5,6 +5,7 @@ import { Maximize2 } from "lucide-react";
 import { useState } from "react";
 import { galleryImage, galleryImages } from "@/lib/product-details";
 import type { Product, Colour } from "@/lib/catalogue";
+import { productImageAlt } from "@/lib/product-image-alt";
 
 export function ProductGallery({
   product,
@@ -40,7 +41,7 @@ export function ProductGallery({
             >
               <Image
                 src={image}
-                alt={`StarkVibe ${product.name} in ${colour.name}, photo ${index + 1}`}
+                alt={productImageAlt(product, colour, image)}
                 fill
                 sizes="(min-width: 640px) 140px, 128px"
                 className="object-contain"
@@ -65,9 +66,8 @@ export function ProductGallery({
           <Image
             key={`${colour.file}-${view}`}
             src={mainImage}
-            alt={`StarkVibe ${product.name} 100% cotton in ${colour.name}, ${view.toLowerCase()} view`}
+            alt={productImageAlt(product, colour, mainImage)}
             fill
-            priority={view === "Front"}
             sizes="(min-width: 1024px) 50vw, 100vw"
             className="object-contain p-0"
             style={zoomPoint ? { transform: "scale(2.25)", transformOrigin: `${zoomPoint.x}% ${zoomPoint.y}%` } : undefined}

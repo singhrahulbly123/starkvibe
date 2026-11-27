@@ -383,7 +383,7 @@ export function ProductDetails({
                     key={point}
                     className="border-l-2 border-olive pl-4 text-[15px] leading-[1.5] font-semibold text-[#3f3e3a]"
                   >
-                    {point}
+                    {plainRichText(point)}
                   </li>
                 ))}
               </ul>
@@ -444,7 +444,7 @@ export function ProductDetails({
                 className="flex justify-between gap-6 border-b border-[#3a3a36] py-5 text-[17px]"
               >
                 <dt className="text-[#b9b7ae]">{label}</dt>
-                <dd className="text-right font-bold">{value}</dd>
+                <dd className="text-right font-bold">{plainRichText(value)}</dd>
               </div>
             ))}
           </dl>
